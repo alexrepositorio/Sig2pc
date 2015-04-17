@@ -1,0 +1,190 @@
+@font-face {
+    font-family: 'journalregular';
+    src: url('fonts/journal_regular_macroman/journal-webfont.eot');
+    src: url('fonts/journal_regular_macroman/journal-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/journal_regular_macroman/journal-webfont.woff') format('woff'),
+         url('fonts/journal_regular_macroman/journal-webfont.ttf') format('truetype'),
+         url('fonts/journal_regular_macroman/journal-webfont.svg#journalregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'fff_tusjbold';
+    src: url('fonts/ffftusj_bold_macroman/FFF_Tusj-webfont.eot');
+    src: url('fonts/ffftusj_bold_macroman/FFF_Tusj-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/ffftusj_bold_macroman/FFF_Tusj-webfont.woff') format('woff'),
+         url('fonts/ffftusj_bold_macroman/FFF_Tusj-webfont.ttf') format('truetype'),
+         url('fonts/ffftusj_bold_macroman/FFF_Tusj-webfont.svg#fff_tusjbold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'anudawitalic';
+    src: url('fonts/anudaw_italic_macroman/ANUDI___-webfont.eot');
+    src: url('fonts/anudaw_italic_macroman/ANUDI___-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/anudaw_italic_macroman/ANUDI___-webfont.woff') format('woff'),
+         url('fonts/anudaw_italic_macroman/ANUDI___-webfont.ttf') format('truetype'),
+         url('fonts/anudaw_italic_macroman/ANUDI___-webfont.svg#anudawitalic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'anudawregular';
+    src: url('fonts/anudaw_regular_macroman/ANUDRG__-webfont.eot');
+    src: url('fonts/anudaw_regular_macroman/ANUDRG__-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/anudaw_regular_macroman/ANUDRG__-webfont.woff') format('woff'),
+         url('fonts/anudaw_regular_macroman/ANUDRG__-webfont.ttf') format('truetype'),
+         url('fonts/anudaw_regular_macroman/ANUDRG__-webfont.svg#anudawregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'candelabook';
+    src: url('fonts/candela_book_macroman/CandelaBook-webfont.eot');
+    src: url('fonts/candela_book_macroman/CandelaBook-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/candela_book_macroman/CandelaBook-webfont.woff') format('woff'),
+         url('fonts/candela_book_macroman/CandelaBook-webfont.ttf') format('truetype'),
+         url('fonts/candela_book_macroman/CandelaBook-webfont.svg#candelabook') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+BODY  { background:white; color: black }
+h1 {display: inline; color: forestgreen; font-family: candelabook; text-transform: uppercase; font-size:20px;}
+h2 {display: inline; color: darkgreen; font-family: candelabook; text-transform: uppercase; font-size:15px; margin:1px}
+h3 {display: inline; color: Blue; font-family: candelabook; font-size:10px; margin:1px; font-weight:bold;}
+h4 {display: inline; color: black; font-family: candelabook; font-size:9px; margin:1px;}
+h5 {display: inline; color: black; font-family: candelabook; font-size:5px; margin:1px; margin-left: 0.25in; text-indent: -0.25in}
+
+h6, a {color:black; font-style: normal; text-decoration: none; font-family: candelabook; font-size:11px; margin:1px }
+
+titulo{font-size: 2.1em; color: grey; font-family:'fff_tusjbold'; line-height: 1em;}
+subtitulo{font-size: 1.1em; color: #1C1C1C; font-family:'journalregular'; line-height: 1em;}
+notif{font-size: 3.41em; color: red; font-family:'candelabook'; line-height: 1em;font-weight:bold;}
+notifsi{font-size: 2.41em; color: green; font-family:'candelabook'; line-height: 1em;}
+notifno{font-size: 2.41em; color: blue; font-family:'candelabook'; line-height: 1em;}
+menuindex{font-size: 5.1em; color: forestgreen; font-family:'fff_tusjbold';}
+
+pregunta {font-family: 'journalregular';font-size:20pt;font-weight:bold;color:brown;}
+respuesta {font-family: 'journalregular';font-size:50pt;font-weight:bold;color:OliveDrab;text-transform: uppercase;}
+categoria {font-family: 'journalregular';font-size:30pt;font-weight:bold;color:steelblue;text-transform: uppercase;}
+persona {font-family: 'journalregular';font-size:40pt;font-weight:bold;color:Blue;text-transform: uppercase;}
+atencion {font-family: 'journalregular';font-size:10pt;font-weight:bold;color:red;text-transform: uppercase;}
+cuentatras {font-family: 'journalregular';font-size:60pt;font-weight:bold;color:green;text-transform: uppercase;}
+
+
+table.tablas {
+	display: inline-table;
+	font-family: candelabook;
+	font-size:11px;
+	color:#333333;
+	
+	border-width: 2px;
+	border-color: forestgreen;
+	border-collapse: collapse;
+}
+table.tablas th {
+	background:#b5cfd2 url('cell-blue.jpg');
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: forestgreen;
+}
+table.tablas td {
+	background:#dcddc0 url('cell-grey.jpg');
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: forestgreen;
+}
+
+
+table.menu {
+	display: inline-table;
+	font-family: anudawregular;
+	font-size:5px;
+	border-width: 2px;
+	border-collapse: collapse;
+}
+table.menu th {
+	border-width: 1px;
+	padding: 8px;
+}
+table.menu td {
+	border-width: 1px;
+	padding: 8px;
+}
+
+table.normal {
+	display: inline-table;
+	border-width: 0px;
+	border-collapse: collapse;
+}
+table.normal th {
+	border-width: 0px;
+	padding: 0px;
+}
+table.normal td {
+	border-width: 0px;
+	padding: 0px;
+}
+
+.index {
+	display: inline-table;
+	margin:0px;padding:0px;
+	border:1px solid #007f00;
+	
+	-moz-border-radius-bottomleft:19px;
+	-webkit-border-bottom-left-radius:19px;
+	border-bottom-left-radius:19px;
+	
+	-moz-border-radius-bottomright:19px;
+	-webkit-border-bottom-right-radius:19px;
+	border-bottom-right-radius:19px;
+	
+	-moz-border-radius-topright:19px;
+	-webkit-border-top-right-radius:19px;
+	border-top-right-radius:19px;
+	
+	-moz-border-radius-topleft:19px;
+	-webkit-border-top-left-radius:19px;
+	border-top-left-radius:19px;
+}
+.index table{
+    border-collapse: collapse;
+        border-spacing: 0;
+	margin:0px;padding:0px;
+}
+.index tr:last-child td:last-child {
+	-moz-border-radius-bottomright:19px;
+	-webkit-border-bottom-right-radius:19px;
+	border-bottom-right-radius:19px;
+}
+.index table tr:first-child td:first-child {
+	-moz-border-radius-topleft:19px;
+	-webkit-border-top-left-radius:19px;
+	border-top-left-radius:19px;
+}
+.index table tr:first-child td:last-child {
+	-moz-border-radius-topright:19px;
+	-webkit-border-top-right-radius:19px;
+	border-top-right-radius:19px;
+}
+.index tr:last-child td:first-child{
+	-moz-border-radius-bottomleft:19px;
+	-webkit-border-bottom-left-radius:19px;
+	border-bottom-left-radius:19px;
+}
+DIV.block {text-align:justify; color: black; font-family: Verdana; font-size:11px; margin:1px; margin-left: 0in; text-indent: 0.25in}
+DIV.esp {color: forestgreen; font-family: Verdana; font-size:35px;}
+
+hr.1 {border: 0; width: 100%;color:OliveDrab}
