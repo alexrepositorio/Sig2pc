@@ -1,6 +1,5 @@
 <?php
 include("cabecera_login.php");
-echo "<hr>";
 if (isset($_POST["user"]) AND isset($_POST["pass"])) {
 	validar();
 } 

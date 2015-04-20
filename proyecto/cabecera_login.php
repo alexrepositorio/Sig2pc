@@ -11,13 +11,6 @@
 
 <?php
 include("titulo.html");
-include("uno.php");
-
-if (isset($_COOKIE['username']) && isset($_COOKIE['password']) && isset($_COOKIE["acceso"])) 
-{
-echo "<div align=right><h4><font size=2>Bienvenido ". $_COOKIE['username']."</font></h4> <a href=logout.php><img src=images/exit.png width=15></a></div><hr>";
-}
-
-
+include("usuarios_funciones.php");
 ?>
 

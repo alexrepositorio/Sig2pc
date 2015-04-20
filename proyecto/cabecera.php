@@ -21,17 +21,6 @@
 <script type="text/javascript">
 function imprimir(id)
     {
-<?php
-//****************PARAMETROS DE CONFIGURACION************************
-$link = mysqli_connect("localhost", "root", "", "sig");
-$SQL_conf="SELECT * FROM configuracion";
-$res_conf=mysqli_query($link, $SQL_conf);
-while($configuraciones = mysqli_fetch_array($res_conf,MYSQLI_ASSOC)){
-	$parametro=$configuraciones["parametro"];
-	$config[$parametro]=$configuraciones["valor"];
-	}
-//*******************************************************************
-?>
 
         var div, imp;
         div = document.getElementById(id);//seleccionamos el objeto
@@ -55,21 +44,21 @@ while($configuraciones = mysqli_fetch_array($res_conf,MYSQLI_ASSOC)){
 
 <?php
 include("titulo.html");
-ini_set('error_reporting', E_ALL);
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-include("uno.php");
+include ("uno.php");
 
-if (isset($_COOKIE['username']) && isset($_COOKIE['password']) && isset($_COOKIE["acceso"])) 
-{
-echo "<div align=left><h4><font size=2>¡Bienvenido ". $_COOKIE['username']."! </font><font size=1>(".nivel($_COOKIE['acceso']).")</font></h4> <a title=salir href=logout.php><img src=images/exit.png width=15></a></div><hr>";
+session_start();
+
+if (empty($_SESSION)) {
+   header ('Location: login.php');
+    exit (0); 
 }
 
-include("menu.php");
+echo "Bienvenido ".$_SESSION["user"];
 
-if (empty($_COOKIE['username']) || empty($_COOKIE['password']) || empty($_COOKIE["acceso"])) 
-{
-header('Location: login.php');
+echo " <form name=form action=".$_SERVER['PHP_SELF']." method='post'>
+<input type='submit' class='button' name='logout' value='logout' onclick='logout()'/>";
+if (isset($_POST['logout'])) {
+   logout();
 }
 
 ?>

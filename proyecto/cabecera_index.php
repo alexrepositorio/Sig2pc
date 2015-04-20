@@ -8,22 +8,20 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 
-
 <?php
 include("titulo.html");
 include("uno.php");
-
-if (isset($_COOKIE['username']) && isset($_COOKIE['password']) && isset($_COOKIE["acceso"])) 
-{
-echo "<div align=left><h4><font size=2>¡Bienvenido ". $_COOKIE['username']."! </font><font size=1>(".nivel($_COOKIE['acceso']).")</font></h4> <a title=salir href=logout.php><img src=images/exit.png width=15></a></div><hr>";
+if (empty($_SESSION)) {
+   header ('Location: login.php');
+	exit (0); 
 }
 
+echo "Bienvenido ".$_SESSION["user"];
 
-
-if (empty($_COOKIE['username']) || empty($_COOKIE['password']) || empty($_COOKIE["acceso"])) 
-{
-header('Location: login.php');
+echo " <form name=form action=".$_SERVER['PHP_SELF']." method='post'>
+<input type='submit' class='button' name='logout' value='logout' onclick='logout()'/>";
+if (isset($_POST['logout'])) {
+   logout();
 }
-//compruebo la cookie y si no, include ("login.php") o redirect a index
 ?>
 

@@ -1,6 +1,6 @@
 <?php
 include ("cabecera.php");
-
+include ("socio.php");
 if(isset ($_GET["guarda"])){
 
 //compruebo si el email ya está en uso
@@ -91,25 +91,23 @@ echo "<tr><th align=right><h4>Apellidos</td><td><input type='text' name=apellido
 echo "<tr><th align=right><h4>Código</td><td><input type='text' name=codigo value='".$socio["codigo"]."'></td></tr>";
 echo "<tr><th align=right><h4>Grupo</th><td>";
 			echo "<select name=poblacion>";
-			$sql_pob="SELECT grupo as pob, codigo_grupo as cod FROM grupos ORDER BY grupo ASC";
-			$r_pob=mysqli_query($link, $sql_pob);
-			while ($row_pob = mysqli_fetch_array($r_pob,MYSQLI_ASSOC)){
-				$pob=$row_pob["pob"];
-				$cod=$row_pob["cod"];
-				if($pob==$socio["poblacion"]){$sel="selected";}else{$sel="";}
-				echo "<option $sel value='$pob'>($cod) $pob</option>";}
+            $result=obtenerGrupos();
+    while ($rowloc = mysql_fetch_array($result)){
+        $localidad=$rowloc["grupo"];
+        echo "<option value='$localidad'>$localidad</option>";
+    }
 			echo "</select></td></tr>";
 echo "<tr><th align=right><h4>Cédula</td><td><input type='text' name=cedula value='".$socio["cedula"]."'></td></tr>";
 echo "<tr><th align=right><h4>Celular</td><td><input type='text' name=celular value='".$socio["celular"]."'></td></tr>";
-echo "<tr><th align=right><h4>Fecha de nacimiento</td><td><input type='text' name=f_nacimiento value='".$socio["f_nacimiento"]."'>\"aaaa-mm-dd\"</td></tr>";
+echo "<tr><th align=right><h4>Fecha de nacimiento</td><td><input type='date' name=f_nacimiento value='".$socio["f_nacimiento"]."'>\"aaaa-mm-dd\"</td></tr>";
 echo "<tr><th align=right><h4>email</td><td><input type='text' name=email value='".$socio["email"]."'></td></tr>";
 echo "<tr><th align=right><h4>Dirección</td><td><input type='text' name=direccion value='".$socio["direccion"]."'></td></tr>";
 echo "<tr><th align=right><h4>Cantón</td><td><input type='text' name=canton value='".$socio["canton"]."'></td></tr>";
 echo "<tr><th align=right><h4>Provincia</td><td><input type='text' name=provincia value='".$socio["provincia"]."'></td></tr>";
 echo "<tr><th><h4>Género</th><td><select name=genero>
 		<option value='".$socio["genero"]."'>".$socio["genero"]."</option>
-		<option value='masculino'>Masculino</option>
-		<option value='femenino'>Femenino</option>
+		<option value='masculino'>M</option>
+		<option value='femenino'>F</option>
 		</select></td></tr>";
 echo "</table><br>";
 
