@@ -1,8 +1,9 @@
 <?php
 include ("cabecera.php");
+include ("socio.php");
 
+$socio = mysqli_fetch_array(obtenerSocio($_GET["user"]),MYSQLI_ASSOC);
 
-$socio = mysql_fetch_array(obtenerSocio($_GET["user"]));
 $estatus=certificacion($_GET["user"]);
 if(count($estatus)>0){
 	$estatus_actual=max(array_keys($estatus));
@@ -17,7 +18,6 @@ else{
 	$estimado_actual="00";
 	$enlace_estimado="<a href=historial_estimacion_nuevo.php?socio=".$_GET["user"].">añadir</a>";
 }
-
 $altas=altas_bajas($socio["id_socio"]);
 if(count($altas)>0){
 	$ultimafecha=max(array_keys($altas));
@@ -42,12 +42,11 @@ else{
 			if($estatus[$estatus_actual]["estatus"]=="O"){$estatus_t="ORGANICO";$estatus[$estatus_actual]["estatus"]="(O)";}
 			else{$estatus_t="CONVENCIONAL";$estatus[$estatus_actual]["estatus"]="(".$estatus[$estatus_actual]["estatus"].")";}
 			}
-
-$resultado_lotes=obtenerLotes($socio["id_socio"]);
-$cuenta_lotes=mysql_num_rows($resultado_lotes);
+			$resultado_lotes=obtenerLotes($socio["id_socio"]);
+$cuenta_lotes=mysqli_num_rows($resultado_lotes);
 if($cuenta_lotes>0)
 {
-	while($lot = mysql_fetch_array($resultado_lotes)){
+	while($lot = mysqli_fetch_array($resultado_lotes)){
 	$pesos_del_socio[]=$lot["peso"];	
 	}
 	$peso_entregado=array_sum($pesos_del_socio);
@@ -57,14 +56,13 @@ if($cuenta_lotes>0)
 }
 else{
 	$peso_entregado=0;
-	//$estimado_actual_max=$estimado[$estimado_actual]["estimados"]*(1+($config["margen_contrato"]/100));
 	$estimado_actual_max="";
 	$peso_restante=$estimado_actual_max-$peso_entregado;	
 	$cuenta_lotes_t="";
 }
 
 $r_par=parcelas($socio["id_socio"]);
-$cuenta_parcelas=mysql_num_rows($r_par);
+$cuenta_parcelas=mysqli_num_rows($r_par);
 if($cuenta_parcelas>0)
 {
 	$cuenta_parcelas_t="(<font color=red><b>$cuenta_parcelas</b></font>)";

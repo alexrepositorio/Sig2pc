@@ -1,12 +1,7 @@
 <?php
 
 
-function obtenerGrupos(){
-    require("conect.php");
-    $sql_localidad="SELECT DISTINCT(grupo)  FROM GRUPOS ORDER BY grupo ASC";
-    $result=mysql_query($sql_localidad,$link);
-    return ($result);
-}
+
 function nombre_socio($id)
 {
 	include ("conect.php");
@@ -22,75 +17,6 @@ function nombre_socio($id)
 	$datos_socio["foto"]=$socio["foto"];
 	return ($datos_socio);
 }
-
-
-function certificacion($socio)
-{
-	require("conect.php");
-	
-	$SQL1="SELECT id_socio FROM socios left join persona on socios.id_persona=persona.id_persona where persona.id_persona=".$socio;
-	$resultado1=mysql_query($SQL1,$link);
-	$row = mysql_fetch_array($resultado1);
-	$id=$row["id_socio"];
-
-	$SQL="SELECT * FROM certificacion WHERE id_socio=".$id;
-	$resultado=mysql_query($SQL,$link);
-	while($socio = mysql_fetch_array($resultado))
-	{
-	$estatus[$id]["year"]=$socio["year"];		
-	$estatus[$id]["estatus"]=$socio["estatus"];		
-		}
-	if(isset($estatus)){
-		return ($estatus);
-	}
-}
-
-function altas_bajas($socio)
-{
-	require ("conect.php");
-	$SQL="SELECT * FROM altas WHERE id_socio='$socio'";
-	$resultado=mysql_query($SQL,$link);
-	while($socio = mysql_fetch_array($resultado)){
-	$id=$socio["id"];
-	$altas[$id]["estado"]=$socio["estado"];	
-	$altas[$id]["year"]=$socio["fecha"];	
-	}
-	if(isset($altas)){
-		return ($altas);
-	}
-}
-function obtenerLotes($socio){
-	require ("conect.php");
-	$SQL="SELECT * FROM lotes where id_socio=".$socio;
-	$resultado=mysql_query($SQL,$link);
-	
-	return ($resultado);
-}
-function parcelas($socio){
-	require ("conect.php");
-	$SQL="SELECT * FROM parcelas WHERE id_socio=".$socio;
-	$resultado=mysql_query($SQL,$link);
-	return ($resultado);
-}
-
-function estimacion($socio)
-{
-	require("conect.php");
-	$SQL="SELECT * FROM estimacion WHERE id_socio='$socio'";
-	$resultado=mysql_query($SQL,$link);
-	while($socio = mysql_fetch_array($resultado)){
-	$id=$socio["id"];	
-	$estimados[$id]["year"]=$socio["year"];		
-	$estimados[$id]["estimados"]=$socio["estimados"];		
-	$estimados[$id]["entregados"]=$socio["entregados"];		
-		}
-	if(isset($estimados))
-		{return ($estimados);
-
-	}
-}
-
-
 
 function muestra_array($array)
 {
@@ -154,8 +80,8 @@ function Vactuales(){
 require("conect.php");	
 // catas pendientes
 $SQL_catas_pendientes="SELECT codigo_lote FROM lotes WHERE calidad='A' AND codigo_lote NOT IN (SELECT lote FROM catas)";
-$resultado=mysql_query($SQL_catas_pendientes,$link);
-$cuenta_catas=mysql_num_rows($resultado);
+$resultado=mysqli_query($link,$SQL_catas_pendientes);
+$cuenta_catas=mysqli_num_rows($resultado);
 
 	$cuenta_catas="<font size=6>(<font color=red><b>$cuenta_catas</b></font>)</font>";
 
@@ -163,8 +89,8 @@ $cuenta_catas=mysql_num_rows($resultado);
 
 // pagos pendientes
 $SQL_pagos_pendientes="SELECT codigo_lote FROM lotes WHERE codigo_lote NOT IN (SELECT lote FROM pagos)";
-$resultado2=mysql_query($SQL_pagos_pendientes,$link);
-$cuenta_pagos=mysql_num_rows($resultado2);
+$resultado2=mysqli_query($link,$SQL_pagos_pendientes);
+$cuenta_pagos=mysqli_num_rows($resultado2);
 
 		$cuenta_pagos="<font size=6>(<font color=red><b>$cuenta_pagos</b></font>)</font>";
 	
@@ -172,12 +98,12 @@ $cuenta_pagos=mysql_num_rows($resultado2);
 
 // estado de almacén
 $SQL_estado_almacen_entradas="SELECT SUM(peso) FROM lotes";
-$resultado3=mysql_query($SQL_estado_almacen_entradas,$link);
-$almacen_entradas=mysql_fetch_row($resultado3);
+$resultado3=mysqli_query($link,$SQL_estado_almacen_entradas);
+$almacen_entradas=mysqli_fetch_row($resultado3);
 $almacen_entradas=$almacen_entradas[0];
 $SQL_estado_almacen_salidas="SELECT SUM(cantidad) FROM despachos";
-$resultado4=mysql_query($SQL_estado_almacen_salidas,$link);
-$almacen_salidas=mysql_fetch_row($resultado4);
+$resultado4=mysqli_query($link,$SQL_estado_almacen_salidas);
+$almacen_salidas=mysqli_fetch_row($resultado4);
 $almacen_salidas=$almacen_salidas[0];
 $stock_almacen=$almacen_entradas-$almacen_salidas;
 $stock_almacen="<font size=6>(<font color=red><b>".$stock_almacen."qq</b></font>)</font>";

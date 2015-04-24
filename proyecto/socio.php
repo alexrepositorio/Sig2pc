@@ -7,46 +7,104 @@
  */
 
 
+
+
 function consultarCriterio($criterio,$valor){
     require("conect.php");
     $SQL="call sp_socio_cons('".$criterio."','".$valor."')";
-    $resultset=mysql_query($SQL,$link);
-    return($resultset);
+    $result=mysqli_query($link,$SQL);   
+    return($result);
 }
-
-function actualizarsocio($id,$nombre,$apellido,$cedula,$celular,$f_nac,$direccion,$poblacion,$canton,$provincia,$genero){
-    $SQL="UPDATE persona SET
-				nombres='".$nombre."',
-				apellidos='".$apellido."',
-				cedula='".$cedula."',
-				celular='".$celular."',
-				f_nacimiento='".$f_nac."',
-				direccion='".$direccion."',
-				canton='".$canton."',
-				provincia='".$provincia."',
-				genero='".$genero."'
-			where id_persona='".$id."'";
-    $resultado=mysql_query($SQL,$link);
-    $SQL2="SELECT id from grupos where grupo like %".$poblacion."%";
-    $resultado=mysql_query($SQL2,$link);
-    $row = mysql_fetch_array($result);
-    $SQL3="UPDATE socios
-		set id_grupo=".$row["id"]."
-			where id_persona=".$id;
-    $resultado=mysql_query($SQL3,$link);
-}
-
 function obtenerSocio($id){
     require("conect.php");
-    $SQL="SELECT `id_socio`,`nombres`, `apellidos`, `codigo`, `cedula`, `f_nacimiento`, `email`, `direccion`, `canton`, `provincia`, `genero`,`grupo` as poblacion FROM persona
-left join socios
-on socios.id_persona=persona.id_persona
-left join grupos
-on grupos.id=socios.id_grupo
-where socios.id_persona='".$id."'";
-    $resultado=mysql_query($SQL,$link);
-    return ($resultado);
+    $SQL="call SP_socio_find(".$id.")";
+    $result=mysqli_query($link,$SQL);
+    return ($result);
 }
+function certificacion($socio)
+{
+	require("conect.php");
+	
+	$SQL1="SELECT id_socio FROM socios left join persona on socios.id_persona=persona.id_persona where persona.id_persona=".$socio;
+	$resultado1=mysqli_query($link,$SQL1);
+	$row = mysqli_fetch_array($resultado1);
+	$id=$row["id_socio"];
+
+	$SQL="SELECT * FROM certificacion WHERE id_socio=".$id;
+	$resultado=mysqli_query($link,$SQL);
+	while($socio = mysqli_fetch_array($resultado))
+	{
+	$estatus[$id]["year"]=$socio["year"];		
+	$estatus[$id]["estatus"]=$socio["estatus"];		
+		}
+	if(isset($estatus)){
+		return ($estatus);
+	}
+}
+
+function estimacion($socio)
+{
+	require("conect.php");
+	$SQL="call SP_socio_estimacion(".$socio.");";
+	$resultado=mysqli_query($link,$SQL);
+	while($socio = mysqli_fetch_array($resultado)){
+	$id=$socio["id"];	
+	$estimados[$id]["year"]=$socio["year"];		
+	$estimados[$id]["estimados"]=$socio["estimados"];		
+	$estimados[$id]["entregados"]=$socio["entregados"];		
+		}
+	if(isset($estimados))
+		{return ($estimados);
+
+	}
+}
+function altas_bajas($socio)
+{
+	require ("conect.php");
+	$SQL="call SP_socio_altas(".$socio.");";
+	$resultado=mysqli_query($link,$SQL);
+	while($socio = mysqli_fetch_array($resultado)){
+	$id=$socio["id"];
+	$altas[$id]["estado"]=$socio["estado"];	
+	$altas[$id]["year"]=$socio["fecha"];	
+	}
+	if(isset($altas)){
+		return ($altas);
+	}
+}
+function actualizarsocio($id,$nombre,$apellido,$codigo,$cedula,$celular,$f_nac,$direccion,$poblacion,$canton,$provincia,$genero,$mail){
+    require ("conect.php");
+    $SQL="call SP_socio_update(".$id.",".$nombre.",".$apellido.",".$codigo.",".$cedula.",".$celular.",".$f_nac.",".$direccion.",".$poblacion."
+    	,".$canton.",".$provincia.",".$genero.",".$mail.")";
+    $resultado=mysqli_query($link,$SQL);    
+}
+function comprobar_mail($mail){
+	require ("conect.php");
+	$SQL="SELECT email FROM socios where email='".$mail."'";
+	$result=mysqli_query($link, $SQL);
+	if(!mysqli_num_rows($result)){
+		return false;
+	}else
+
+	return true;
+	}
+
+
+
+function obtenerLotes($socio){
+	require ("conect.php");
+	$SQL="SELECT * FROM lotes where id_socio=".$socio;
+	$resultado=mysqli_query($link,$SQL);
+	
+	return ($resultado);
+}
+function parcelas($socio){
+	require ("conect.php");
+	$SQL="SELECT * FROM parcelas WHERE id_socio=".$socio;
+	$resultado=mysqli_query($link,$SQL);
+	return ($resultado);
+}
+
 
 
 function obtenerSocioLotes($id){

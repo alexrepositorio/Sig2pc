@@ -1,5 +1,6 @@
 <?php
 include ("cabecera.php");
+include("grupos_funciones.php");
 include ("socio.php") ;
 
 if(!isset($_GET["criterio"]))
@@ -14,9 +15,9 @@ if(!isset($_GET["criterio"]))
 	}
 	else{	
 		$res=consultarCriterio($_GET["criterio"],$_POST["busca"]);
-
 	}	
 }
+
 
 echo "<div align=center><h1>Listado de socios</h1><br><br>";
 echo "<table border=0 cellpadding=15 cellspacing=0><tr>";
@@ -31,7 +32,6 @@ echo "</td>";
 
 echo "</form></td>";
 
-
 echo "<td align=center>  <h4>Nombre y apellidos<br>
 <form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=nombres method='post'>";
 echo "<input type='text' name=busca><br>";
@@ -41,8 +41,8 @@ echo "</form></td>";
 echo "<td align=center> <h4>Localidad<br>
 <form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
 echo "<select name=busca>";
-//$result=obtenerGrupos();
-while ($rowloc = mysql_fetch_array($result)){
+$result=obtenerGrupos();
+while ($rowloc = mysqli_fetch_array($result)){
     $localidad=$rowloc["grupo"];
     echo "<option value='$localidad'>$localidad</option>";
 }
@@ -51,7 +51,7 @@ echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
 
 
-echo "<table cellspacing=1 cellspadding=1 align=center border=2 >";
+echo "<table data-toggle='table' cellspacing=1 cellspadding=1 align=center border=2 >";
 		echo "<td >Nombre</td>";
 		echo "<td>Apellido</td>";
 		echo "<td>Poblacion</td>";
@@ -59,7 +59,8 @@ echo "<table cellspacing=1 cellspadding=1 align=center border=2 >";
 		echo  "<td>opciones </td>";
 		echo "</tr>";
 
-while ($row = mysql_fetch_assoc($res)) {
+while ($row = mysqli_fetch_assoc($res)) {
+	// mysqli_free_result($res);
 	echo "<tr>";
 		echo "<td>".$row['nombres']."</td>";
 		echo "<td>".$row['apellidos']."</td>";
@@ -72,7 +73,9 @@ while ($row = mysql_fetch_assoc($res)) {
 			}	
 		echo "<td><a href=ficha_socio.php?user=".$row['id']."><img src=images/user_edit.png width=50><br></a></td>";
 	echo "</tr>";
-}	
+}
+
+
 echo "</table>";
 
 echo "</table></div>";

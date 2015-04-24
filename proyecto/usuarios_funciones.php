@@ -13,9 +13,9 @@ function validar(){
     $pass = ($_POST["pass"]);
 
     $sql="call SP_usuario_find('".$user."','".$pass."')";
-    $res_sql=mysql_query($sql,$link);
-    $cpin=mysql_num_rows($res_sql);
-    $row_user=mysql_fetch_array($res_sql);
+    $res_sql=mysqli_query($link,$sql);
+    $cpin=mysqli_num_rows($res_sql);
+    $row_user=mysqli_fetch_array($res_sql);
     if ($cpin>0)
     {
         session_start();

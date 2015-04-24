@@ -1,12 +1,9 @@
 <?php
 	include("config.php");
 	//cadena de conexion al mysql
-	if(!($link=mysql_connect($db_host,$db_user,$db_pass))){
-		echo "Error de conexion al servidor";
+	
+	if(!($link=mysqli_connect($db_host,$db_user,$db_pass,$db_name))){
+		echo "Error:".mysql_error();
 		exit();
-	}
-	if(!(mysql_select_db($db_name,$link))){
-		echo "Error de conexion a la db";
-		exit();
-	}
+	}	
 ?>
