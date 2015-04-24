@@ -32,7 +32,7 @@ $criterio="<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> es <i>''$_tex
 
 }
 
-//echo "$SQL";                         
+                        
 $resultado=mysqli_query($link, $SQL);
 $cuenta=mysqli_num_rows($resultado);
 while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
