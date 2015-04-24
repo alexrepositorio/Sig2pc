@@ -28,8 +28,7 @@ $balance[$row["codigo_lote"]]=$cata[$row["codigo_lote"]]["balance"];
 }
 	
 }
-//if(!isset($pesos)){$pesos[]=0;}
-//if(!isset($costos)){$costos[]=0;}
+
 
 
 /*
