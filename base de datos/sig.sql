@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-04-2015 a las 00:49:46
+-- Tiempo de generación: 24-04-2015 a las 17:18:27
 -- Versión del servidor: 5.6.21
 -- Versión de PHP: 5.6.3
 
@@ -24,6 +24,13 @@ DELIMITER $$
 --
 -- Procedimientos
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_altas`(
+in id int
+)
+BEGIN
+SELECT id,fecha,estado FROM altas WHERE id_socio=id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_cons`(
 in criterio varchar(20),
 in valor varchar(20)
@@ -70,13 +77,68 @@ SELECT socios.id_persona as id,`nombres`, `apellidos`, `codigo`, `cedula`, `gene
 				  
 when ''
 then
-SELECT socios.id_persona as id,`nombres`, `apellidos`, `codigo`, `cedula`, `genero`,grupo,estatus as certificacion FROM
+	SELECT socios.id_persona as id,`nombres`, `apellidos`, `codigo`, `cedula`, `genero`,grupo,estatus as certificacion FROM
 				socios
 				left join persona on persona.id_persona=socios.id_persona
 				left join certificacion on certificacion.id_socio=socios.id_socio
 				left join grupos on grupos.id=socios.id_grupo
-	 		order by apellidos;                        
+	 		order by apellidos;
 END case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_estimacion`(
+in id int
+)
+BEGIN
+SELECT id,year,estimados,entregados FROM estimacion WHERE id_socio=id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_find`(
+in id int
+)
+BEGIN
+SELECT `id_socio`,`nombres`, `apellidos`, `codigo`, `cedula`,`celular`, `f_nacimiento`, `email`, `direccion`, `canton`, `provincia`, `genero`,`grupo` as poblacion FROM persona
+	left join socios
+	on socios.id_persona=persona.id_persona
+	left join grupos
+	on grupos.id=socios.id_grupo
+	where socios.id_persona=id; 
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_update`(
+in in_id int,
+in in_nombre varchar(20),
+in in_apellido varchar(20),
+in in_codigo varchar (4),
+in in_cedula varchar(20),
+in in_celular varchar(20),
+in f_nac date,
+in in_direccion varchar(50),
+in in_poblacion varchar(30),
+in in_canton varchar(20),
+in in_provincia varchar(20),
+in in_genero char(1),
+in in_mail varchar(50)
+)
+BEGIN
+UPDATE persona SET
+				nombres=in_nombre,
+				apellidos=in_apellido,
+				cedula=in_cedula,
+				codigo=in_codigo,
+				celular=in_celular,
+				f_nacimiento=f_nac,
+				direccion=in_direccion,
+				canton=in_canton,
+				provincia=in_provincia,
+				genero=in_genero,
+                email=in_mail
+			where id_persona=in_id;
+
+SELECT id into @id from grupos where grupo like concat("%",in_poblacion,"%");            
+UPDATE socios
+set id_grupo=@id
+			where id_persona=in_id;            
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_usuario_find`(
@@ -472,7 +534,7 @@ CREATE TABLE IF NOT EXISTS `persona` (
 --
 
 INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `codigo`, `cedula`, `celular`, `f_nacimiento`, `email`, `direccion`, `canton`, `provincia`, `foto`, `genero`) VALUES
-(2, ' Baltazar Francisco', 'Alvarez Michay', 'AN01', 1102029814, 0, '1960-01-08', '', '', '', 'Zamora', '', ''),
+(2, 'Prueba', 'Prueba', 'ANnn', 1111111, 9999, '0000-00-00', '', 'direccion', '', '', '', 'M'),
 (3, ' Manuela Bernarda', 'Cevallos Michay', 'AN04', 1900055300, 0, '1944-12-04', '', '', '', 'Zamora', '', ''),
 (4, ' Angel Benigno', 'Gaona Torres', 'AN05', 1101903662, 0, '1956-04-19', '', '', '', 'Zamora', '', ''),
 (5, ' Gloria Elisa', 'Guarinda Ceballos', 'AN06', 1103418503, 983520805, '1976-03-27', '', '', '', 'Zamora', '', ''),
