@@ -7,8 +7,6 @@
  */
 
 
-
-
 function consultarCriterio($criterio,$valor){
     require("conect.php");
     $SQL="call sp_socio_cons('".$criterio."','".$valor."')";
@@ -20,6 +18,12 @@ function obtenerSocio($id){
     $SQL="call SP_socio_find(".$id.")";
     $result=mysqli_query($link,$SQL);
     return ($result);
+}
+
+function certificarsocio($id,$anio,$estado){
+	require("conect.php");
+    $sql="call SP_socio_certificar(".$id.",'".$anio."','".$estado."')";
+    $result=mysqli_query($link,$sql) or die(mysqli_error($link));
 }
 function certificacion($socio)
 {
@@ -74,21 +78,26 @@ function altas_bajas($socio)
 }
 function actualizarsocio($id,$nombre,$apellido,$codigo,$cedula,$celular,$f_nac,$direccion,$poblacion,$canton,$provincia,$genero,$mail){
     require ("conect.php");
-    $SQL="call SP_socio_update(".$id.",".$nombre.",".$apellido.",".$codigo.",".$cedula.",".$celular.",".$f_nac.",".$direccion.",".$poblacion."
-    	,".$canton.",".$provincia.",".$genero.",".$mail.")";
-    $resultado=mysqli_query($link,$SQL);    
+    $SQL="call SP_socio_update(".$id.",'".$nombre."','".$apellido."','".$codigo."','".$cedula."','".$celular."','".$f_nac."','".$direccion."','".$poblacion."','".$canton."','".$provincia."','".$genero."','".$mail."')";
+    mysqli_query($link,$SQL) or die(mysqli_error($link));    
 }
+
+
 function comprobar_mail($mail){
 	require ("conect.php");
-	$SQL="SELECT email FROM socios where email='".$mail."'";
-	$result=mysqli_query($link, $SQL);
-	if(!mysqli_num_rows($result)){
+	$SQL="SELECT email FROM persona where email='".$mail."'";
+	$result=mysqli_query($link, $SQL)or die(mysqli_error($link));
+	if(mysqli_num_rows($result)==0 or $mail==''){
 		return false;
 	}else
-
 	return true;
 	}
 
+function insertar_socio($nombre,$apellido,$codigo,$cedula,$celular,$f_nac,$direccion,$poblacion,$canton,$provincia,$genero,$mail){
+	require ("conect.php");
+	$SQL="call SP_socio_ins('".$nombre."','".$apellido."','".$codigo."','".$cedula."','".$celular."','".$f_nac."','".$direccion."','".$poblacion."','".$canton."','".$provincia."','".$genero."','".$mail."')";
+	mysqli_query($link,$SQL) or die(mysqli_error($link));
+}
 
 
 function obtenerLotes($socio){

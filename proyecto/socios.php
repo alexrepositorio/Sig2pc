@@ -52,11 +52,11 @@ echo "</form></td>";
 
 
 echo "<table data-toggle='table' cellspacing=1 cellspadding=1 align=center border=2 >";
-		echo "<td >Nombre</td>";
-		echo "<td>Apellido</td>";
-		echo "<td>Poblacion</td>";
-		echo "<td>Certificacion</td>";
-		echo  "<td>opciones </td>";
+		echo "<th >Nombre</th>";
+		echo "<th>Apellido</th>";
+		echo "<th>Poblacion</th>";
+		echo "<th>Certificacion</th>";
+		echo  "<th>opciones </th>";
 		echo "</tr>";
 
 while ($row = mysqli_fetch_assoc($res)) {
@@ -69,7 +69,7 @@ while ($row = mysqli_fetch_assoc($res)) {
 				echo "<td>".$row['certificacion']."</td>";
 			}
 			else{
-				echo  "<td>sin certificacion</td>";
+				echo "<td><a href=ficha_socio_certificar.php?socio=".$row['id']."><img src=images/add1.ico width=50><br></a></td>";
 			}	
 		echo "<td><a href=ficha_socio.php?user=".$row['id']."><img src=images/user_edit.png width=50><br></a></td>";
 	echo "</tr>";

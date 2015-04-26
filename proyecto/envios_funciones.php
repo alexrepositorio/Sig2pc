@@ -3,7 +3,7 @@
 
 	function busqueda_sin_criterios()
 	{
-		$link = mysqli_connect("localhost", "root", "", "sigantigua");
+		$link = mysqli_connect("localhost", "root", "", "sig");
 		mysqli_query($link, "SET NAMES 'utf8'");
 
 		$SQL="SELECT * FROM envios order by fecha desc";
