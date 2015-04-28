@@ -2,7 +2,10 @@
 include ("cabecera.php");
 include ("socio.php");
 
-$socio = mysqli_fetch_array(obtenerSocio($_GET["user"]),MYSQLI_ASSOC);
+
+
+$socio = obtenerSocio($_GET["user"]);
+
 
 $estatus=certificacion($_GET["user"]);
 if(count($estatus)>0){
@@ -43,14 +46,15 @@ else{
 			else{$estatus_t="CONVENCIONAL";$estatus[$estatus_actual]["estatus"]="(".$estatus[$estatus_actual]["estatus"].")";}
 			}
 			$resultado_lotes=obtenerLotes($socio["id_socio"]);
-$cuenta_lotes=mysqli_num_rows($resultado_lotes);
+$cuenta_lotes=mysqli_num_rows($resultado_lotes);;
+
 if($cuenta_lotes>0)
 {
 	while($lot = mysqli_fetch_array($resultado_lotes)){
 	$pesos_del_socio[]=$lot["peso"];	
 	}
 	$peso_entregado=array_sum($pesos_del_socio);
-	$estimado_actual_max=$estimado[$estimado_actual]["estimados"]*(1+($config["margen_contrato"]/100));
+	$estimado_actual_max=$estimado[$estimado_actual]["estimados"]*(1+(obtener_configuracion_parametro('margen_contrato')/100));
 	$peso_restante=$estimado_actual_max-$peso_entregado;
 	$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";
 }

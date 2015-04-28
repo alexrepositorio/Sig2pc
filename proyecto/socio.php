@@ -10,14 +10,42 @@
 function consultarCriterio($criterio,$valor){
     require("conect.php");
     $SQL="call sp_socio_cons('".$criterio."','".$valor."')";
-    $result=mysqli_query($link,$SQL);   
-    return($result);
+    $resultado=mysqli_query($link,$SQL); 
+    while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
+				$socios[]=$row;	
+			}  
+    return($socios);
+
 }
 function obtenerSocio($id){
     require("conect.php");
     $SQL="call SP_socio_find(".$id.")";
-    $result=mysqli_query($link,$SQL);
-    return ($result);
+    $resultado=mysqli_query($link,$SQL);
+    $row = mysqli_fetch_array($resultado,MYSQLI_ASSOC);			
+    return ($row);
+}
+
+function calcular_codigo($poblacion){
+    require("conect.php");
+
+    $codigo_grupo=substr($poblacion,0,2);
+    $SQL="SELECT codigo from socios" ;
+    $result=mysqli_query($link,$SQL) or die(mysqli_error($link));;
+    $cuenta_p=mysqli_num_rows($result);
+		if($cuenta_p==0){
+			$nuevo_codigo=$codigo_grupo."01";
+		}
+		else{
+			while ($rowcodigos = mysqli_fetch_array($result,MYSQLI_ASSOC)){
+				$nsocio=substr($rowcodigos["codigo"],2,2);
+				//$codigo_grupo=$codigo_grupo;
+				$numeraciones[]=$nsocio;
+			}
+			$siguiente=max($numeraciones)+1;
+			$nuevo_codigo=$codigo_grupo.$siguiente;
+		}
+
+    return ($nuevo_codigo);
 }
 
 function certificarsocio($id,$anio,$estado){
@@ -25,21 +53,16 @@ function certificarsocio($id,$anio,$estado){
     $sql="call SP_socio_certificar(".$id.",'".$anio."','".$estado."')";
     $result=mysqli_query($link,$sql) or die(mysqli_error($link));
 }
-function certificacion($socio)
+function certificacion($in_socio)
 {
 	require("conect.php");
 	
-	$SQL1="SELECT id_socio FROM socios left join persona on socios.id_persona=persona.id_persona where persona.id_persona=".$socio;
-	$resultado1=mysqli_query($link,$SQL1);
-	$row = mysqli_fetch_array($resultado1);
-	$id=$row["id_socio"];
-
-	$SQL="SELECT * FROM certificacion WHERE id_socio=".$id;
-	$resultado=mysqli_query($link,$SQL);
-	while($socio = mysqli_fetch_array($resultado))
+	$SQL="SELECT * FROM certificacion WHERE id_socio=".$in_socio;
+	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
+	while($socio = mysqli_fetch_array($resultado));
 	{
-	$estatus[$id]["year"]=$socio["year"];		
-	$estatus[$id]["estatus"]=$socio["estatus"];		
+	$estatus[$in_socio]["year"]=$socio["year"];		
+	$estatus[$in_socio]["estatus"]=$socio["estatus"];		
 		}
 	if(isset($estatus)){
 		return ($estatus);
@@ -50,7 +73,7 @@ function estimacion($socio)
 {
 	require("conect.php");
 	$SQL="call SP_socio_estimacion(".$socio.");";
-	$resultado=mysqli_query($link,$SQL);
+	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
 	while($socio = mysqli_fetch_array($resultado)){
 	$id=$socio["id"];	
 	$estimados[$id]["year"]=$socio["year"];		
@@ -66,7 +89,7 @@ function altas_bajas($socio)
 {
 	require ("conect.php");
 	$SQL="call SP_socio_altas(".$socio.");";
-	$resultado=mysqli_query($link,$SQL);
+	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link)) ;
 	while($socio = mysqli_fetch_array($resultado)){
 	$id=$socio["id"];
 	$altas[$id]["estado"]=$socio["estado"];	
@@ -104,7 +127,6 @@ function obtenerLotes($socio){
 	require ("conect.php");
 	$SQL="SELECT * FROM lotes where id_socio=".$socio;
 	$resultado=mysqli_query($link,$SQL);
-	
 	return ($resultado);
 }
 function parcelas($socio){

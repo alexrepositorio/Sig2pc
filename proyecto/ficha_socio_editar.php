@@ -3,9 +3,12 @@ include ("cabecera.php");
 include ("socio.php");
 include ("grupos_funciones.php");
 
+
 if(isset ($_POST["update"])){
-actualizarsocio($_POST["update"],$_POST["nombres"],$_POST["apellidos"],$_POST["codigo"],$_POST["cedula"],$_POST["celular"],$_POST["f_nacimiento"]
+actualizarsocio($_POST["update"],$_POST["nombres"],$_POST["apellidos"],calcular_codigo($_POST["poblacion"]),$_POST["cedula"],$_POST["celular"],$_POST["f_nacimiento"]
 ,$_POST["direccion"],$_POST["poblacion"],$_POST["canton"],$_POST["provincia"],$_POST["genero"],$_POST["email"]);	
+
+
 
 echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
 <meta http-equiv='Refresh' content='2;url=ficha_socio.php?user=".$_POST["update"]."'></font></h1></div>";
@@ -14,28 +17,34 @@ echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
 
 else{
 	
-$socio = mysqli_fetch_array(obtenerSocio($_GET["user"]));
+$socio = obtenerSocio($_GET["user"]);
 
-if(isset($_GET["foto"])){$socio["foto"]=$_GET["foto"];}
+if(isset($_GET["foto"])){
+
+	$socio["foto"]=$_GET["foto"];
+}
 
 echo "<div align=center><h1>Edición de la Ficha del socio</h1><br><h2>".$socio["nombres"]." ".$socio["apellidos"]."</h2><br><br>";
 
 
 echo "<form name=form1 action=".$_SERVER['PHP_SELF']." method='post'>";
-if($socio["foto"]==""){$socio["foto"]="sinfoto.jpg";}
+if($socio["foto"]==""){
+	$socio["foto"]="sinfoto.jpg";
+}
 echo "<a href=galery2.php?socio=".$socio["id_socio"]."><img src=fotos/th/small_".$socio["foto"]." width=100></a><br><h5>click en la foto para cambiarla</h5><br>";
 echo "<table class=tablas>";
 echo "<input type='hidden' name='update' value=".$_GET["user"].">";
 echo "<tr><th align=right><h4>Nombres</td><td><input type='text' name=nombres value='".$socio["nombres"]."'></td></tr>";
 echo "<tr><th align=right><h4>Apellidos</td><td><input type='text' name=apellidos value='".$socio["apellidos"]."'></td></tr>";
-echo "<tr><th align=right><h4>Código</td><td><input type='text' name=codigo value='".$socio["codigo"]."'></td></tr>";
+echo "<tr><th align=right><h4>Código</th><td>*se calculará automáticamente</td></tr>";
 echo "<tr><th align=right><h4>Grupo</th><td>";
-			echo "<select name=poblacion>";
- $result=obtenerGrupos();
-    while ($rowloc = mysqli_fetch_array($result)){
-        $localidad=$rowloc["grupo"];
-        echo "<option value='$localidad'>$localidad</option>";
-    }
+			echo "<select name=poblacion >";
+			echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
+ $grupos=obtenerGrupos();
+ foreach ($grupos as $grupo)
+	{
+		echo "<option value=".$grupo["grupo"].">".$grupo["grupo"]."</option>";
+	}
 			echo "</select></td></tr>";
 echo "<tr><th align=right><h4>Cédula</td><td><input type='text' name=cedula value='".$socio["cedula"]."'></td></tr>";
 echo "<tr><th align=right><h4>Celular</td><td><input type='text' name=celular value='".$socio["celular"]."'></td></tr>";

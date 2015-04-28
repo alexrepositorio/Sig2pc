@@ -9,7 +9,7 @@ $criterio="";
 $encontrados="";
 $SQL=busqueda_sin_criterios();//funcion
 
-}else{
+}else
 	if(isset($_GET["socio"])){
 		$_POST["busca"]=$_GET["socio"];
 	}	

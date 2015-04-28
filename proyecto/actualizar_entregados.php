@@ -1,7 +1,7 @@
 <?php
 include ("cabecera.php");
 
-
+require("conect.php");
 $SQL_estimaciones="SELECT estimacion.*, l.pesosum FROM estimacion
 				LEFT JOIN (SELECT id_socio, date_format(fecha,'%Y') as ano, SUM(peso) as pesosum FROM lotes GROUP BY id_socio, ano) l 
 				on (estimacion.id_socio=l.id_socio AND estimacion.year=l.ano) ORDER BY year desc";

@@ -15,6 +15,7 @@
     <!--<script type="text/javascript" src="LB/js/jquery.lightbox-0.5.js"></script>-->
     <script type="text/javascript" src="LB/js/lightbox.js"></script>
     <!--<link rel="stylesheet" type="text/css" href="LB/css/jquery.lightbox-0.5.css" media="screen" />-->
+    <script type="text/javascript" src="LB/js/pager.js"></script>
     <link rel="stylesheet" type="text/css" href="LB/css/lightbox.css" media="screen" />
     <!-- / fim dos arquivos utilizados pelo jQuery lightBox plugin -->
 

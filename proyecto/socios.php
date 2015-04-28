@@ -1,20 +1,22 @@
+
 <?php
 include ("cabecera.php");
 include("grupos_funciones.php");
 include ("socio.php") ;
 
+
 if(!isset($_GET["criterio"]))
 {
-	$res=consultarCriterio("","");
+	$socios=consultarCriterio("","");
 
 
 }else{
 	if (!isset($_POST["busca"])) {
-		$res=consultarCriterio($_GET["criterio"],"");
+		$socios=consultarCriterio($_GET["criterio"],"");
 
 	}
 	else{	
-		$res=consultarCriterio($_GET["criterio"],$_POST["busca"]);
+		$socios=consultarCriterio($_GET["criterio"],$_POST["busca"]);
 	}	
 }
 
@@ -41,17 +43,18 @@ echo "</form></td>";
 echo "<td align=center> <h4>Localidad<br>
 <form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
 echo "<select name=busca>";
-$result=obtenerGrupos();
-while ($rowloc = mysqli_fetch_array($result)){
-    $localidad=$rowloc["grupo"];
-    echo "<option value='$localidad'>$localidad</option>";
-}
+$grupos=obtenerGrupos();
+ foreach ($grupos as $grupo)
+	{
+		echo "<option value=".$grupo["grupo"].">".$grupo["grupo"]."</option>";
+	}
+
 echo "</select><br>";
 echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
 
 
-echo "<table data-toggle='table' cellspacing=1 cellspadding=1 align=center border=2 >";
+echo "<table class='paginated' cellspacing=1 cellspadding=1 align=center border=2 >";
 		echo "<th >Nombre</th>";
 		echo "<th>Apellido</th>";
 		echo "<th>Poblacion</th>";
@@ -59,22 +62,21 @@ echo "<table data-toggle='table' cellspacing=1 cellspadding=1 align=center borde
 		echo  "<th>opciones </th>";
 		echo "</tr>";
 
-while ($row = mysqli_fetch_assoc($res)) {
-	// mysqli_free_result($res);
-	echo "<tr>";
-		echo "<td>".$row['nombres']."</td>";
-		echo "<td>".$row['apellidos']."</td>";
-		echo "<td>".$row['grupo']."</td>";
-		if (isset($row['certificacion'])) {
-				echo "<td>".$row['certificacion']."</td>";
+foreach ($socios as $socio)
+	{
+		echo "<tr>";
+		echo "<td>".$socio['nombres']."</td>";
+		echo "<td>".$socio['apellidos']."</td>";
+		echo "<td>".$socio['grupo']."</td>";
+		if (isset($socio['certificacion'])) {
+				echo "<td>".$socio['certificacion']."</td>";
 			}
 			else{
-				echo "<td><a href=ficha_socio_certificar.php?socio=".$row['id']."><img src=images/add1.ico width=50><br></a></td>";
+				echo "<td><a href=ficha_socio_certificar.php?socio=".$socio['id']."><img src=images/add1.ico width=50><br></a></td>";
 			}	
-		echo "<td><a href=ficha_socio.php?user=".$row['id']."><img src=images/user_edit.png width=50><br></a></td>";
+		echo "<td><a href=ficha_socio.php?user=".$socio['id']."><img src=images/user_edit.png width=50><br></a></td>";
 	echo "</tr>";
-}
-
+	}		
 
 echo "</table>";
 
@@ -106,6 +108,7 @@ if(in_array($_SESSION['acceso'],$permisos_administrativos)){	echo "<th width=20p
 if(in_array($_SESSION['acceso'],$permisos_administrativos)){	echo "<th width=20px><h6>avisos</h6></th></tr>";}
 
 echo "</table>";
+
 
 
 

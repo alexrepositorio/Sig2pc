@@ -3,8 +3,11 @@ function obtenerGrupos(){
 
     require("conect.php");
     $sql="SELECT DISTINCT(grupo)  FROM GRUPOS ORDER BY grupo ASC";
-    $result=mysqli_query($link,$sql) or die(mysqli_error($link));
-    return ($result);
+    $resultado=mysqli_query($link,$sql) or die(mysqli_error($link));
+      while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
+                $grupos[]=$row; 
+            }  
+    return ($grupos);
 }
 function obtenerGrupo($id){
 	 require("conect.php");
