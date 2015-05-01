@@ -1,37 +1,21 @@
 <?php
 include ("cabecera.php");
+include ("envios_funciones.php");
 
 if(isset ($_POST["fecha"])){
-	
+//FUNCION
+list($cadena, $resultado, $nuevo_id)=ingresar_nuevo_envio($_POST["fecha"],$_POST["destino"],$_POST["chofer"],$_POST["responsable"],$link);
 
-$SQL_edit="INSERT INTO envios VALUES('',
-				'".$_POST["fecha"]."',
-				'".$_POST["destino"]."',
-				'".$_POST["chofer"]."',
-				'".$_POST["responsable"]."')";
-
-$resultado=mysqli_query($link, $SQL_edit);
-$nuevo_id=mysqli_insert_id($link);
-
-
-$cadena=str_replace("'", "", $SQL_edit);
+//Metodo de historial en uno.php
 guarda_historial($cadena);
-
-//echo "$SQL_edit";
 
 echo "<div align=center><h1>GUARDANDO, ESPERA...
 <meta http-equiv='Refresh' content='2;url=envios.php'></font></h1></div>";
-
-//echo "$SQL_edit";
 }
 
 
-else{
-	
-
+else{	
 echo "<div align=center><h1>NUEVO ENVIO</h1><br>";
-
-//muestra_array($socio);
 
 echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 echo "<table class=tablas>";

@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.11
+-- version 4.1.12
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-04-2015 a las 23:46:12
--- Versión del servidor: 5.6.21
--- Versión de PHP: 5.6.3
+-- Tiempo de generación: 01-05-2015 a las 18:57:22
+-- Versión del servidor: 5.6.16
+-- Versión de PHP: 5.5.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -17,13 +19,80 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de datos: `sig2`
+-- Base de datos: `sig`
 --
+CREATE DATABASE IF NOT EXISTS `sig` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `sig`;
 
 DELIMITER $$
 --
 -- Procedimientos
 --
+DROP PROCEDURE IF EXISTS `SP_envios_con`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_con`(
+in criterio varchar(20),
+in post varchar(20)
+)
+BEGIN
+case  criterio
+when ''
+then
+	SELECT * FROM 
+
+envios order by fecha desc;
+    
+when 'fecha'
+then
+	SELECT * FROM envios WHERE 
+
+date_format(fecha,'%Y-%m-%d') = post order by 
+
+fecha desc;    
+END case;
+END$$
+
+DROP PROCEDURE IF EXISTS `SP_envios_fechas_con`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_fechas_con`()
+BEGIN
+SELECT DISTINCT 
+
+date_format(fecha,'%Y-%m-%d') as fecha FROM 
+
+envios ORDER BY fecha ASC;
+END$$
+
+DROP PROCEDURE IF EXISTS `SP_envios_ins`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_ins`(in fecha timestamp, in destino varchar(22), in chofer varchar(22),in responsable varchar(22))
+BEGIN
+INSERT INTO envios VALUES('',fecha,destino,chofer,responsable);
+END$$
+
+DROP PROCEDURE IF EXISTS `SP_envios_upd`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_upd`(in fec 
+
+timestamp, in des varchar(22), in cho 
+
+varchar(22),in res varchar(22),in envio int)
+BEGIN
+UPDATE envios SET
+				
+
+fecha=fec,
+				
+
+destino=des,
+				
+
+chofer=cho,
+				
+
+responsable=res
+				WHERE 
+
+id=envio;
+END$$
+
+DROP PROCEDURE IF EXISTS `SP_lote_ins`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_ins`(
  IN in_socio int ,
  IN in_codigo varchar(20),
@@ -49,6 +118,7 @@ BEGIN
  VALUES (in_socio,in_codigo , in_fecha, in_peso,in_humedad , in_rto_descarte, in_rto_exportable, in_defecto_negro, in_defecto_vinagre, in_defecto_decolorado, in_defecto_mordido, in_defecto_brocado, in_reposo, in_moho, in_fermento, in_contaminado,in_calidad);
 END$$
 
+DROP PROCEDURE IF EXISTS `SP_socio_altas`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_altas`(
 in id int
 )
@@ -56,6 +126,7 @@ BEGIN
 SELECT id,fecha,estado FROM altas WHERE id_socio=id;
 END$$
 
+DROP PROCEDURE IF EXISTS `SP_socio_certificar`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_certificar`(
  IN in_id int ,
  IN in_anio date,
@@ -66,6 +137,7 @@ BEGIN
  INSERT INTO certificacion(id_socio,year,estatus)  VALUES (in_id,in_anio,in_estado);
 END$$
 
+DROP PROCEDURE IF EXISTS `SP_socio_cons`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_cons`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20))
 BEGIN
 case  criterio
@@ -124,6 +196,7 @@ then
 END case;
 END$$
 
+DROP PROCEDURE IF EXISTS `SP_socio_estimacion`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_estimacion`(
 in id int
 )
@@ -131,6 +204,7 @@ BEGIN
 SELECT id,year,estimados,entregados FROM estimacion WHERE id_socio=id;
 END$$
 
+DROP PROCEDURE IF EXISTS `SP_socio_find`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_find`(IN `id` INT)
 BEGIN
 SELECT `id_socio`,`nombres`, `apellidos`, socios.codigo as codigo, `cedula`,`celular`, `f_nacimiento`, `email`, `direccion`, `canton`, `provincia`, `genero`,`grupo` as poblacion FROM persona
@@ -141,6 +215,7 @@ SELECT `id_socio`,`nombres`, `apellidos`, socios.codigo as codigo, `cedula`,`cel
 	where socios.id_socio=id; 
 END$$
 
+DROP PROCEDURE IF EXISTS `SP_socio_ins`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_ins`(in in_nombre varchar(20),
 in in_apellido varchar(20),
 in in_codigo varchar (4),
@@ -167,6 +242,7 @@ BEGIN
   
 END$$
 
+DROP PROCEDURE IF EXISTS `SP_socio_update`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_update`(IN `in_id` INT, IN `in_nombre` VARCHAR(20), IN `in_apellido` VARCHAR(20), IN `in_codigo` VARCHAR(4), IN `in_cedula` VARCHAR(20), IN `in_celular` VARCHAR(20), IN `f_nac` DATE, IN `in_direccion` VARCHAR(50), IN `in_poblacion` VARCHAR(30), IN `in_canton` VARCHAR(20), IN `in_provincia` VARCHAR(20), IN `in_genero` CHAR(1), IN `in_mail` VARCHAR(50))
 BEGIN
 select id_persona into @persona from socios where socios.id_socio=in_id;
@@ -191,6 +267,7 @@ set id_grupo=@id, codigo=in_codigo
             
 END$$
 
+DROP PROCEDURE IF EXISTS `SP_usuario_find`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_usuario_find`(
 in userr varchar(20),
 in passw varchar(20)
@@ -207,35 +284,53 @@ DELIMITER ;
 --
 -- Estructura de tabla para la tabla `acciones`
 --
+-- Creación: 01-05-2015 a las 16:42:24
+--
 
+DROP TABLE IF EXISTS `acciones`;
 CREATE TABLE IF NOT EXISTS `acciones` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `accion` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `accion` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `altas`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `altas`;
 CREATE TABLE IF NOT EXISTS `altas` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `estado` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `estado` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_alta_SOCIO_idx` (`id_socio`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+
+--
+-- RELACIONES PARA LA TABLA `altas`:
+--   `id_socio`
+--       `socios` -> `id_socio`
+--
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `analisis`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `analisis`;
 CREATE TABLE IF NOT EXISTS `analisis` (
-`id_analisis` int(11) NOT NULL,
+  `id_analisis` int(11) NOT NULL AUTO_INCREMENT,
   `id_subparcela` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `muestra` int(11) NOT NULL,
@@ -259,32 +354,54 @@ CREATE TABLE IF NOT EXISTS `analisis` (
   `s_textura` text COLLATE latin1_spanish_ci NOT NULL,
   `f_n` float(10,2) NOT NULL,
   `f_p` float(10,2) NOT NULL,
-  `f_k` float(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `f_k` float(10,2) NOT NULL,
+  PRIMARY KEY (`id_analisis`),
+  KEY `fk_subparcela_analisis_idx` (`id_subparcela`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+
+--
+-- RELACIONES PARA LA TABLA `analisis`:
+--   `id_subparcela`
+--       `subparcelas` -> `id`
+--
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `asociaciones`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `asociaciones`;
 CREATE TABLE IF NOT EXISTS `asociaciones` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `concepto` text COLLATE latin1_spanish_ci NOT NULL,
   `valor` text COLLATE latin1_spanish_ci NOT NULL,
   `tipo` text COLLATE latin1_spanish_ci NOT NULL,
   `elemento` text COLLATE latin1_spanish_ci NOT NULL,
-  `subparcela_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `subparcela_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_SUBPARCELA_ASOCIACION_idx` (`subparcela_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+
+--
+-- RELACIONES PARA LA TABLA `asociaciones`:
+--   `subparcela_id`
+--       `subparcelas` -> `id`
+--
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `catas`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `catas`;
 CREATE TABLE IF NOT EXISTS `catas` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `catador` text COLLATE latin1_spanish_ci NOT NULL,
@@ -325,21 +442,40 @@ CREATE TABLE IF NOT EXISTS `catas` (
   `dl_reposo` int(11) NOT NULL,
   `dl_moho` int(11) NOT NULL,
   `dl_astringencia` int(11) NOT NULL,
-  `d_general` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `d_general` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk:CATA_LOTE_idx` (`lote`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+
+--
+-- RELACIONES PARA LA TABLA `catas`:
+--   `lote`
+--       `lotes` -> `id`
+--
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `certificacion`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `certificacion`;
 CREATE TABLE IF NOT EXISTS `certificacion` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
   `year` int(11) NOT NULL,
-  `estatus` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `estatus` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_:SOCIO_CERTIFICACION_idx` (`id_socio`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=2 ;
+
+--
+-- RELACIONES PARA LA TABLA `certificacion`:
+--   `id_socio`
+--       `socios` -> `id_socio`
+--
 
 --
 -- Volcado de datos para la tabla `certificacion`
@@ -353,26 +489,45 @@ INSERT INTO `certificacion` (`id`, `id_socio`, `year`, `estatus`) VALUES
 --
 -- Estructura de tabla para la tabla `comentario`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `comentario`;
 CREATE TABLE IF NOT EXISTS `comentario` (
-`id_COMENTARIO` int(11) NOT NULL,
+  `id_COMENTARIO` int(11) NOT NULL AUTO_INCREMENT,
   `Comentario` varchar(45) DEFAULT NULL,
   `id_usuario` int(11) NOT NULL,
-  `Id_foto` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `Id_foto` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_COMENTARIO`),
+  KEY `FK_Comentario_cuenta_idx` (`id_usuario`),
+  KEY `FK_Foto_COmentario_idx` (`Id_foto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+--
+-- RELACIONES PARA LA TABLA `comentario`:
+--   `id_usuario`
+--       `usuarios` -> `id`
+--   `Id_foto`
+--       `fotos` -> `id`
+--
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `configuracion`
 --
+-- Creación: 01-05-2015 a las 16:42:24
+--
 
+DROP TABLE IF EXISTS `configuracion`;
 CREATE TABLE IF NOT EXISTS `configuracion` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `parametro` text COLLATE latin1_spanish_ci NOT NULL,
   `descripcion` text COLLATE latin1_spanish_ci NOT NULL,
-  `valor` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `valor` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=8 ;
 
 --
 -- Volcado de datos para la tabla `configuracion`
@@ -392,65 +547,102 @@ INSERT INTO `configuracion` (`id`, `parametro`, `descripcion`, `valor`) VALUES
 --
 -- Estructura de tabla para la tabla `despachos`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `despachos`;
 CREATE TABLE IF NOT EXISTS `despachos` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `cantidad` float(10,2) NOT NULL,
-  `envio` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `envio` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_despacho_lote_idx` (`lote`),
+  KEY `FK_DESPACHO_ENVIO_idx` (`envio`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+
+--
+-- RELACIONES PARA LA TABLA `despachos`:
+--   `envio`
+--       `envios` -> `id`
+--   `lote`
+--       `lotes` -> `id`
+--
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `envios`
 --
+-- Creación: 01-05-2015 a las 16:42:24
+--
 
+DROP TABLE IF EXISTS `envios`;
 CREATE TABLE IF NOT EXISTS `envios` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `destino` text COLLATE latin1_spanish_ci NOT NULL,
   `chofer` text COLLATE latin1_spanish_ci NOT NULL,
-  `responsable` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `responsable` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `estimacion`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `estimacion`;
 CREATE TABLE IF NOT EXISTS `estimacion` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
   `year` int(11) NOT NULL,
   `estimados` double(10,2) NOT NULL,
-  `entregados` double(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `entregados` double(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk:_Estimacion_socio_idx` (`id_socio`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+
+--
+-- RELACIONES PARA LA TABLA `estimacion`:
+--   `id_socio`
+--       `socios` -> `id_socio`
+--
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `fotos`
 --
+-- Creación: 01-05-2015 a las 16:42:24
+--
 
+DROP TABLE IF EXISTS `fotos`;
 CREATE TABLE IF NOT EXISTS `fotos` (
-`id` int(11) NOT NULL,
-  `foto` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `foto` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `grupos`
 --
+-- Creación: 01-05-2015 a las 16:42:24
+--
 
+DROP TABLE IF EXISTS `grupos`;
 CREATE TABLE IF NOT EXISTS `grupos` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `grupo` text COLLATE latin1_spanish_ci NOT NULL,
-  `codigo_grupo` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `codigo_grupo` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=24 ;
 
 --
 -- Volcado de datos para la tabla `grupos`
@@ -485,9 +677,12 @@ INSERT INTO `grupos` (`id`, `grupo`, `codigo_grupo`) VALUES
 --
 -- Estructura de tabla para la tabla `lotes`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `lotes`;
 CREATE TABLE IF NOT EXISTS `lotes` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
   `codigo_lote` text COLLATE latin1_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -504,8 +699,17 @@ CREATE TABLE IF NOT EXISTS `lotes` (
   `moho` tinyint(1) NOT NULL,
   `fermento` tinyint(1) NOT NULL,
   `contaminado` tinyint(1) NOT NULL,
-  `calidad` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=174 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `calidad` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`),
+  KEY `FK_SOCIO_LOTE_idx` (`id_socio`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=174 ;
+
+--
+-- RELACIONES PARA LA TABLA `lotes`:
+--   `id_socio`
+--       `socios` -> `id_socio`
+--
 
 --
 -- Volcado de datos para la tabla `lotes`
@@ -690,11 +894,15 @@ INSERT INTO `lotes` (`id`, `id_socio`, `codigo_lote`, `fecha`, `peso`, `humedad`
 --
 -- Estructura de tabla para la tabla `niveles`
 --
+-- Creación: 01-05-2015 a las 16:42:24
+--
 
+DROP TABLE IF EXISTS `niveles`;
 CREATE TABLE IF NOT EXISTS `niveles` (
-`id_niveles` int(11) NOT NULL,
-  `nivel` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+  `id_niveles` int(11) NOT NULL AUTO_INCREMENT,
+  `nivel` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id_niveles`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 --
 -- Volcado de datos para la tabla `niveles`
@@ -709,9 +917,12 @@ INSERT INTO `niveles` (`id_niveles`, `nivel`) VALUES
 --
 -- Estructura de tabla para la tabla `pagos`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `pagos`;
 CREATE TABLE IF NOT EXISTS `pagos` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `exportable` float(10,2) NOT NULL,
@@ -720,8 +931,16 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   `calidad` double(10,2) NOT NULL,
   `cliente` float(10,2) NOT NULL,
   `microlote` float(10,2) NOT NULL,
-  `tazadorada` float(10,2) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `tazadorada` float(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_PAGO_LOTE_idx` (`lote`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=4 ;
+
+--
+-- RELACIONES PARA LA TABLA `pagos`:
+--   `lote`
+--       `lotes` -> `id`
+--
 
 --
 -- Volcado de datos para la tabla `pagos`
@@ -737,9 +956,12 @@ INSERT INTO `pagos` (`id`, `lote`, `fecha`, `exportable`, `descarte`, `fuera`, `
 --
 -- Estructura de tabla para la tabla `parcelas`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `parcelas`;
 CREATE TABLE IF NOT EXISTS `parcelas` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
   `coorX` int(11) NOT NULL,
   `coorY` int(11) NOT NULL,
@@ -748,8 +970,16 @@ CREATE TABLE IF NOT EXISTS `parcelas` (
   `MOcontratada` int(11) NOT NULL,
   `MOfamiliar` int(11) NOT NULL,
   `Miembros_familia` int(11) NOT NULL,
-  `riego` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `riego` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_PARCELA_SOCIO_idx` (`id_socio`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=298 ;
+
+--
+-- RELACIONES PARA LA TABLA `parcelas`:
+--   `id_socio`
+--       `socios` -> `id_socio`
+--
 
 --
 -- Volcado de datos para la tabla `parcelas`
@@ -856,9 +1086,12 @@ INSERT INTO `parcelas` (`id`, `id_socio`, `coorX`, `coorY`, `alti`, `sup_total`,
 --
 -- Estructura de tabla para la tabla `persona`
 --
+-- Creación: 01-05-2015 a las 16:42:24
+--
 
+DROP TABLE IF EXISTS `persona`;
 CREATE TABLE IF NOT EXISTS `persona` (
-`id_persona` int(11) NOT NULL,
+  `id_persona` int(11) NOT NULL AUTO_INCREMENT,
   `nombres` text,
   `apellidos` text,
   `codigo` text,
@@ -870,8 +1103,9 @@ CREATE TABLE IF NOT EXISTS `persona` (
   `canton` text,
   `provincia` text,
   `foto` text,
-  `genero` char(1) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=309 DEFAULT CHARSET=utf8;
+  `genero` char(1) DEFAULT NULL,
+  PRIMARY KEY (`id_persona`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=309 ;
 
 --
 -- Volcado de datos para la tabla `persona`
@@ -1188,13 +1422,28 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `codigo`, `cedula`,
 --
 -- Estructura de tabla para la tabla `socios`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `socios`;
 CREATE TABLE IF NOT EXISTS `socios` (
-`id_socio` int(11) NOT NULL,
+  `id_socio` int(11) NOT NULL AUTO_INCREMENT,
   `id_grupo` int(11) DEFAULT NULL,
   `id_persona` int(11) DEFAULT NULL,
-  `codigo` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=307 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `codigo` text COLLATE latin1_spanish_ci NOT NULL,
+  PRIMARY KEY (`id_socio`),
+  KEY `id_socio` (`id_socio`),
+  KEY `FK_SOCIO_GRUPO_idx` (`id_grupo`),
+  KEY `FK_PERSONA_SOCIO_idx` (`id_persona`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=307 ;
+
+--
+-- RELACIONES PARA LA TABLA `socios`:
+--   `id_persona`
+--       `persona` -> `id_persona`
+--   `id_grupo`
+--       `grupos` -> `id`
+--
 
 --
 -- Volcado de datos para la tabla `socios`
@@ -1510,9 +1759,12 @@ INSERT INTO `socios` (`id_socio`, `id_grupo`, `id_persona`, `codigo`) VALUES
 --
 -- Estructura de tabla para la tabla `subparcelas`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `subparcelas`;
 CREATE TABLE IF NOT EXISTS `subparcelas` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_parcela` int(11) NOT NULL,
   `superficie` float(10,2) NOT NULL,
   `variedad` text COLLATE latin1_spanish_ci NOT NULL,
@@ -1526,8 +1778,15 @@ CREATE TABLE IF NOT EXISTS `subparcelas` (
   `broca` text COLLATE latin1_spanish_ci NOT NULL,
   `ojo_pollo` text COLLATE latin1_spanish_ci NOT NULL,
   `mes_inicio_cosecha` text COLLATE latin1_spanish_ci NOT NULL,
-  `duracion_cosecha` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `duracion_cosecha` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=298 ;
+
+--
+-- RELACIONES PARA LA TABLA `subparcelas`:
+--   `id`
+--       `parcelas` -> `id`
+--
 
 --
 -- Volcado de datos para la tabla `subparcelas`
@@ -1634,14 +1893,28 @@ INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `varied
 --
 -- Estructura de tabla para la tabla `usuarios`
 --
+-- Creación: 01-05-2015 a las 16:53:31
+--
 
+DROP TABLE IF EXISTS `usuarios`;
 CREATE TABLE IF NOT EXISTS `usuarios` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
   `pass` text COLLATE latin1_spanish_ci NOT NULL,
   `id_nivel` int(11) NOT NULL,
-  `id_persona` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `id_persona` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_USUARIO_SOCIO_idx` (`id_persona`),
+  KEY `fk_user_nivel` (`id_nivel`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=2 ;
+
+--
+-- RELACIONES PARA LA TABLA `usuarios`:
+--   `id_persona`
+--       `persona` -> `id_persona`
+--   `id_nivel`
+--       `niveles` -> `id_niveles`
+--
 
 --
 -- Volcado de datos para la tabla `usuarios`
@@ -1651,245 +1924,6 @@ INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`) VALUES
 (1, 'admin', 'admin', 1, 304);
 
 --
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `acciones`
---
-ALTER TABLE `acciones`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `altas`
---
-ALTER TABLE `altas`
- ADD PRIMARY KEY (`id`), ADD KEY `fk_alta_SOCIO_idx` (`id_socio`);
-
---
--- Indices de la tabla `analisis`
---
-ALTER TABLE `analisis`
- ADD PRIMARY KEY (`id_analisis`), ADD KEY `fk_subparcela_analisis_idx` (`id_subparcela`);
-
---
--- Indices de la tabla `asociaciones`
---
-ALTER TABLE `asociaciones`
- ADD PRIMARY KEY (`id`), ADD KEY `FK_SUBPARCELA_ASOCIACION_idx` (`subparcela_id`);
-
---
--- Indices de la tabla `catas`
---
-ALTER TABLE `catas`
- ADD PRIMARY KEY (`id`), ADD KEY `fk:CATA_LOTE_idx` (`lote`);
-
---
--- Indices de la tabla `certificacion`
---
-ALTER TABLE `certificacion`
- ADD PRIMARY KEY (`id`), ADD KEY `fk_:SOCIO_CERTIFICACION_idx` (`id_socio`);
-
---
--- Indices de la tabla `comentario`
---
-ALTER TABLE `comentario`
- ADD PRIMARY KEY (`id_COMENTARIO`), ADD KEY `FK_Comentario_cuenta_idx` (`id_usuario`), ADD KEY `FK_Foto_COmentario_idx` (`Id_foto`);
-
---
--- Indices de la tabla `configuracion`
---
-ALTER TABLE `configuracion`
- ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`);
-
---
--- Indices de la tabla `despachos`
---
-ALTER TABLE `despachos`
- ADD PRIMARY KEY (`id`), ADD KEY `fk_despacho_lote_idx` (`lote`), ADD KEY `FK_DESPACHO_ENVIO_idx` (`envio`);
-
---
--- Indices de la tabla `envios`
---
-ALTER TABLE `envios`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `estimacion`
---
-ALTER TABLE `estimacion`
- ADD PRIMARY KEY (`id`), ADD KEY `fk:_Estimacion_socio_idx` (`id_socio`);
-
---
--- Indices de la tabla `fotos`
---
-ALTER TABLE `fotos`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `grupos`
---
-ALTER TABLE `grupos`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `lotes`
---
-ALTER TABLE `lotes`
- ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`), ADD KEY `FK_SOCIO_LOTE_idx` (`id_socio`);
-
---
--- Indices de la tabla `niveles`
---
-ALTER TABLE `niveles`
- ADD PRIMARY KEY (`id_niveles`);
-
---
--- Indices de la tabla `pagos`
---
-ALTER TABLE `pagos`
- ADD PRIMARY KEY (`id`), ADD KEY `FK_PAGO_LOTE_idx` (`lote`);
-
---
--- Indices de la tabla `parcelas`
---
-ALTER TABLE `parcelas`
- ADD PRIMARY KEY (`id`), ADD KEY `FK_PARCELA_SOCIO_idx` (`id_socio`);
-
---
--- Indices de la tabla `persona`
---
-ALTER TABLE `persona`
- ADD PRIMARY KEY (`id_persona`);
-
---
--- Indices de la tabla `socios`
---
-ALTER TABLE `socios`
- ADD PRIMARY KEY (`id_socio`), ADD KEY `id_socio` (`id_socio`), ADD KEY `FK_SOCIO_GRUPO_idx` (`id_grupo`), ADD KEY `FK_PERSONA_SOCIO_idx` (`id_persona`);
-
---
--- Indices de la tabla `subparcelas`
---
-ALTER TABLE `subparcelas`
- ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
- ADD PRIMARY KEY (`id`), ADD KEY `FK_USUARIO_SOCIO_idx` (`id_persona`), ADD KEY `fk_user_nivel` (`id_nivel`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `acciones`
---
-ALTER TABLE `acciones`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `altas`
---
-ALTER TABLE `altas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `analisis`
---
-ALTER TABLE `analisis`
-MODIFY `id_analisis` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `asociaciones`
---
-ALTER TABLE `asociaciones`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `catas`
---
-ALTER TABLE `catas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `certificacion`
---
-ALTER TABLE `certificacion`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT de la tabla `comentario`
---
-ALTER TABLE `comentario`
-MODIFY `id_COMENTARIO` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `configuracion`
---
-ALTER TABLE `configuracion`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
---
--- AUTO_INCREMENT de la tabla `despachos`
---
-ALTER TABLE `despachos`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `envios`
---
-ALTER TABLE `envios`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `estimacion`
---
-ALTER TABLE `estimacion`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `fotos`
---
-ALTER TABLE `fotos`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
---
--- AUTO_INCREMENT de la tabla `grupos`
---
-ALTER TABLE `grupos`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
---
--- AUTO_INCREMENT de la tabla `lotes`
---
-ALTER TABLE `lotes`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=174;
---
--- AUTO_INCREMENT de la tabla `niveles`
---
-ALTER TABLE `niveles`
-MODIFY `id_niveles` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
---
--- AUTO_INCREMENT de la tabla `pagos`
---
-ALTER TABLE `pagos`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
---
--- AUTO_INCREMENT de la tabla `parcelas`
---
-ALTER TABLE `parcelas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
---
--- AUTO_INCREMENT de la tabla `persona`
---
-ALTER TABLE `persona`
-MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=309;
---
--- AUTO_INCREMENT de la tabla `socios`
---
-ALTER TABLE `socios`
-MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=307;
---
--- AUTO_INCREMENT de la tabla `subparcelas`
---
-ALTER TABLE `subparcelas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
---
 -- Restricciones para tablas volcadas
 --
 
@@ -1897,90 +1931,91 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 -- Filtros para la tabla `altas`
 --
 ALTER TABLE `altas`
-ADD CONSTRAINT `fk_alta_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_alta_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `analisis`
 --
 ALTER TABLE `analisis`
-ADD CONSTRAINT `fk_subparcela_analisis` FOREIGN KEY (`id_subparcela`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_subparcela_analisis` FOREIGN KEY (`id_subparcela`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
-ADD CONSTRAINT `FK_SUBPARCELA_ASOCIACION` FOREIGN KEY (`subparcela_id`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_SUBPARCELA_ASOCIACION` FOREIGN KEY (`subparcela_id`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `catas`
 --
 ALTER TABLE `catas`
-ADD CONSTRAINT `fk_CATA_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_CATA_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
-ADD CONSTRAINT `fk_SOCIO_CERTIFICACION` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_SOCIO_CERTIFICACION` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `comentario`
 --
 ALTER TABLE `comentario`
-ADD CONSTRAINT `FK_Comentario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `FK_Foto_COmentario` FOREIGN KEY (`Id_foto`) REFERENCES `fotos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_Comentario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_Foto_COmentario` FOREIGN KEY (`Id_foto`) REFERENCES `fotos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `despachos`
 --
 ALTER TABLE `despachos`
-ADD CONSTRAINT `FK_DESPACHO_ENVIO` FOREIGN KEY (`envio`) REFERENCES `envios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `fk_despacho_lote` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_DESPACHO_ENVIO` FOREIGN KEY (`envio`) REFERENCES `envios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_despacho_lote` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
-ADD CONSTRAINT `fk_Estimacion_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_Estimacion_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `lotes`
 --
 ALTER TABLE `lotes`
-ADD CONSTRAINT `FK_SOCIO_LOTE` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_SOCIO_LOTE` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `pagos`
 --
 ALTER TABLE `pagos`
-ADD CONSTRAINT `FK_PAGO_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_PAGO_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
-ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `socios`
 --
 ALTER TABLE `socios`
-ADD CONSTRAINT `FK_PERSONA_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `FK_SOCIO_GRUPO` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `fk_socio_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`);
+  ADD CONSTRAINT `FK_PERSONA_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_SOCIO_GRUPO` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_socio_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`);
 
 --
 -- Filtros para la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id`) REFERENCES `parcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id`) REFERENCES `parcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-ADD CONSTRAINT `FK_USUARIO_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `fk_user_nivel` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`);
+  ADD CONSTRAINT `FK_USUARIO_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_user_nivel` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`);
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
