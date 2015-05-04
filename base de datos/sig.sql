@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.1.12
+-- version 4.1.14
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-05-2015 a las 18:57:22
--- Versión del servidor: 5.6.16
--- Versión de PHP: 5.5.11
+-- Tiempo de generación: 29-04-2015 a las 01:15:01
+-- Versión del servidor: 5.6.17
+-- Versión de PHP: 5.5.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -21,13 +19,13 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `sig`
 --
-CREATE DATABASE IF NOT EXISTS `sig` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `sig`;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla
 
 DELIMITER $$
---
--- Procedimientos
---
 DROP PROCEDURE IF EXISTS `SP_envios_con`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_con`(
 in criterio varchar(20),
@@ -69,30 +67,19 @@ END$$
 
 DROP PROCEDURE IF EXISTS `SP_envios_upd`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_upd`(in fec 
-
 timestamp, in des varchar(22), in cho 
-
 varchar(22),in res varchar(22),in envio int)
 BEGIN
 UPDATE envios SET
-				
-
 fecha=fec,
-				
-
 destino=des,
-				
-
 chofer=cho,
-				
-
 responsable=res
 				WHERE 
-
 id=envio;
 END$$
 
-DROP PROCEDURE IF EXISTS `SP_lote_ins`$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_ins`(
  IN in_socio int ,
  IN in_codigo varchar(20),
@@ -118,7 +105,6 @@ BEGIN
  VALUES (in_socio,in_codigo , in_fecha, in_peso,in_humedad , in_rto_descarte, in_rto_exportable, in_defecto_negro, in_defecto_vinagre, in_defecto_decolorado, in_defecto_mordido, in_defecto_brocado, in_reposo, in_moho, in_fermento, in_contaminado,in_calidad);
 END$$
 
-DROP PROCEDURE IF EXISTS `SP_socio_altas`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_altas`(
 in id int
 )
@@ -126,7 +112,6 @@ BEGIN
 SELECT id,fecha,estado FROM altas WHERE id_socio=id;
 END$$
 
-DROP PROCEDURE IF EXISTS `SP_socio_certificar`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_certificar`(
  IN in_id int ,
  IN in_anio date,
@@ -137,7 +122,6 @@ BEGIN
  INSERT INTO certificacion(id_socio,year,estatus)  VALUES (in_id,in_anio,in_estado);
 END$$
 
-DROP PROCEDURE IF EXISTS `SP_socio_cons`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_cons`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20))
 BEGIN
 case  criterio
@@ -196,7 +180,6 @@ then
 END case;
 END$$
 
-DROP PROCEDURE IF EXISTS `SP_socio_estimacion`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_estimacion`(
 in id int
 )
@@ -204,7 +187,6 @@ BEGIN
 SELECT id,year,estimados,entregados FROM estimacion WHERE id_socio=id;
 END$$
 
-DROP PROCEDURE IF EXISTS `SP_socio_find`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_find`(IN `id` INT)
 BEGIN
 SELECT `id_socio`,`nombres`, `apellidos`, socios.codigo as codigo, `cedula`,`celular`, `f_nacimiento`, `email`, `direccion`, `canton`, `provincia`, `genero`,`grupo` as poblacion FROM persona
@@ -215,7 +197,6 @@ SELECT `id_socio`,`nombres`, `apellidos`, socios.codigo as codigo, `cedula`,`cel
 	where socios.id_socio=id; 
 END$$
 
-DROP PROCEDURE IF EXISTS `SP_socio_ins`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_ins`(in in_nombre varchar(20),
 in in_apellido varchar(20),
 in in_codigo varchar (4),
@@ -242,7 +223,6 @@ BEGIN
   
 END$$
 
-DROP PROCEDURE IF EXISTS `SP_socio_update`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_update`(IN `in_id` INT, IN `in_nombre` VARCHAR(20), IN `in_apellido` VARCHAR(20), IN `in_codigo` VARCHAR(4), IN `in_cedula` VARCHAR(20), IN `in_celular` VARCHAR(20), IN `f_nac` DATE, IN `in_direccion` VARCHAR(50), IN `in_poblacion` VARCHAR(30), IN `in_canton` VARCHAR(20), IN `in_provincia` VARCHAR(20), IN `in_genero` CHAR(1), IN `in_mail` VARCHAR(50))
 BEGIN
 select id_persona into @persona from socios where socios.id_socio=in_id;
@@ -267,7 +247,6 @@ set id_grupo=@id, codigo=in_codigo
             
 END$$
 
-DROP PROCEDURE IF EXISTS `SP_usuario_find`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_usuario_find`(
 in userr varchar(20),
 in passw varchar(20)
@@ -279,32 +258,734 @@ END$$
 
 DELIMITER ;
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `acciones`
---
--- Creación: 01-05-2015 a las 16:42:24
---
-
-DROP TABLE IF EXISTS `acciones`;
 CREATE TABLE IF NOT EXISTS `acciones` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `accion` text COLLATE latin1_spanish_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=706 ;
+
+--
+-- Volcado de datos para la tabla `acciones`
+--
+
+INSERT INTO `acciones` (`id`, `user`, `fecha`, `accion`) VALUES
+(1, 'admin', '2014-06-04 05:24:47', 'UPDATE despachos SET\r\n				fecha=2014-06-03 19:15:52,\r\n				cantidad=3,\r\n				envio=4\r\n				WHERE id=6'),
+(2, 'admin', '2014-06-04 05:24:55', 'UPDATE despachos SET\r\n				fecha=2014-06-03 19:15:52,\r\n				cantidad=3.00,\r\n				envio=2\r\n				WHERE id=6'),
+(3, 'admin', '2014-06-04 05:25:28', 'UPDATE despachos SET\r\n				fecha=2014-06-03 12:20:40,\r\n				cantidad=1.5,\r\n				envio=3\r\n				WHERE id=5'),
+(4, 'admin', '2014-06-04 05:25:45', 'UPDATE despachos SET\r\n				fecha=2014-06-03 12:20:40,\r\n				cantidad=2,\r\n				envio=3\r\n				WHERE id=5'),
+(5, 'admin', '2014-06-04 05:26:15', 'INSERT INTO despachos VALUES(,\r\n				APC-00016-14,\r\n				2014-06-03 19:26:11,\r\n				8,\r\n				1)'),
+(6, 'admin', '2014-06-04 05:26:27', 'UPDATE despachos SET\r\n				fecha=2014-06-03 12:20:40,\r\n				cantidad=1.5,\r\n				envio=3\r\n				WHERE id=5'),
+(7, 'admin', '2014-06-04 14:38:26', 'UPDATE pagos SET \r\n				calidad=87 \r\n				WHERE lote=APC-00001-14'),
+(8, 'admin', '2014-06-04 14:38:56', 'DELETE FROM pagos WHERE id=5'),
+(9, 'admin', '2014-06-04 14:39:42', 'DELETE FROM catas WHERE lote=APC-00001-14'),
+(10, 'user', '2014-06-04 14:40:14', 'INSERT INTO pagos VALUES (,\r\n				APC-00001-14,\r\n				2014-06-04 04:40:08,\r\n				234,\r\n				123,\r\n				0)'),
+(11, 'admin', '2014-06-04 14:42:08', 'INSERT INTO catas VALUES (,\r\n				APC-00001-14,\r\n				2014-06-04 04:41:14,\r\n				,\r\n				5.75,\r\n				9,\r\n				Floral,\r\n				,\r\n				9.25,\r\n				Floral,\r\n				,\r\n				7.5,\r\n				Refrescante,\r\n				,\r\n				8.75,\r\n				8.75,\r\n				9,\r\n				9.75,\r\n				8.25,\r\n				9.75,\r\n				9,\r\n				,\r\n				88,\r\n				0,\r\n				1,				\r\n				0,\r\n				0,				\r\n				0,\r\n				1,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				1,				\r\n				0,\r\n				1				\r\n				)'),
+(12, 'user', '2014-06-04 14:42:34', 'UPDATE pagos SET \r\n				calidad=87 \r\n				WHERE lote=APC-00001-14'),
+(13, 'admin', '2014-06-04 14:47:28', 'INSERT INTO usuarios VALUES(,\r\n				bodega,\r\n				bodega,\r\n				6410,\r\n				3)'),
+(14, 'admin', '2014-06-04 14:47:42', 'INSERT INTO usuarios VALUES(,\r\n				cata,\r\n				cata,\r\n				3953,\r\n				5)'),
+(15, 'admin', '2014-06-04 18:03:31', 'UPDATE pagos SET \r\n				fecha=2014-06-02 17:13:20,\r\n				exportable=500.00,\r\n				descarte=265.00,\r\n				calidad=56.00 \r\n				WHERE lote=APC-00006-14'),
+(16, 'admin', '2014-06-04 18:08:01', 'UPDATE pagos SET \r\n				fecha=2014-06-04 04:40:08,\r\n				exportable=234.00,\r\n				descarte=123.00,\r\n				calidad= \r\n				WHERE lote=APC-00001-14'),
+(17, 'admin', '2014-06-05 20:05:00', 'UPDATE socios SET \r\n				nombres= Jose Isaias,\r\n				apellidos=Puchaicela Angamarca,\r\n				cedula=1104111669,\r\n				celular=,\r\n				f_nacimiento=1982-09-06,\r\n				email=,\r\n				direccion=,\r\n				poblacion=SAN JUAN,\r\n				canton=,\r\n				codigo=SJ06,\r\n				provincia=, \r\n				genero= \r\n			where id_socio=239'),
+(18, 'admin', '2014-06-05 20:11:44', 'INSERT INTO altas VALUES(,\r\n				CU20,\r\n				2014-06-05 10:11:41,\r\n				baja)'),
+(19, 'admin', '2014-06-05 20:12:39', 'DELETE FROM altas WHERE id=301'),
+(20, 'admin', '2014-06-05 20:17:05', 'INSERT INTO altas VALUES(,\r\n				CU20,\r\n				2014-06-05 10:17:02,\r\n				salida)'),
+(21, 'admin', '2014-06-05 22:00:56', 'UPDATE socios SET \r\n				nombres= Indalecio,\r\n				apellidos=Abad Abad,\r\n				cedula=1104518863,\r\n				celular=,\r\n				f_nacimiento=1981-01-29,\r\n				direccion=,\r\n				poblacion=CUMANDA,\r\n				canton=,\r\n				codigo=CU20,\r\n				provincia=Zamora, \r\n				genero= \r\n			where id_socio=69'),
+(22, 'admin', '2014-06-05 22:02:27', 'UPDATE socios SET \r\n				nombres= Indalecio,\r\n				apellidos=Abad Abad,\r\n				cedula=1104518863,\r\n				celular=,\r\n				f_nacimiento=1981-01-29,\r\n				direccion=,\r\n				poblacion=CUMANDA,\r\n				canton=,\r\n				codigo=CU20,\r\n				provincia=Zamora, \r\n				genero= \r\n			where id_socio=69'),
+(23, 'admin', '2014-06-05 22:23:14', 'UPDATE lotes SET \r\n				id_socio=6,\r\n				codigo_lote=APC-00015-14,\r\n				fecha=2014-05-27 18:49:50,\r\n				peso=1.50,\r\n				humedad=12.00,\r\n				rto_pilado=85,\r\n				rto_exportable=80,\r\n				defecto_negro=56,\r\n				defecto_vinagre=45,\r\n				defecto_decolorado=12,\r\n				defecto_mordido=24,\r\n				defecto_brocado=15,\r\n				reposo=1,\r\n				moho=0,\r\n				fermento=0,\r\n				contaminado=1,\r\n				calidad=A,\r\n				apto_cata=1\r\n			where id=16'),
+(24, 'admin', '2014-06-05 22:25:32', 'INSERT INTO lotes VALUES (,\r\n				32,\r\n				APC-00018-14,\r\n				2014-06-05 12:25:11,\r\n				34,\r\n				12,\r\n				34,\r\n				56,\r\n				0,\r\n				5,\r\n				0,\r\n				0,\r\n				5,\r\n				0,\r\n				1,\r\n				0,\r\n				1,\r\n				A,\r\n				0)'),
+(25, 'admin', '2014-08-25 04:55:22', 'UPDATE catas SET\r\n				fecha =2014-06-03 19:08:11,\r\n				catador =yo mismo,\r\n				tostado =4,\r\n				fragancia =9.25,\r\n				tipo_aroma1 =Floral,Caramelo,\r\n				nota_aroma =hola ,\r\n				sabor =9.5,\r\n				tipo_sabor =Vainilla,\r\n				nota_sabor =holass,\r\n				sabor_residual =9.75,\r\n				tipo_sabor_residual =Refrescante,\r\n				nota_sabor_residual =fgsdfg,\r\n				acidez =9.25,\r\n				cuerpo =8.5,\r\n				uniformidad =9.75,\r\n				balance =10,\r\n				puntaje_catador =8,\r\n				taza_limpia =9.5,\r\n				dulzor =9.75,\r\n				nota_catacion =asdfsdf,\r\n				puntuacion =91.25,\r\n				d_fermento=1,\r\n				d_metalico=1,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=1,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=1,\r\n				dl_moho=1,				\r\n				dl_astringencia=0,\r\n				d_general=2				\r\n				\r\n				WHERE lote=APC-00017-14'),
+(26, 'admin', '2014-08-25 05:00:52', 'UPDATE catas SET\r\n				fecha =2014-06-03 19:08:11,\r\n				catador =yo mismo,\r\n				tostado =4,\r\n				fragancia =9.25,\r\n				tipo_aroma1 =Floral,Caramelo,\r\n				nota_aroma =hola ,\r\n				sabor =9.5,\r\n				tipo_sabor =Herbal,Picante,Chocolate dulce,Vainilla,\r\n				nota_sabor =holass,\r\n				sabor_residual =9.75,\r\n				tipo_sabor_residual =Refrescante,\r\n				nota_sabor_residual =fgsdfg,\r\n				acidez =9.25,\r\n				cuerpo =8.5,\r\n				uniformidad =9.75,\r\n				balance =10,\r\n				puntaje_catador =8,\r\n				taza_limpia =9.5,\r\n				dulzor =9.75,\r\n				nota_catacion =asdfsdf,\r\n				puntuacion =91.25,\r\n				d_fermento=1,\r\n				d_metalico=1,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=1,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=1,\r\n				dl_moho=1,				\r\n				dl_astringencia=0,\r\n				d_general=2				\r\n				\r\n				WHERE lote=APC-00017-14'),
+(27, 'admin', '2014-08-25 05:02:24', 'UPDATE catas SET\r\n				fecha =2014-06-03 19:08:11,\r\n				catador =yo mismo,\r\n				tostado =4,\r\n				fragancia =9.25,\r\n				tipo_aroma1 =Floral,Caramelo,\r\n				nota_aroma =hola ,\r\n				sabor =9.5,\r\n				tipo_sabor =Herbal,Picante,Chocolate dulce,Vainilla,\r\n				nota_sabor =holass,\r\n				sabor_residual =9.75,\r\n				tipo_sabor_residual =Refrescante,Delicado,Duro,Astringente,\r\n				nota_sabor_residual =fgsdfg,\r\n				acidez =9.25,\r\n				cuerpo =8.5,\r\n				uniformidad =9.75,\r\n				balance =10,\r\n				puntaje_catador =8,\r\n				taza_limpia =9.5,\r\n				dulzor =9.75,\r\n				nota_catacion =asdfsdf,\r\n				puntuacion =91.25,\r\n				d_fermento=1,\r\n				d_metalico=1,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=1,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=1,\r\n				dl_moho=1,				\r\n				dl_astringencia=0,\r\n				d_general=2				\r\n				\r\n				WHERE lote=APC-00017-14'),
+(28, 'admin', '2014-08-25 05:03:01', 'UPDATE catas SET\r\n				fecha =2014-06-03 19:08:11,\r\n				catador =yo mismo,\r\n				tostado =4,\r\n				fragancia =9.25,\r\n				tipo_aroma1 =Floral,Caramelo,\r\n				nota_aroma =hola ,\r\n				sabor =9.5,\r\n				tipo_sabor =Herbal,Picante,Chocolate dulce,Vainilla,\r\n				nota_sabor =holass,\r\n				sabor_residual =9.75,\r\n				tipo_sabor_residual =Refrescante,Delicado,Duro,Astringente,\r\n				nota_sabor_residual =fgsdfg,\r\n				acidez =9.25,\r\n				cuerpo =8.5,\r\n				uniformidad =9.75,\r\n				balance =10,\r\n				puntaje_catador =8,\r\n				taza_limpia =9.5,\r\n				dulzor =9.75,\r\n				nota_catacion =asdfsdf,\r\n				puntuacion =91.25,\r\n				d_fermento=1,\r\n				d_metalico=1,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=1,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=1,\r\n				dl_moho=1,				\r\n				dl_astringencia=0,\r\n				d_general=2				\r\n				\r\n				WHERE lote=APC-00017-14'),
+(29, 'admin', '2014-08-25 05:07:34', 'UPDATE catas SET\r\n				fecha =2014-06-03 19:08:11,\r\n				catador =yo mismo,\r\n				tostado =4,\r\n				fragancia =9.25,\r\n				tipo_aroma1 =Floral,Caramelo,\r\n				nota_aroma =hola ,\r\n				sabor =9.5,\r\n				tipo_sabor =Herbal,Picante,Chocolate dulce,Vainilla,Madera,Resinoso,\r\n				nota_sabor =holass,\r\n				sabor_residual =9.75,\r\n				tipo_sabor_residual =Refrescante,Delicado,Duro,Astringente,\r\n				nota_sabor_residual =fgsdfg,\r\n				acidez =9.25,\r\n				cuerpo =8.5,\r\n				uniformidad =9.75,\r\n				balance =10,\r\n				puntaje_catador =8,\r\n				taza_limpia =9.5,\r\n				dulzor =9.75,\r\n				nota_catacion =asdfsdf,\r\n				puntuacion =91.25,\r\n				d_fermento=1,\r\n				d_metalico=1,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=1,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=1,\r\n				dl_moho=1,				\r\n				dl_astringencia=0,\r\n				d_general=2				\r\n				\r\n				WHERE lote=APC-00017-14'),
+(30, 'admin', '2014-08-25 05:37:53', 'UPDATE catas SET\r\n				fecha =2014-06-04 04:41:14,\r\n				catador =,\r\n				tostado =6,\r\n				fragancia =9,\r\n				tipo_aroma1 =Floral,\r\n				nota_aroma =,\r\n				sabor =9.25,\r\n				tipo_sabor =Floral,\r\n				nota_sabor =,\r\n				sabor_residual =7.5,\r\n				tipo_sabor_residual =Refrescante,\r\n				nota_sabor_residual =,\r\n				acidez =8.75,\r\n				cuerpo =8.75,\r\n				uniformidad =9,\r\n				balance =9.75,\r\n				puntaje_catador =8.25,\r\n				taza_limpia =9.75,\r\n				dulzor =9,\r\n				nota_catacion =,\r\n				puntuacion =88,\r\n				d_fermento=0,\r\n				d_metalico=1,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=1,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=0,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=0,\r\n				dl_moho=1,				\r\n				dl_astringencia=0,\r\n				d_general=1				\r\n				\r\n				WHERE lote=APC-00001-14'),
+(31, 'admin', '2014-08-25 05:38:33', 'UPDATE catas SET\r\n				fecha =2014-06-04 04:41:14,\r\n				catador =,\r\n				tostado =6,\r\n				fragancia =9,\r\n				tipo_aroma1 =Floral,\r\n				nota_aroma =,\r\n				sabor =9.25,\r\n				tipo_sabor =Floral,\r\n				nota_sabor =,\r\n				sabor_residual =7.5,\r\n				tipo_sabor_residual =Refrescante,\r\n				nota_sabor_residual =,\r\n				acidez =8.75,\r\n				cuerpo =8.75,\r\n				uniformidad =9,\r\n				balance =9.75,\r\n				puntaje_catador =8.25,\r\n				taza_limpia =9.75,\r\n				dulzor =9,\r\n				nota_catacion =,\r\n				puntuacion =88,\r\n				d_fermento=0,\r\n				d_metalico=1,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=1,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=0,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=3,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=0,\r\n				dl_moho=1,				\r\n				dl_astringencia=0,\r\n				d_general=1				\r\n				\r\n				WHERE lote=APC-00001-14'),
+(32, 'admin', '2014-08-25 05:44:01', 'UPDATE catas SET\r\n				fecha =2014-06-03 19:08:11,\r\n				catador =yo mismo,\r\n				tostado =4,\r\n				fragancia =9.25,\r\n				tipo_aroma1 =Floral,Caramelo,\r\n				nota_aroma =hola ,\r\n				sabor =9.5,\r\n				tipo_sabor =Herbal,\r\n				nota_sabor =holass,\r\n				sabor_residual =9.75,\r\n				tipo_sabor_residual =Refrescante,Delicado,Duro,Astringente,\r\n				nota_sabor_residual =fgsdfg,\r\n				acidez =9.25,\r\n				cuerpo =8.5,\r\n				uniformidad =9.75,\r\n				balance =10,\r\n				puntaje_catador =8,\r\n				taza_limpia =9.5,\r\n				dulzor =9.75,\r\n				nota_catacion =asdfsdf,\r\n				puntuacion =91.25,\r\n				d_fermento=1,\r\n				d_metalico=1,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=1,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=1,\r\n				dl_moho=1,				\r\n				dl_astringencia=0,\r\n				d_general=2				\r\n				\r\n				WHERE lote=APC-00017-14'),
+(33, 'admin', '2014-08-27 19:28:12', 'INSERT INTO lotes VALUES (,\r\n				33,\r\n				APC-00019-14,\r\n				2014-08-27 09:27:33,\r\n				3.5,\r\n				10,\r\n				25,\r\n				180,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				A,\r\n				)'),
+(34, 'admin', '2014-08-27 20:06:31', 'UPDATE lotes SET \r\n				id_socio=33,\r\n				codigo_lote=APC-00019-14,\r\n				fecha=2014-08-27 09:27:33,\r\n				peso=3.50,\r\n				humedad=10.00,\r\n				rto_descarte=,\r\n				rto_exportable=180,\r\n				defecto_negro=0,\r\n				defecto_vinagre=0,\r\n				defecto_decolorado=0,\r\n				defecto_mordido=0,\r\n				defecto_brocado=0,\r\n				reposo=0,\r\n				moho=0,\r\n				fermento=0,\r\n				contaminado=0,\r\n				calidad=A\r\n				\r\n			where id=20'),
+(35, 'admin', '2014-08-27 20:07:08', 'UPDATE lotes SET \r\n				id_socio=33,\r\n				codigo_lote=APC-00019-14,\r\n				fecha=2014-08-27 09:27:33,\r\n				peso=3.50,\r\n				humedad=10.00,\r\n				rto_descarte=,\r\n				rto_exportable=180,\r\n				defecto_negro=0,\r\n				defecto_vinagre=0,\r\n				defecto_decolorado=0,\r\n				defecto_mordido=0,\r\n				defecto_brocado=0,\r\n				reposo=0,\r\n				moho=0,\r\n				fermento=0,\r\n				contaminado=0,\r\n				calidad=A\r\n				\r\n			where id=20'),
+(36, 'admin', '2014-08-27 20:07:52', 'UPDATE lotes SET \r\n				id_socio=33,\r\n				codigo_lote=APC-00019-14,\r\n				fecha=2014-08-27 09:27:33,\r\n				peso=3.50,\r\n				humedad=10.00,\r\n				rto_descarte=25,\r\n				rto_exportable=180,\r\n				defecto_negro=0,\r\n				defecto_vinagre=0,\r\n				defecto_decolorado=0,\r\n				defecto_mordido=0,\r\n				defecto_brocado=0,\r\n				reposo=0,\r\n				moho=0,\r\n				fermento=0,\r\n				contaminado=0,\r\n				calidad=A\r\n				\r\n			where id=20'),
+(37, 'admin', '2014-08-27 20:08:06', 'UPDATE lotes SET \r\n				id_socio=33,\r\n				codigo_lote=APC-00019-14,\r\n				fecha=2014-08-27 09:27:33,\r\n				peso=3.50,\r\n				humedad=10.00,\r\n				rto_descarte=30,\r\n				rto_exportable=180,\r\n				defecto_negro=0,\r\n				defecto_vinagre=0,\r\n				defecto_decolorado=0,\r\n				defecto_mordido=0,\r\n				defecto_brocado=0,\r\n				reposo=0,\r\n				moho=0,\r\n				fermento=0,\r\n				contaminado=0,\r\n				calidad=A\r\n				\r\n			where id=20'),
+(38, 'admin', '2014-08-27 20:36:55', 'INSERT INTO pagos VALUES (,\r\n				APC-00019-14,\r\n				2014-08-27 10:36:48,\r\n				543,\r\n				34,\r\n				0)'),
+(39, 'admin', '2014-08-27 20:37:16', 'UPDATE pagos SET \r\n				fecha=2014-08-27 10:36:48,\r\n				exportable=543.00,\r\n				descarte=100,\r\n				calidad=0 \r\n				WHERE lote=APC-00019-14'),
+(40, 'admin', '2014-09-09 20:17:40', 'UPDATE catas SET\r\n				fecha =2014-06-03 19:08:11,\r\n				catador =yo mismo,\r\n				tostado =4,\r\n				fragancia =9.25,\r\n				tipo_aroma1 =Floral,Caramelo,\r\n				nota_aroma =hola ,\r\n				sabor =9.5,\r\n				tipo_sabor =Herbal,\r\n				nota_sabor =holass,\r\n				sabor_residual =9.75,\r\n				tipo_sabor_residual =Refrescante,Delicado,Duro,Astringente,\r\n				nota_sabor_residual =fgsdfg,\r\n				acidez =9.25,\r\n				cuerpo =8.5,\r\n				uniformidad =9.75,\r\n				balance =10,\r\n				puntaje_catador =8,\r\n				taza_limpia =9.5,\r\n				dulzor =9.75,\r\n				nota_catacion =asdfsdf,\r\n				puntuacion =91.25,\r\n				d_fermento=1,\r\n				d_metalico=1,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=1,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=1,\r\n				dl_moho=1,				\r\n				dl_astringencia=0,\r\n				d_general=2				\r\n				\r\n				WHERE lote=APC-00017-14'),
+(41, 'admin', '2014-09-09 20:55:41', 'UPDATE pagos SET \r\n						fecha=2014-08-27 10:36:48,\r\n						exportable=543.00,\r\n						descarte=100.00,\r\n						calidad=0, \r\n						cliente=25 \r\n						tazadorada=0.00 \r\n						WHERE lote=APC-00019-14'),
+(42, 'admin', '2014-09-09 20:56:28', 'UPDATE pagos SET \r\n						fecha=2014-08-27 10:36:48,\r\n						exportable=543.00,\r\n						descarte=100.00,\r\n						calidad=0, \r\n						cliente=25 \r\n						tazadorada=0.00 \r\n						WHERE lote=APC-00019-14'),
+(43, 'admin', '2014-09-09 20:57:05', 'UPDATE pagos SET \r\n						fecha=2014-08-27 10:36:48,\r\n						exportable=543.00,\r\n						descarte=100.00,\r\n						calidad=0, \r\n						cliente=25,\r\n						tazadorada=0.00 \r\n						WHERE lote=APC-00019-14'),
+(44, 'admin', '2014-09-09 20:57:15', 'UPDATE pagos SET \r\n						fecha=2014-08-27 10:36:48,\r\n						exportable=543.00,\r\n						descarte=100.00,\r\n						calidad=0, \r\n						cliente=25.00,\r\n						tazadorada=15.23 \r\n						WHERE lote=APC-00019-14'),
+(45, 'admin', '2014-09-16 02:47:04', 'UPDATE catas SET\r\n				fecha =2014-06-01 12:09:45,\r\n				catador =yo mismo,\r\n				tostado =6,\r\n				fragancia =7.75,\r\n				tipo_aroma1 =Floral,\r\n				nota_aroma =hola que tal,\r\n				sabor =10,\r\n				tipo_sabor =Chocolate dulce,\r\n				nota_sabor =genial!!!,\r\n				sabor_residual =10,\r\n				tipo_sabor_residual =Dulce,\r\n				nota_sabor_residual =asombroso!!,\r\n				acidez =9,\r\n				cuerpo =6,\r\n				uniformidad =8,\r\n				balance =8,\r\n				puntaje_catador =9,\r\n				taza_limpia =6.75,\r\n				dulzor =9,\r\n				nota_catacion =guau!!,\r\n				puntuacion =83.5,\r\n				d_fermento=0,\r\n				d_metalico=0,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=0,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=2,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=0,\r\n				dl_moho=0,				\r\n				dl_astringencia=0,\r\n				d_general=0				\r\n				\r\n				WHERE lote=APC-00015-14'),
+(46, 'admin', '2014-09-16 06:22:46', 'UPDATE catas SET\r\n				fecha =2014-06-01 12:09:45,\r\n				catador =yo mismo,\r\n				tostado =6,\r\n				fragancia =7.5,\r\n				tipo_aroma1 =Floral,\r\n				nota_aroma =hola que tal,\r\n				sabor =7.75,\r\n				tipo_sabor =Chocolate dulce,\r\n				nota_sabor =genial!!!,\r\n				sabor_residual =10,\r\n				tipo_sabor_residual =Dulce,\r\n				nota_sabor_residual =asombroso!!,\r\n				acidez =9,\r\n				cuerpo =6,\r\n				uniformidad =8,\r\n				balance =8,\r\n				puntaje_catador =9,\r\n				taza_limpia =6.75,\r\n				dulzor =9,\r\n				nota_catacion =guau!!,\r\n				puntuacion =81,\r\n				d_fermento=0,\r\n				d_metalico=0,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=0,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=2,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=0,\r\n				dl_moho=0,				\r\n				dl_astringencia=0,\r\n				d_general=0				\r\n				\r\n				WHERE lote=APC-00015-14'),
+(47, 'admin', '2014-09-17 02:17:11', 'INSERT INTO lotes VALUES (,\r\n				EM02,\r\n				APC-00020-14,\r\n				2014-09-16 16:16:40,\r\n				22,\r\n				13,\r\n				45,\r\n				200,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				1,\r\n				1,\r\n				0,\r\n				A\r\n				)'),
+(48, 'admin', '2014-09-17 02:19:54', 'INSERT INTO lotes VALUES (,\r\n				AN04,\r\n				APC-00020-14,\r\n				2014-09-16 16:19:37,\r\n				55,\r\n				12,\r\n				30,\r\n				180,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				MN\r\n				)'),
+(49, 'admin', '2014-09-17 02:34:48', 'UPDATE lotes SET \r\n				id_socio=AN04,\r\n				codigo_lote=APC-00020-14,\r\n				fecha=2014-09-16 16:19:37,\r\n				peso=100,\r\n				humedad=12.00,\r\n				rto_descarte=30,\r\n				rto_exportable=180,\r\n				defecto_negro=0,\r\n				defecto_vinagre=0,\r\n				defecto_decolorado=0,\r\n				defecto_mordido=0,\r\n				defecto_brocado=0,\r\n				reposo=0,\r\n				moho=0,\r\n				fermento=0,\r\n				contaminado=0,\r\n				calidad=MN\r\n				\r\n			where id=22'),
+(50, 'admin', '2014-09-17 02:35:28', 'UPDATE lotes SET \r\n				id_socio=AN04,\r\n				codigo_lote=APC-00020-14,\r\n				fecha=2014-09-16 16:19:37,\r\n				peso=100.00,\r\n				humedad=12.00,\r\n				rto_descarte=30,\r\n				rto_exportable=180,\r\n				defecto_negro=0,\r\n				defecto_vinagre=0,\r\n				defecto_decolorado=0,\r\n				defecto_mordido=0,\r\n				defecto_brocado=0,\r\n				reposo=0,\r\n				moho=0,\r\n				fermento=0,\r\n				contaminado=0,\r\n				calidad=A\r\n				\r\n			where id=22'),
+(51, 'admin', '2014-09-17 03:23:32', 'INSERT INTO socios VALUES(,\r\n				Juan,\r\n				Hartman Merino,\r\n				AN53,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				AGRODIN,\r\n				Zamora,\r\n				Zamora,\r\n				,masculino)'),
+(52, 'admin', '2014-09-17 03:23:49', 'UPDATE socios SET \r\n				nombres=Juan,\r\n				apellidos=Hartman Merino,\r\n				cedula=0,\r\n				celular=,\r\n				f_nacimiento=0000-00-00,\r\n				direccion=,\r\n				poblacion=AGRODIN,\r\n				canton=Zamora,\r\n				codigo=AN55,\r\n				provincia=Zamora, \r\n				genero=masculino \r\n			where id_socio=300'),
+(53, 'admin', '2014-09-17 03:24:58', 'INSERT INTO certificacion VALUES(,\r\n				AN55,\r\n				2014,\r\n				O)'),
+(54, 'admin', '2014-09-17 03:25:19', 'INSERT INTO altas VALUES(,\r\n				AN55,\r\n				2014-09-16 17:25:13,\r\n				ingreso)'),
+(55, 'admin', '2014-09-17 03:25:37', 'INSERT INTO estimacion VALUES(,\r\n				AN55,\r\n				2014,\r\n				15,\r\n				)'),
+(56, 'admin', '2014-09-17 03:28:39', 'INSERT INTO socios VALUES(,\r\n				Gilver,\r\n				Rosillo,\r\n				AN56,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				AGRODIN,\r\n				Zamora,\r\n				Zamora,\r\n				,masculino)'),
+(57, 'admin', '2014-09-17 03:28:55', 'UPDATE socios SET \r\n				nombres=Gilver,\r\n				apellidos=Rosillo,\r\n				cedula=0,\r\n				celular=,\r\n				f_nacimiento=0000-00-00,\r\n				direccion=,\r\n				poblacion=AGRODIN,\r\n				canton=Zamora,\r\n				codigo=AN53,\r\n				provincia=Zamora, \r\n				genero=masculino \r\n			where id_socio=301'),
+(58, 'admin', '2014-09-17 03:31:20', 'INSERT INTO socios VALUES(,\r\n				Harvey,\r\n				Merino,\r\n				AN56,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				AGRODIN,\r\n				Zamora,\r\n				Zamora,\r\n				,masculino)'),
+(59, 'admin', '2014-09-17 03:31:38', 'UPDATE socios SET \r\n				nombres=Harvey,\r\n				apellidos=Merino,\r\n				cedula=0,\r\n				celular=,\r\n				f_nacimiento=0000-00-00,\r\n				direccion=,\r\n				poblacion=AGRODIN,\r\n				canton=Zamora,\r\n				codigo=AN57,\r\n				provincia=Zamora, \r\n				genero=masculino \r\n			where id_socio=302'),
+(60, 'admin', '2014-09-17 03:31:51', 'INSERT INTO altas VALUES(,\r\n				AN57,\r\n				2014-09-16 17:31:49,\r\n				ingreso)'),
+(61, 'admin', '2014-09-17 03:32:02', 'INSERT INTO estimacion VALUES(,\r\n				AN57,\r\n				2014,\r\n				13,\r\n				)'),
+(62, 'admin', '2014-09-17 03:32:18', 'INSERT INTO certificacion VALUES(,\r\n				AN57,\r\n				2014,\r\n				O)'),
+(63, 'admin', '2014-09-17 03:33:48', 'INSERT INTO socios VALUES(,\r\n				Manuel,\r\n				Tillaguango,\r\n				AN58,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				AGRODIN,\r\n				Zamora,\r\n				Zamora,\r\n				,masculino)'),
+(64, 'admin', '2014-09-17 03:34:07', 'UPDATE socios SET \r\n				nombres=Manuel,\r\n				apellidos=Tillaguango,\r\n				cedula=0,\r\n				celular=,\r\n				f_nacimiento=0000-00-00,\r\n				direccion=,\r\n				poblacion=AGRODIN,\r\n				canton=Zamora,\r\n				codigo=AN54,\r\n				provincia=Zamora, \r\n				genero=masculino \r\n			where id_socio=303'),
+(65, 'admin', '2014-09-17 03:34:15', 'INSERT INTO certificacion VALUES(,\r\n				AN54,\r\n				2014,\r\n				O)'),
+(66, 'admin', '2014-09-17 03:34:27', 'INSERT INTO estimacion VALUES(,\r\n				AN54,\r\n				2014,\r\n				13,\r\n				)'),
+(67, 'admin', '2014-09-17 03:34:38', 'INSERT INTO altas VALUES(,\r\n				AN54,\r\n				2014-09-16 17:34:36,\r\n				ingreso)'),
+(68, 'admin', '2014-09-17 04:16:52', 'INSERT INTO catas VALUES (,\r\n				APC-153,\r\n				2014-09-16 18:15:07,\r\n				juanito,\r\n				5.75,\r\n				8.5,\r\n				Frutal,Caramelo,Vainilla,\r\n				,\r\n				9.5,\r\n				Chocolate amargo,Articulado,\r\n				,\r\n				6.75,\r\n				Limpio,Dulce,\r\n				,\r\n				9,\r\n				7,\r\n				8.25,\r\n				7.75,\r\n				9.25,\r\n				7,\r\n				8.75,\r\n				,\r\n				79.75,\r\n				0,\r\n				1,				\r\n				1,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				4,				\r\n				0,\r\n				0,				\r\n				0,\r\n				1,				\r\n				1,\r\n				2				\r\n				)'),
+(69, 'admin', '2014-09-17 04:24:14', 'UPDATE catas SET\r\n				fecha =2014-09-16 18:15:07,\r\n				catador =juanito,\r\n				tostado =6,\r\n				fragancia =8.5,\r\n				tipo_aroma1 =Frutal,Caramelo,Vainilla,\r\n				nota_aroma =,\r\n				sabor =9.5,\r\n				tipo_sabor =Chocolate amargo,Articulado,\r\n				nota_sabor =,\r\n				sabor_residual =6.75,\r\n				tipo_sabor_residual =Limpio,Dulce,\r\n				nota_sabor_residual =,\r\n				acidez =9,\r\n				cuerpo =8.5,\r\n				uniformidad =9.5,\r\n				balance =7.75,\r\n				puntaje_catador =9.25,\r\n				taza_limpia =7,\r\n				dulzor =8.75,\r\n				nota_catacion =,\r\n				puntuacion =82.5,\r\n				d_fermento=0,\r\n				d_metalico=1,				\r\n				d_quimico=1,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=0,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=4,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=0,\r\n				dl_moho=1,				\r\n				dl_astringencia=1,\r\n				d_general=2				\r\n				\r\n				WHERE lote=APC-153'),
+(70, 'admin', '2014-09-17 04:24:30', 'UPDATE catas SET\r\n				fecha =2014-09-16 18:15:07,\r\n				catador =juanito,\r\n				tostado =6,\r\n				fragancia =8.5,\r\n				tipo_aroma1 =Frutal,Caramelo,Vainilla,\r\n				nota_aroma =,\r\n				sabor =9.5,\r\n				tipo_sabor =Chocolate amargo,Articulado,\r\n				nota_sabor =,\r\n				sabor_residual =6.75,\r\n				tipo_sabor_residual =Limpio,Dulce,\r\n				nota_sabor_residual =,\r\n				acidez =9,\r\n				cuerpo =8.5,\r\n				uniformidad =9.5,\r\n				balance =8.75,\r\n				puntaje_catador =9.25,\r\n				taza_limpia =9.5,\r\n				dulzor =8.75,\r\n				nota_catacion =,\r\n				puntuacion =86,\r\n				d_fermento=0,\r\n				d_metalico=1,				\r\n				d_quimico=1,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=0,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=4,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=0,\r\n				dl_moho=1,				\r\n				dl_astringencia=1,\r\n				d_general=2				\r\n				\r\n				WHERE lote=APC-153'),
+(71, 'admin', '2014-09-17 20:40:30', 'INSERT INTO socios VALUES(,\r\n				Francisco,\r\n				Montero García,\r\n				SF52,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				SAN FRANCISCO,\r\n				,\r\n				,\r\n				,masculino)'),
+(72, 'admin', '2014-09-18 21:38:57', 'INSERT INTO pagos VALUES (,\r\n				APC86,\r\n				2014-09-18 11:38:38,\r\n				800,\r\n				70,\r\n				50,\r\n				,\r\n				,\r\n				)'),
+(73, 'admin', '2014-09-18 21:39:23', 'UPDATE pagos SET \r\n						fecha=2014-09-18 11:38:38,\r\n						exportable=800.00,\r\n						descarte=70.00,\r\n						calidad=0, \r\n						cliente=0.00,\r\n						microlote=0.00,\r\n						tazadorada=0.00 \r\n						WHERE lote=APC86'),
+(74, 'admin', '2014-09-22 21:34:14', 'INSERT INTO lotes VALUES (,\r\n				SF52,\r\n				APC-00626-14,\r\n				2014-09-22 11:33:56,\r\n				50,\r\n				12,\r\n				35,\r\n				180,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				A\r\n				)'),
+(75, 'admin', '2014-09-22 22:45:01', 'INSERT INTO certificacion VALUES(,\r\n				SF52,\r\n				2014,\r\n				O)'),
+(76, 'admin', '2014-09-22 22:48:59', 'INSERT INTO estimacion VALUES(,\r\n				SF52,\r\n				2014,\r\n				15,\r\n				)'),
+(77, 'admin', '2014-09-22 22:49:09', 'INSERT INTO altas VALUES(,\r\n				SF52,\r\n				2014-09-22 12:49:06,\r\n				ingreso)'),
+(78, 'admin', '2014-09-22 22:49:42', 'INSERT INTO lotes VALUES (,\r\n				SF52,\r\n				APC-00626-14,\r\n				2014-09-22 12:49:19,\r\n				8,\r\n				12,\r\n				20,\r\n				200,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				A\r\n				)'),
+(79, 'admin', '2014-09-22 22:52:09', 'INSERT INTO lotes VALUES (,\r\n				SF52,\r\n				APC-00627-14,\r\n				2014-09-22 12:51:44,\r\n				5,\r\n				12,\r\n				20,\r\n				200,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				A\r\n				)'),
+(80, 'admin', '2014-09-22 22:53:36', 'INSERT INTO lotes VALUES (,\r\n				SF52,\r\n				APC-00628-14,\r\n				2014-09-22 12:53:10,\r\n				5,\r\n				12,\r\n				20,\r\n				200,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				A\r\n				)'),
+(81, 'admin', '2014-09-22 22:57:44', 'INSERT INTO lotes VALUES (,\r\n				SF52,\r\n				APC-00629-14,\r\n				2014-09-22 12:57:21,\r\n				5,\r\n				12,\r\n				20,\r\n				200,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				0,\r\n				A\r\n				)'),
+(82, 'admin', '2014-09-23 02:41:31', 'INSERT INTO pagos VALUES (,\r\n				APC-00629-14,\r\n				2014-09-22 16:41:21,\r\n				0,\r\n				0,\r\n				100,\r\n				0,\r\n				,\r\n				,\r\n				)'),
+(83, 'admin', '2014-09-23 02:44:27', 'INSERT INTO pagos VALUES (,\r\n				APC-00627-14,\r\n				2014-09-22 16:44:01,\r\n				1499,\r\n				90,\r\n				0,\r\n				0,\r\n				45,\r\n				30,\r\n				)'),
+(84, 'admin', '2014-09-25 04:18:49', 'INSERT INTO despachos VALUES(,\r\n				APC-00629-14,\r\n				2014-09-24 18:18:41,\r\n				2,\r\n				1)'),
+(85, 'admin', '2014-09-25 04:19:28', 'INSERT INTO despachos VALUES(,\r\n				APC-00629-14,\r\n				2014-09-24 18:19:22,\r\n				1.93,\r\n				2)'),
+(86, 'admin', '2014-09-25 04:57:19', 'INSERT INTO despachos VALUES(,\r\n				APC-163,\r\n				2014-09-24 18:57:14,\r\n				4,\r\n				3)'),
+(87, 'admin', '2014-09-25 06:18:54', 'UPDATE estimacion SET\r\n				entregados=3.07\r\n				WHERE id=1017'),
+(88, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=2.67,\r\n							WHERE id=931'),
+(89, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=0.71,\r\n							WHERE id=932'),
+(90, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=1.54,\r\n							WHERE id=934'),
+(91, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=10.04,\r\n							WHERE id=935'),
+(92, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=1.90,\r\n							WHERE id=940'),
+(93, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=2.09,\r\n							WHERE id=942'),
+(94, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=1.52,\r\n							WHERE id=944'),
+(95, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=3.26,\r\n							WHERE id=899'),
+(96, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=6.38,\r\n							WHERE id=901'),
+(97, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=7.96,\r\n							WHERE id=903'),
+(98, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=8.70,\r\n							WHERE id=904'),
+(99, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=10.70,\r\n							WHERE id=905'),
+(100, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=12.26,\r\n							WHERE id=907'),
+(101, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=1.46,\r\n							WHERE id=910'),
+(102, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=6.03,\r\n							WHERE id=913'),
+(103, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=2.99,\r\n							WHERE id=914'),
+(104, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=7.08,\r\n							WHERE id=917'),
+(105, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=3.33,\r\n							WHERE id=929'),
+(106, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=1.42,\r\n							WHERE id=1200'),
+(107, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=5.49,\r\n							WHERE id=1198'),
+(108, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=4.67,\r\n							WHERE id=1199'),
+(109, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=2.10,\r\n							WHERE id=945'),
+(110, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=22.29,\r\n							WHERE id=948'),
+(111, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=7.12,\r\n							WHERE id=949'),
+(112, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=15.37,\r\n							WHERE id=950'),
+(113, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=4.21,\r\n							WHERE id=952'),
+(114, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=4.97,\r\n							WHERE id=957'),
+(115, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=4.38,\r\n							WHERE id=958'),
+(116, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=2.48,\r\n							WHERE id=1037'),
+(117, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=1.46,\r\n							WHERE id=1038'),
+(118, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=5.13,\r\n							WHERE id=1039'),
+(119, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=9.94,\r\n							WHERE id=1040'),
+(120, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=11.74,\r\n							WHERE id=1043'),
+(121, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=1.53,\r\n							WHERE id=1046'),
+(122, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=3.87,\r\n							WHERE id=959'),
+(123, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=7.04,\r\n							WHERE id=960'),
+(124, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=2.83,\r\n							WHERE id=962'),
+(125, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=10.05,\r\n							WHERE id=966'),
+(126, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=2.21,\r\n							WHERE id=970'),
+(127, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=6.25,\r\n							WHERE id=973'),
+(128, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=1.77,\r\n							WHERE id=974'),
+(129, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=5.78,\r\n							WHERE id=992'),
+(130, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=8.66,\r\n							WHERE id=1004'),
+(131, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=9.40,\r\n							WHERE id=1006'),
+(132, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=11.28,\r\n							WHERE id=1007'),
+(133, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=14.85,\r\n							WHERE id=1197'),
+(134, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=10.68,\r\n							WHERE id=1196'),
+(135, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=3.07,\r\n							WHERE id=1017'),
+(136, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=4.65,\r\n							WHERE id=1022'),
+(137, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=0.62,\r\n							WHERE id=1100'),
+(138, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=1.90,\r\n							WHERE id=1101'),
+(139, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=2.62,\r\n							WHERE id=1029'),
+(140, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=30.65,\r\n							WHERE id=986'),
+(141, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=7.21,\r\n							WHERE id=989'),
+(142, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=15.81,\r\n							WHERE id=1194'),
+(143, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=16.86,\r\n							WHERE id=1195'),
+(144, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=4.36,\r\n							WHERE id=985'),
+(145, 'admin', '2014-09-25 09:37:56', 'UPDATE estimacion SET\r\n							entregados=5.08,\r\n							WHERE id=1049'),
+(146, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=3.88,\r\n							WHERE id=1053'),
+(147, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=1.86,\r\n							WHERE id=1055'),
+(148, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=4.14,\r\n							WHERE id=1063'),
+(149, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=2.22,\r\n							WHERE id=1071'),
+(150, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=0.78,\r\n							WHERE id=1090'),
+(151, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=1.22,\r\n							WHERE id=1092'),
+(152, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=2.68,\r\n							WHERE id=1096'),
+(153, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=10.78,\r\n							WHERE id=1187'),
+(154, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=5.00,\r\n							WHERE id=1188'),
+(155, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=3.00,\r\n							WHERE id=1190'),
+(156, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=16.70,\r\n							WHERE id=1191'),
+(157, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=5.29,\r\n							WHERE id=1192'),
+(158, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=3.85,\r\n							WHERE id=1193'),
+(159, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=0.48,\r\n							WHERE id=1106'),
+(160, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=4.00,\r\n							WHERE id=1109'),
+(161, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=9.63,\r\n							WHERE id=1113'),
+(162, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=15.08,\r\n							WHERE id=1114'),
+(163, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=1.00,\r\n							WHERE id=1115'),
+(164, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=5.09,\r\n							WHERE id=1149'),
+(165, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=13.80,\r\n							WHERE id=1150'),
+(166, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=1.22,\r\n							WHERE id=1151'),
+(167, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=3.45,\r\n							WHERE id=1119'),
+(168, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=10.29,\r\n							WHERE id=1121'),
+(169, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=2.91,\r\n							WHERE id=1122'),
+(170, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=6.25,\r\n							WHERE id=1123'),
+(171, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=2.33,\r\n							WHERE id=1130'),
+(172, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=23.00,\r\n							WHERE id=1201'),
+(173, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=1.35,\r\n							WHERE id=1139'),
+(174, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=0.73,\r\n							WHERE id=1142'),
+(175, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=0.50,\r\n							WHERE id=1137'),
+(176, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=1.32,\r\n							WHERE id=1143'),
+(177, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=2.28,\r\n							WHERE id=1153'),
+(178, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=2.09,\r\n							WHERE id=1155'),
+(179, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=4.86,\r\n							WHERE id=1156'),
+(180, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=12.46,\r\n							WHERE id=1157'),
+(181, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=0.71,\r\n							WHERE id=1158'),
+(182, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=1.73,\r\n							WHERE id=1159'),
+(183, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=1.60,\r\n							WHERE id=1167'),
+(184, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=3.78,\r\n							WHERE id=1172'),
+(185, 'admin', '2014-09-25 09:37:57', 'UPDATE estimacion SET\r\n							entregados=2.65,\r\n							WHERE id=1074'),
+(186, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=2.67,\r\n							WHERE id=931'),
+(187, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=0.71,\r\n							WHERE id=932'),
+(188, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=1.54,\r\n							WHERE id=934'),
+(189, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=10.04,\r\n							WHERE id=935'),
+(190, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=1.90,\r\n							WHERE id=940'),
+(191, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=2.09,\r\n							WHERE id=942'),
+(192, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=1.52,\r\n							WHERE id=944'),
+(193, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=3.26,\r\n							WHERE id=899'),
+(194, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=6.38,\r\n							WHERE id=901'),
+(195, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=7.96,\r\n							WHERE id=903'),
+(196, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=8.70,\r\n							WHERE id=904'),
+(197, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=10.70,\r\n							WHERE id=905'),
+(198, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=12.26,\r\n							WHERE id=907'),
+(199, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=1.46,\r\n							WHERE id=910'),
+(200, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=6.03,\r\n							WHERE id=913'),
+(201, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=2.99,\r\n							WHERE id=914'),
+(202, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=7.08,\r\n							WHERE id=917'),
+(203, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=3.33,\r\n							WHERE id=929'),
+(204, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=1.42,\r\n							WHERE id=1200'),
+(205, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=5.49,\r\n							WHERE id=1198'),
+(206, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=4.67,\r\n							WHERE id=1199'),
+(207, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=2.10,\r\n							WHERE id=945'),
+(208, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=22.29,\r\n							WHERE id=948'),
+(209, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=7.12,\r\n							WHERE id=949'),
+(210, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=15.37,\r\n							WHERE id=950'),
+(211, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=4.21,\r\n							WHERE id=952'),
+(212, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=4.97,\r\n							WHERE id=957'),
+(213, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=4.38,\r\n							WHERE id=958'),
+(214, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=2.48,\r\n							WHERE id=1037'),
+(215, 'admin', '2014-09-25 09:39:35', 'UPDATE estimacion SET\r\n							entregados=1.46,\r\n							WHERE id=1038'),
+(216, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=5.13,\r\n							WHERE id=1039'),
+(217, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=9.94,\r\n							WHERE id=1040'),
+(218, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=11.74,\r\n							WHERE id=1043'),
+(219, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.53,\r\n							WHERE id=1046'),
+(220, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=3.87,\r\n							WHERE id=959'),
+(221, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=7.04,\r\n							WHERE id=960'),
+(222, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.83,\r\n							WHERE id=962'),
+(223, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=10.05,\r\n							WHERE id=966'),
+(224, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.21,\r\n							WHERE id=970'),
+(225, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=6.25,\r\n							WHERE id=973'),
+(226, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.77,\r\n							WHERE id=974'),
+(227, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=5.78,\r\n							WHERE id=992'),
+(228, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=8.66,\r\n							WHERE id=1004'),
+(229, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=9.40,\r\n							WHERE id=1006'),
+(230, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=11.28,\r\n							WHERE id=1007'),
+(231, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=14.85,\r\n							WHERE id=1197'),
+(232, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=10.68,\r\n							WHERE id=1196'),
+(233, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=3.07,\r\n							WHERE id=1017'),
+(234, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=4.65,\r\n							WHERE id=1022'),
+(235, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=0.62,\r\n							WHERE id=1100'),
+(236, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.90,\r\n							WHERE id=1101'),
+(237, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.62,\r\n							WHERE id=1029'),
+(238, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=30.65,\r\n							WHERE id=986'),
+(239, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=7.21,\r\n							WHERE id=989'),
+(240, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=15.81,\r\n							WHERE id=1194'),
+(241, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=16.86,\r\n							WHERE id=1195'),
+(242, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=4.36,\r\n							WHERE id=985'),
+(243, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=5.08,\r\n							WHERE id=1049'),
+(244, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=3.88,\r\n							WHERE id=1053'),
+(245, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.86,\r\n							WHERE id=1055'),
+(246, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=4.14,\r\n							WHERE id=1063'),
+(247, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.22,\r\n							WHERE id=1071'),
+(248, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=0.78,\r\n							WHERE id=1090'),
+(249, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.22,\r\n							WHERE id=1092'),
+(250, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.68,\r\n							WHERE id=1096'),
+(251, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=10.78,\r\n							WHERE id=1187'),
+(252, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=5.00,\r\n							WHERE id=1188'),
+(253, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=3.00,\r\n							WHERE id=1190'),
+(254, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=16.70,\r\n							WHERE id=1191');
+INSERT INTO `acciones` (`id`, `user`, `fecha`, `accion`) VALUES
+(255, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=5.29,\r\n							WHERE id=1192'),
+(256, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=3.85,\r\n							WHERE id=1193'),
+(257, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=0.48,\r\n							WHERE id=1106'),
+(258, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=4.00,\r\n							WHERE id=1109'),
+(259, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=9.63,\r\n							WHERE id=1113'),
+(260, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=15.08,\r\n							WHERE id=1114'),
+(261, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.00,\r\n							WHERE id=1115'),
+(262, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=5.09,\r\n							WHERE id=1149'),
+(263, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=13.80,\r\n							WHERE id=1150'),
+(264, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.22,\r\n							WHERE id=1151'),
+(265, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=3.45,\r\n							WHERE id=1119'),
+(266, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=10.29,\r\n							WHERE id=1121'),
+(267, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.91,\r\n							WHERE id=1122'),
+(268, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=6.25,\r\n							WHERE id=1123'),
+(269, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.33,\r\n							WHERE id=1130'),
+(270, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=23.00,\r\n							WHERE id=1201'),
+(271, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.35,\r\n							WHERE id=1139'),
+(272, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=0.73,\r\n							WHERE id=1142'),
+(273, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=0.50,\r\n							WHERE id=1137'),
+(274, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.32,\r\n							WHERE id=1143'),
+(275, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.28,\r\n							WHERE id=1153'),
+(276, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.09,\r\n							WHERE id=1155'),
+(277, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=4.86,\r\n							WHERE id=1156'),
+(278, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=12.46,\r\n							WHERE id=1157'),
+(279, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=0.71,\r\n							WHERE id=1158'),
+(280, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.73,\r\n							WHERE id=1159'),
+(281, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=1.60,\r\n							WHERE id=1167'),
+(282, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=3.78,\r\n							WHERE id=1172'),
+(283, 'admin', '2014-09-25 09:39:36', 'UPDATE estimacion SET\r\n							entregados=2.65,\r\n							WHERE id=1074'),
+(284, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=2.67,\r\n							WHERE id=931'),
+(285, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=0.71,\r\n							WHERE id=932'),
+(286, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.54,\r\n							WHERE id=934'),
+(287, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=10.04,\r\n							WHERE id=935'),
+(288, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.90,\r\n							WHERE id=940'),
+(289, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=2.09,\r\n							WHERE id=942'),
+(290, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.52,\r\n							WHERE id=944'),
+(291, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=3.26,\r\n							WHERE id=899'),
+(292, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=6.38,\r\n							WHERE id=901'),
+(293, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=7.96,\r\n							WHERE id=903'),
+(294, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=8.70,\r\n							WHERE id=904'),
+(295, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=10.70,\r\n							WHERE id=905'),
+(296, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=12.26,\r\n							WHERE id=907'),
+(297, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.46,\r\n							WHERE id=910'),
+(298, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=6.03,\r\n							WHERE id=913'),
+(299, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=2.99,\r\n							WHERE id=914'),
+(300, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=7.08,\r\n							WHERE id=917'),
+(301, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=3.33,\r\n							WHERE id=929'),
+(302, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.42,\r\n							WHERE id=1200'),
+(303, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=5.49,\r\n							WHERE id=1198'),
+(304, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=4.67,\r\n							WHERE id=1199'),
+(305, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=2.10,\r\n							WHERE id=945'),
+(306, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=22.29,\r\n							WHERE id=948'),
+(307, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=7.12,\r\n							WHERE id=949'),
+(308, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=15.37,\r\n							WHERE id=950'),
+(309, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=4.21,\r\n							WHERE id=952'),
+(310, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=4.97,\r\n							WHERE id=957'),
+(311, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=4.38,\r\n							WHERE id=958'),
+(312, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=2.48,\r\n							WHERE id=1037'),
+(313, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.46,\r\n							WHERE id=1038'),
+(314, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=5.13,\r\n							WHERE id=1039'),
+(315, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=9.94,\r\n							WHERE id=1040'),
+(316, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=11.74,\r\n							WHERE id=1043'),
+(317, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.53,\r\n							WHERE id=1046'),
+(318, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=3.87,\r\n							WHERE id=959'),
+(319, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=7.04,\r\n							WHERE id=960'),
+(320, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=2.83,\r\n							WHERE id=962'),
+(321, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=10.05,\r\n							WHERE id=966'),
+(322, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=2.21,\r\n							WHERE id=970'),
+(323, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=6.25,\r\n							WHERE id=973'),
+(324, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.77,\r\n							WHERE id=974'),
+(325, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=5.78,\r\n							WHERE id=992'),
+(326, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=8.66,\r\n							WHERE id=1004'),
+(327, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=9.40,\r\n							WHERE id=1006'),
+(328, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=11.28,\r\n							WHERE id=1007'),
+(329, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=14.85,\r\n							WHERE id=1197'),
+(330, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=10.68,\r\n							WHERE id=1196'),
+(331, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=3.07,\r\n							WHERE id=1017'),
+(332, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=4.65,\r\n							WHERE id=1022'),
+(333, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=0.62,\r\n							WHERE id=1100'),
+(334, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.90,\r\n							WHERE id=1101'),
+(335, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=2.62,\r\n							WHERE id=1029'),
+(336, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=30.65,\r\n							WHERE id=986'),
+(337, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=7.21,\r\n							WHERE id=989'),
+(338, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=15.81,\r\n							WHERE id=1194'),
+(339, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=16.86,\r\n							WHERE id=1195'),
+(340, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=4.36,\r\n							WHERE id=985'),
+(341, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=5.08,\r\n							WHERE id=1049'),
+(342, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=3.88,\r\n							WHERE id=1053'),
+(343, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=1.86,\r\n							WHERE id=1055'),
+(344, 'admin', '2014-09-25 09:40:32', 'UPDATE estimacion SET\r\n							entregados=4.14,\r\n							WHERE id=1063'),
+(345, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=2.22,\r\n							WHERE id=1071'),
+(346, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=0.78,\r\n							WHERE id=1090'),
+(347, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=1.22,\r\n							WHERE id=1092'),
+(348, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=2.68,\r\n							WHERE id=1096'),
+(349, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=10.78,\r\n							WHERE id=1187'),
+(350, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=5.00,\r\n							WHERE id=1188'),
+(351, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=3.00,\r\n							WHERE id=1190'),
+(352, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=16.70,\r\n							WHERE id=1191'),
+(353, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=5.29,\r\n							WHERE id=1192'),
+(354, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=3.85,\r\n							WHERE id=1193'),
+(355, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=0.48,\r\n							WHERE id=1106'),
+(356, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=4.00,\r\n							WHERE id=1109'),
+(357, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=9.63,\r\n							WHERE id=1113'),
+(358, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=15.08,\r\n							WHERE id=1114'),
+(359, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=1.00,\r\n							WHERE id=1115'),
+(360, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=5.09,\r\n							WHERE id=1149'),
+(361, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=13.80,\r\n							WHERE id=1150'),
+(362, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=1.22,\r\n							WHERE id=1151'),
+(363, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=3.45,\r\n							WHERE id=1119'),
+(364, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=10.29,\r\n							WHERE id=1121'),
+(365, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=2.91,\r\n							WHERE id=1122'),
+(366, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=6.25,\r\n							WHERE id=1123'),
+(367, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=2.33,\r\n							WHERE id=1130'),
+(368, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=23.00,\r\n							WHERE id=1201'),
+(369, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=1.35,\r\n							WHERE id=1139'),
+(370, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=0.73,\r\n							WHERE id=1142'),
+(371, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=0.50,\r\n							WHERE id=1137'),
+(372, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=1.32,\r\n							WHERE id=1143'),
+(373, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=2.28,\r\n							WHERE id=1153'),
+(374, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=2.09,\r\n							WHERE id=1155'),
+(375, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=4.86,\r\n							WHERE id=1156'),
+(376, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=12.46,\r\n							WHERE id=1157'),
+(377, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=0.71,\r\n							WHERE id=1158'),
+(378, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=1.73,\r\n							WHERE id=1159'),
+(379, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=1.60,\r\n							WHERE id=1167'),
+(380, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=3.78,\r\n							WHERE id=1172'),
+(381, 'admin', '2014-09-25 09:40:33', 'UPDATE estimacion SET\r\n							entregados=2.65,\r\n							WHERE id=1074'),
+(382, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=2.67\r\n							WHERE id=931'),
+(383, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=0.71\r\n							WHERE id=932'),
+(384, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=1.54\r\n							WHERE id=934'),
+(385, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=10.04\r\n							WHERE id=935'),
+(386, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=1.90\r\n							WHERE id=940'),
+(387, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=2.09\r\n							WHERE id=942'),
+(388, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=1.52\r\n							WHERE id=944'),
+(389, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=3.26\r\n							WHERE id=899'),
+(390, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=6.38\r\n							WHERE id=901'),
+(391, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=7.96\r\n							WHERE id=903'),
+(392, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=8.70\r\n							WHERE id=904'),
+(393, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=10.70\r\n							WHERE id=905'),
+(394, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=12.26\r\n							WHERE id=907'),
+(395, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=1.46\r\n							WHERE id=910'),
+(396, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=6.03\r\n							WHERE id=913'),
+(397, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=2.99\r\n							WHERE id=914'),
+(398, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=7.08\r\n							WHERE id=917'),
+(399, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=3.33\r\n							WHERE id=929'),
+(400, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=1.42\r\n							WHERE id=1200'),
+(401, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=5.49\r\n							WHERE id=1198'),
+(402, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=4.67\r\n							WHERE id=1199'),
+(403, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=2.10\r\n							WHERE id=945'),
+(404, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=22.29\r\n							WHERE id=948'),
+(405, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=7.12\r\n							WHERE id=949'),
+(406, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=15.37\r\n							WHERE id=950'),
+(407, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=4.21\r\n							WHERE id=952'),
+(408, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=4.97\r\n							WHERE id=957'),
+(409, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=4.38\r\n							WHERE id=958'),
+(410, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=2.48\r\n							WHERE id=1037'),
+(411, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=1.46\r\n							WHERE id=1038'),
+(412, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=5.13\r\n							WHERE id=1039'),
+(413, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=9.94\r\n							WHERE id=1040'),
+(414, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=11.74\r\n							WHERE id=1043'),
+(415, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=1.53\r\n							WHERE id=1046'),
+(416, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=3.87\r\n							WHERE id=959'),
+(417, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=7.04\r\n							WHERE id=960'),
+(418, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=2.83\r\n							WHERE id=962'),
+(419, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=10.05\r\n							WHERE id=966'),
+(420, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=2.21\r\n							WHERE id=970'),
+(421, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=6.25\r\n							WHERE id=973'),
+(422, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=1.77\r\n							WHERE id=974'),
+(423, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=5.78\r\n							WHERE id=992'),
+(424, 'admin', '2014-09-25 09:44:23', 'UPDATE estimacion SET\r\n							entregados=8.66\r\n							WHERE id=1004'),
+(425, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=9.40\r\n							WHERE id=1006'),
+(426, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=11.28\r\n							WHERE id=1007'),
+(427, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=14.85\r\n							WHERE id=1197'),
+(428, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=10.68\r\n							WHERE id=1196'),
+(429, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=3.07\r\n							WHERE id=1017'),
+(430, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=4.65\r\n							WHERE id=1022'),
+(431, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=0.62\r\n							WHERE id=1100'),
+(432, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=1.90\r\n							WHERE id=1101'),
+(433, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=2.62\r\n							WHERE id=1029'),
+(434, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=30.65\r\n							WHERE id=986'),
+(435, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=7.21\r\n							WHERE id=989'),
+(436, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=15.81\r\n							WHERE id=1194'),
+(437, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=16.86\r\n							WHERE id=1195'),
+(438, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=4.36\r\n							WHERE id=985'),
+(439, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=5.08\r\n							WHERE id=1049'),
+(440, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=3.88\r\n							WHERE id=1053'),
+(441, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=1.86\r\n							WHERE id=1055'),
+(442, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=4.14\r\n							WHERE id=1063'),
+(443, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=2.22\r\n							WHERE id=1071'),
+(444, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=0.78\r\n							WHERE id=1090'),
+(445, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=1.22\r\n							WHERE id=1092'),
+(446, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=2.68\r\n							WHERE id=1096'),
+(447, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=10.78\r\n							WHERE id=1187'),
+(448, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=5.00\r\n							WHERE id=1188'),
+(449, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=3.00\r\n							WHERE id=1190'),
+(450, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=16.70\r\n							WHERE id=1191'),
+(451, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=5.29\r\n							WHERE id=1192'),
+(452, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=3.85\r\n							WHERE id=1193'),
+(453, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=0.48\r\n							WHERE id=1106'),
+(454, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=4.00\r\n							WHERE id=1109'),
+(455, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=9.63\r\n							WHERE id=1113'),
+(456, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=15.08\r\n							WHERE id=1114'),
+(457, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=1.00\r\n							WHERE id=1115'),
+(458, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=5.09\r\n							WHERE id=1149'),
+(459, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=13.80\r\n							WHERE id=1150'),
+(460, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=1.22\r\n							WHERE id=1151'),
+(461, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=3.45\r\n							WHERE id=1119'),
+(462, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=10.29\r\n							WHERE id=1121'),
+(463, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=2.91\r\n							WHERE id=1122'),
+(464, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=6.25\r\n							WHERE id=1123'),
+(465, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=2.33\r\n							WHERE id=1130'),
+(466, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=23.00\r\n							WHERE id=1201'),
+(467, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=1.35\r\n							WHERE id=1139'),
+(468, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=0.73\r\n							WHERE id=1142'),
+(469, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=0.50\r\n							WHERE id=1137'),
+(470, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=1.32\r\n							WHERE id=1143'),
+(471, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=2.28\r\n							WHERE id=1153'),
+(472, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=2.09\r\n							WHERE id=1155'),
+(473, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=4.86\r\n							WHERE id=1156'),
+(474, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=12.46\r\n							WHERE id=1157'),
+(475, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=0.71\r\n							WHERE id=1158'),
+(476, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=1.73\r\n							WHERE id=1159'),
+(477, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=1.60\r\n							WHERE id=1167'),
+(478, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=3.78\r\n							WHERE id=1172'),
+(479, 'admin', '2014-09-25 09:44:24', 'UPDATE estimacion SET\r\n							entregados=2.65\r\n							WHERE id=1074'),
+(480, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=2.67\r\n							WHERE id=931'),
+(481, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=0.71\r\n							WHERE id=932'),
+(482, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=1.54\r\n							WHERE id=934'),
+(483, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=10.04\r\n							WHERE id=935'),
+(484, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=1.90\r\n							WHERE id=940'),
+(485, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=2.09\r\n							WHERE id=942'),
+(486, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=1.52\r\n							WHERE id=944'),
+(487, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=3.26\r\n							WHERE id=899'),
+(488, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=6.38\r\n							WHERE id=901'),
+(489, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=7.96\r\n							WHERE id=903'),
+(490, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=8.70\r\n							WHERE id=904'),
+(491, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=10.70\r\n							WHERE id=905'),
+(492, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=12.26\r\n							WHERE id=907'),
+(493, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=1.46\r\n							WHERE id=910'),
+(494, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=6.03\r\n							WHERE id=913'),
+(495, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=2.99\r\n							WHERE id=914'),
+(496, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=7.08\r\n							WHERE id=917'),
+(497, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=3.33\r\n							WHERE id=929'),
+(498, 'admin', '2014-09-25 09:44:36', 'UPDATE estimacion SET\r\n							entregados=1.42\r\n							WHERE id=1200'),
+(499, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=5.49\r\n							WHERE id=1198'),
+(500, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=4.67\r\n							WHERE id=1199'),
+(501, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.10\r\n							WHERE id=945'),
+(502, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=22.29\r\n							WHERE id=948'),
+(503, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=7.12\r\n							WHERE id=949'),
+(504, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=15.37\r\n							WHERE id=950'),
+(505, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=4.21\r\n							WHERE id=952'),
+(506, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=4.97\r\n							WHERE id=957'),
+(507, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=4.38\r\n							WHERE id=958'),
+(508, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.48\r\n							WHERE id=1037'),
+(509, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.46\r\n							WHERE id=1038'),
+(510, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=5.13\r\n							WHERE id=1039'),
+(511, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=9.94\r\n							WHERE id=1040'),
+(512, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=11.74\r\n							WHERE id=1043'),
+(513, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.53\r\n							WHERE id=1046'),
+(514, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=3.87\r\n							WHERE id=959'),
+(515, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=7.04\r\n							WHERE id=960'),
+(516, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.83\r\n							WHERE id=962'),
+(517, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=10.05\r\n							WHERE id=966'),
+(518, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.21\r\n							WHERE id=970'),
+(519, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=6.25\r\n							WHERE id=973'),
+(520, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.77\r\n							WHERE id=974'),
+(521, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=5.78\r\n							WHERE id=992'),
+(522, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=8.66\r\n							WHERE id=1004'),
+(523, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=9.40\r\n							WHERE id=1006'),
+(524, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=11.28\r\n							WHERE id=1007'),
+(525, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=14.85\r\n							WHERE id=1197'),
+(526, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=10.68\r\n							WHERE id=1196'),
+(527, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=3.07\r\n							WHERE id=1017'),
+(528, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=4.65\r\n							WHERE id=1022'),
+(529, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=0.62\r\n							WHERE id=1100'),
+(530, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.90\r\n							WHERE id=1101'),
+(531, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.62\r\n							WHERE id=1029'),
+(532, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=30.65\r\n							WHERE id=986'),
+(533, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=7.21\r\n							WHERE id=989'),
+(534, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=15.81\r\n							WHERE id=1194'),
+(535, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=16.86\r\n							WHERE id=1195'),
+(536, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=4.36\r\n							WHERE id=985'),
+(537, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=5.08\r\n							WHERE id=1049'),
+(538, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=3.88\r\n							WHERE id=1053'),
+(539, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.86\r\n							WHERE id=1055'),
+(540, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=4.14\r\n							WHERE id=1063'),
+(541, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.22\r\n							WHERE id=1071'),
+(542, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=0.78\r\n							WHERE id=1090'),
+(543, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.22\r\n							WHERE id=1092'),
+(544, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.68\r\n							WHERE id=1096'),
+(545, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=10.78\r\n							WHERE id=1187'),
+(546, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=5.00\r\n							WHERE id=1188'),
+(547, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=3.00\r\n							WHERE id=1190'),
+(548, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=16.70\r\n							WHERE id=1191'),
+(549, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=5.29\r\n							WHERE id=1192'),
+(550, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=3.85\r\n							WHERE id=1193'),
+(551, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=0.48\r\n							WHERE id=1106'),
+(552, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=4.00\r\n							WHERE id=1109'),
+(553, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=9.63\r\n							WHERE id=1113'),
+(554, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=15.08\r\n							WHERE id=1114'),
+(555, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.00\r\n							WHERE id=1115'),
+(556, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=5.09\r\n							WHERE id=1149'),
+(557, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=13.80\r\n							WHERE id=1150'),
+(558, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.22\r\n							WHERE id=1151'),
+(559, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=3.45\r\n							WHERE id=1119'),
+(560, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=10.29\r\n							WHERE id=1121'),
+(561, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.91\r\n							WHERE id=1122'),
+(562, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=6.25\r\n							WHERE id=1123'),
+(563, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.33\r\n							WHERE id=1130'),
+(564, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=23.00\r\n							WHERE id=1201'),
+(565, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.35\r\n							WHERE id=1139'),
+(566, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=0.73\r\n							WHERE id=1142'),
+(567, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=0.50\r\n							WHERE id=1137'),
+(568, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.32\r\n							WHERE id=1143'),
+(569, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.28\r\n							WHERE id=1153'),
+(570, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.09\r\n							WHERE id=1155'),
+(571, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=4.86\r\n							WHERE id=1156'),
+(572, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=12.46\r\n							WHERE id=1157'),
+(573, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=0.71\r\n							WHERE id=1158'),
+(574, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.73\r\n							WHERE id=1159'),
+(575, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=1.60\r\n							WHERE id=1167'),
+(576, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=3.78\r\n							WHERE id=1172'),
+(577, 'admin', '2014-09-25 09:44:37', 'UPDATE estimacion SET\r\n							entregados=2.65\r\n							WHERE id=1074'),
+(578, 'admin', '2014-09-25 14:52:55', 'UPDATE pagos SET \r\n				fecha=2014-09-25 04:52:44,\r\n				exportable=1499.00,\r\n				descarte=190.00,\r\n				fuera=0,\r\n				calidad=0,\r\n				cliente=45.00,\r\n				microlote=30.00,\r\n				tazadorada=0.00\r\n				WHERE id=3'),
+(579, 'admin', '2014-09-25 14:53:16', 'UPDATE pagos SET \r\n				fecha=2014-09-25 04:53:10,\r\n				exportable=1499.00,\r\n				descarte=190.00,\r\n				fuera=0,\r\n				calidad=0,\r\n				cliente=45.00,\r\n				microlote=50.00,\r\n				tazadorada=0.00\r\n				WHERE id=3'),
+(580, 'admin', '2014-09-25 14:53:37', 'UPDATE pagos SET \r\n				fecha=2014-09-25 04:53:29,\r\n				exportable=1499.00,\r\n				descarte=190.00,\r\n				fuera=0,\r\n				calidad=0,\r\n				cliente=45.00,\r\n				microlote=250.00,\r\n				tazadorada=300\r\n				WHERE id=3'),
+(581, 'admin', '2014-09-26 05:49:17', 'UPDATE despachos SET\r\n				fecha=2014-09-24 18:18:41,\r\n				cantidad=2.5,\r\n				envio=1\r\n				WHERE id=1'),
+(582, 'admin', '2014-09-28 05:31:15', 'INSERT INTO usuarios VALUES(,\r\n				Fran,\r\n				fran,\r\n				8410,\r\n				2)'),
+(583, 'admin', '2014-09-28 20:10:43', 'INSERT INTO catas VALUES (,\r\n				APC-00628-14,\r\n				2014-09-28 10:09:18,\r\n				Catador,\r\n				5.5,\r\n				9.25,\r\n				Herbal,Vainilla,Neutral,\r\n				,\r\n				8.25,\r\n				Caramelo,Chocolate dulce,\r\n				,\r\n				9,\r\n				Refrescante,Dulce,\r\n				,\r\n				9.5,\r\n				9,\r\n				8.75,\r\n				9,\r\n				9,\r\n				8.25,\r\n				8.75,\r\n				,\r\n				88.75,\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0,				\r\n				0,\r\n				0				\r\n				)'),
+(584, 'admin', '2014-09-28 20:11:11', 'UPDATE catas SET\r\n				fecha =2014-09-28 10:09:18,\r\n				catador =Catador,\r\n				tostado =6,\r\n				fragancia =9.25,\r\n				tipo_aroma1 =Herbal,Vainilla,Neutral,\r\n				nota_aroma =,\r\n				sabor =8,\r\n				tipo_sabor =Caramelo,Chocolate dulce,\r\n				nota_sabor =,\r\n				sabor_residual =8.25,\r\n				tipo_sabor_residual =Refrescante,Dulce,\r\n				nota_sabor_residual =,\r\n				acidez =9.5,\r\n				cuerpo =8,\r\n				uniformidad =8.75,\r\n				balance =9,\r\n				puntaje_catador =9,\r\n				taza_limpia =8.25,\r\n				dulzor =8.75,\r\n				nota_catacion =,\r\n				puntuacion =86.75,\r\n				d_fermento=0,\r\n				d_metalico=0,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=0,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=0,\r\n				dl_moho=0,				\r\n				dl_astringencia=0,\r\n				d_general=0				\r\n				\r\n				WHERE lote=APC-00628-14'),
+(585, 'admin', '2014-09-28 20:11:24', 'UPDATE catas SET\r\n				fecha =2014-09-28 10:09:18,\r\n				catador =Catador,\r\n				tostado =6,\r\n				fragancia =9.25,\r\n				tipo_aroma1 =Herbal,Vainilla,Neutral,\r\n				nota_aroma =,\r\n				sabor =8,\r\n				tipo_sabor =Caramelo,Chocolate dulce,\r\n				nota_sabor =,\r\n				sabor_residual =8.25,\r\n				tipo_sabor_residual =Refrescante,Dulce,\r\n				nota_sabor_residual =,\r\n				acidez =9.5,\r\n				cuerpo =8,\r\n				uniformidad =8.75,\r\n				balance =8,\r\n				puntaje_catador =9,\r\n				taza_limpia =8.25,\r\n				dulzor =8.75,\r\n				nota_catacion =,\r\n				puntuacion =85.75,\r\n				d_fermento=0,\r\n				d_metalico=0,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=0,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=0,\r\n				dl_moho=0,				\r\n				dl_astringencia=0,\r\n				d_general=0				\r\n				\r\n				WHERE lote=APC-00628-14'),
+(586, 'admin', '2014-09-28 20:11:38', 'UPDATE catas SET\r\n				fecha =2014-09-28 10:09:18,\r\n				catador =Catador,\r\n				tostado =6,\r\n				fragancia =8.75,\r\n				tipo_aroma1 =Herbal,Vainilla,Neutral,\r\n				nota_aroma =,\r\n				sabor =8,\r\n				tipo_sabor =Caramelo,Chocolate dulce,\r\n				nota_sabor =,\r\n				sabor_residual =8.25,\r\n				tipo_sabor_residual =Refrescante,Dulce,\r\n				nota_sabor_residual =,\r\n				acidez =9.5,\r\n				cuerpo =8,\r\n				uniformidad =8.75,\r\n				balance =8,\r\n				puntaje_catador =9,\r\n				taza_limpia =8.25,\r\n				dulzor =8.75,\r\n				nota_catacion =,\r\n				puntuacion =85.25,\r\n				d_fermento=0,\r\n				d_metalico=0,				\r\n				d_quimico=0,\r\n				d_vinagre=0,				\r\n				d_stinker=0,\r\n				d_fenol=0,				\r\n				d_reposo=0,\r\n				d_moho=0,				\r\n				d_terroso=0,\r\n				d_extrano=0,				\r\n				d_sucio=0,\r\n				d_astringente=0,				\r\n				d_quaquers=0,				\r\n				dl_cereal=0,\r\n				dl_fermento=0,				\r\n				dl_reposo=0,\r\n				dl_moho=0,				\r\n				dl_astringencia=0,\r\n				d_general=0				\r\n				\r\n				WHERE lote=APC-00628-14'),
+(587, 'admin', '2014-09-28 23:02:07', 'INSERT INTO despachos VALUES(,\r\n				APC-163,\r\n				2014-09-28 13:01:57,\r\n				3.12,\r\n				2)'),
+(588, 'admin', '2014-09-28 23:02:39', 'INSERT INTO despachos VALUES(,\r\n				APC-00629-14,\r\n				2014-09-28 13:02:33,\r\n				0.57,\r\n				3)'),
+(589, 'admin', '2014-09-28 23:03:28', 'INSERT INTO despachos VALUES(,\r\n				APC-00626-14,\r\n				2014-09-28 13:03:20,\r\n				4.5,\r\n				2)'),
+(590, 'admin', '2014-09-29 07:30:25', 'UPDATE configuracion SET \r\n				valor=85\r\n				WHERE id=1'),
+(591, 'admin', '2014-09-29 07:30:36', 'UPDATE configuracion SET \r\n				valor=85.00\r\n				WHERE id=1'),
+(592, 'admin', '2014-09-29 07:40:05', 'UPDATE configuracion SET \r\n				valor=84\r\n				WHERE id=1'),
+(593, 'admin', '2014-09-30 03:15:19', 'UPDATE subparcelas SET \r\n				id_parcela=1,\r\n				superficie=0.50,\r\n				variedad=catucaí,\r\n				variedad2=catucaí,\r\n				siembra=0,\r\n				densidad=0,\r\n				marco=Regular,\r\n				hierbas=Limpio,\r\n				sombreado=Poco,\r\n				roya=0,\r\n				broca=0,\r\n				ojo_pollo=0,\r\n				mes_inicio_cosecha=julio,\r\n				duracion_cosecha=0\r\n				WHERE id=1'),
+(594, 'admin', '2014-09-30 03:15:33', 'UPDATE subparcelas SET \r\n				id_parcela=1,\r\n				superficie=0.50,\r\n				variedad=catucaí,\r\n				variedad2=catucaí,\r\n				siembra=0,\r\n				densidad=0,\r\n				marco=Regular,\r\n				hierbas=Medio,\r\n				sombreado=Medio,\r\n				roya=0,\r\n				broca=0,\r\n				ojo_pollo=0,\r\n				mes_inicio_cosecha=julio,\r\n				duracion_cosecha=0\r\n				WHERE id=1'),
+(595, 'admin', '2014-09-30 03:15:59', 'UPDATE subparcelas SET \r\n				id_parcela=1,\r\n				superficie=0.50,\r\n				variedad=catucaí,\r\n				variedad2=criollo,\r\n				siembra=0,\r\n				densidad=0,\r\n				marco=Regular,\r\n				hierbas=Limpio,\r\n				sombreado=Poco,\r\n				roya=0,\r\n				broca=0,\r\n				ojo_pollo=0,\r\n				mes_inicio_cosecha=julio,\r\n				duracion_cosecha=0\r\n				WHERE id=1'),
+(596, 'admin', '2014-09-30 03:16:51', 'UPDATE subparcelas SET \r\n				id_parcela=1,\r\n				superficie=3,\r\n				variedad=tipica,\r\n				variedad2=colombia6,\r\n				siembra=1945,\r\n				densidad=1500,\r\n				marco=Medio,\r\n				hierbas=Medio,\r\n				sombreado=Poco,\r\n				roya=75,\r\n				broca=0,\r\n				ojo_pollo=0,\r\n				mes_inicio_cosecha=agosto,\r\n				duracion_cosecha=1\r\n				WHERE id=2'),
+(597, 'admin', '2014-09-30 03:33:11', 'UPDATE subparcelas SET \r\n				id_parcela=1,\r\n				superficie=0.50,\r\n				variedad=catucaí,\r\n				variedad2=criollo,\r\n				siembra=0,\r\n				densidad=0,\r\n				marco=Regular,\r\n				hierbas=Limpio,\r\n				sombreado=Poco,\r\n				roya=0,\r\n				broca=0,\r\n				ojo_pollo=0,\r\n				mes_inicio_cosecha=julio,\r\n				duracion_cosecha=0\r\n				WHERE id=1'),
+(598, 'admin', '2014-09-30 03:37:22', 'UPDATE parcelas SET \r\n				sup_total=2.00,\r\n				coorX=234234,\r\n				coorY=234234,\r\n				alti=2345,\r\n				id_socio=SF52,\r\n				MOcontratada=,\r\n				MOfamiliar=,\r\n				miembros_familia=,\r\n				riego=Goteo\r\n				WHERE id=1'),
+(599, 'admin', '2014-09-30 03:40:16', 'UPDATE parcelas SET \r\n				sup_total=2.00,\r\n				coorX=234234,\r\n				coorY=234234,\r\n				alti=2345,\r\n				id_socio=SF52,\r\n				MOcontratada=5,\r\n				MOfamiliar=2,\r\n				miembros_familia=2,\r\n				riego=Aspersión\r\n				WHERE id=1'),
+(600, 'admin', '2014-09-30 03:41:31', 'UPDATE parcelas SET \r\n				sup_total=2.00,\r\n				coorX=234234,\r\n				coorY=234234,\r\n				alti=2345,\r\n				id_socio=SF52,\r\n				MOcontratada=5,\r\n				MOfamiliar=2,\r\n				Miembros_familia=2,\r\n				riego=Gravedad\r\n				WHERE id=1'),
+(601, 'admin', '2014-09-30 03:53:46', 'INSERT INTO parcelas VALUES (,SF52,34534666,254234534,1432,\r\n				12,4,3,3,\r\n				Aspersión)'),
+(602, 'admin', '2014-09-30 04:08:38', 'INSERT INTO subparcelas VALUES (,\r\n				2,\r\n				1.45,\r\n				tipica,\r\n				criollo,\r\n				1974,\r\n				1500,\r\n				Medio,\r\n				Medio,\r\n				Medio,\r\n				50,\r\n				25,\r\n				25,\r\n				Agosto,\r\n				3)'),
+(603, 'admin', '2014-09-30 04:15:26', 'INSERT INTO subparcelas VALUES (,\r\n				2,\r\n				5,\r\n				criollo,\r\n				catimoro,\r\n				2006,\r\n				2000,\r\n				Regular,\r\n				Limpio,\r\n				Medio,\r\n				0,\r\n				0,\r\n				0,\r\n				agosto,\r\n				4)'),
+(604, 'admin', '2014-09-30 04:19:01', 'INSERT INTO subparcelas VALUES (,\r\n				2,\r\n				4,\r\n				catucaí,\r\n				catucaí,\r\n				,\r\n				,\r\n				Regular,\r\n				Limpio,\r\n				Poco,\r\n				0,\r\n				0,\r\n				0,\r\n				,\r\n				)'),
+(605, 'admin', '2014-09-30 04:20:13', 'INSERT INTO subparcelas VALUES (,\r\n				2,\r\n				10,\r\n				catucaí,\r\n				catucaí,\r\n				,\r\n				,\r\n				Regular,\r\n				Limpio,\r\n				Poco,\r\n				0,\r\n				0,\r\n				0,\r\n				,\r\n				)'),
+(606, 'admin', '2014-09-30 04:28:46', 'DELETE FROM parcelas WHERE id=1'),
+(607, 'admin', '2014-09-30 04:28:46', 'DELETE FROM subparcelas WHERE id_parcela=1'),
+(608, 'admin', '2014-09-30 04:34:50', ''),
+(609, 'admin', '2014-09-30 04:35:17', ''),
+(610, 'admin', '2014-09-30 04:35:41', 'DELETE FROM subparcelas WHERE id=2'),
+(611, 'admin', '2014-09-30 04:36:36', 'DELETE FROM subparcelas WHERE id=2'),
+(612, 'admin', '2014-09-30 04:37:50', 'DELETE FROM subparcelas WHERE id=2'),
+(613, 'admin', '2014-09-30 04:39:05', 'UPDATE subparcelas SET \r\n				id_parcela=2,\r\n				superficie=5.00,\r\n				variedad=criollo,\r\n				variedad2=catimoro,\r\n				siembra=2006,\r\n				densidad=2000,\r\n				marco=Regular,\r\n				hierbas=Limpio,\r\n				sombreado=Medio,\r\n				roya=75,\r\n				broca=0,\r\n				ojo_pollo=0,\r\n				mes_inicio_cosecha=agosto,\r\n				duracion_cosecha=4\r\n				WHERE id=4'),
+(614, 'admin', '2014-09-30 04:39:45', 'DELETE FROM subparcelas WHERE id=2'),
+(615, 'admin', '2014-09-30 04:42:25', 'DELETE FROM subparcelas WHERE id=2'),
+(616, 'admin', '2014-09-30 04:42:43', 'DELETE FROM subparcelas WHERE id=2'),
+(617, 'admin', '2014-09-30 04:43:33', 'DELETE FROM subparcelas WHERE id=4'),
+(618, 'admin', '2014-09-30 04:45:18', 'INSERT INTO parcelas VALUES (,AN05,34533434,234566,1673,\r\n				25,4,5,6,\r\n				Gravedad)'),
+(619, 'admin', '2014-09-30 04:45:53', 'INSERT INTO subparcelas VALUES (,\r\n				3,\r\n				6,\r\n				criollo,\r\n				catimoro,\r\n				2002,\r\n				1233,\r\n				Medio,\r\n				Medio,\r\n				Medio,\r\n				50,\r\n				50,\r\n				0,\r\n				Octubre,\r\n				3)'),
+(620, 'admin', '2014-09-30 04:48:35', 'INSERT INTO subparcelas VALUES (,\r\n				2,\r\n				3,\r\n				tipica,\r\n				criollo,\r\n				2005,\r\n				1500,\r\n				Regular,\r\n				Limpio,\r\n				Poco,\r\n				0,\r\n				0,\r\n				0,\r\n				julio,\r\n				3)'),
+(621, 'admin', '2014-09-30 04:49:11', 'INSERT INTO subparcelas VALUES (,\r\n				2,\r\n				5,\r\n				tipica,\r\n				catimoro,\r\n				1996,\r\n				1500,\r\n				Medio,\r\n				Medio,\r\n				Medio,\r\n				0,\r\n				0,\r\n				0,\r\n				julio,\r\n				3)'),
+(622, 'admin', '2014-09-30 05:49:12', ''),
+(623, 'admin', '2014-09-30 05:49:42', 'INSERT INTO asociaciones VALUES (,caña,\r\n												 bajo,\r\n												 cultivos,\r\n												 parcela,\r\n												 3)'),
+(624, 'admin', '2014-09-30 05:50:13', 'INSERT INTO asociaciones VALUES (,cítrico,\r\n												 medio,\r\n												 cultivos,\r\n												 parcela,\r\n												 3)'),
+(625, 'admin', '2014-09-30 05:50:31', 'INSERT INTO asociaciones VALUES (,caña,\r\n												 bajo,\r\n												 cultivos,\r\n												 parcela,\r\n												 3)'),
+(626, 'admin', '2014-09-30 05:51:01', 'INSERT INTO asociaciones VALUES (,chanchos,\r\n												 medio,\r\n												 animales,\r\n												 parcela,\r\n												 3)'),
+(627, 'admin', '2014-09-30 05:51:07', 'INSERT INTO asociaciones VALUES (,caña,\r\n												 medio,\r\n												 cultivos,\r\n												 parcela,\r\n												 3)'),
+(628, 'admin', '2014-09-30 18:42:51', 'DELETE FROM asociaciones WHERE id=4'),
+(629, 'admin', '2014-09-30 18:43:24', 'INSERT INTO asociaciones VALUES (,cuyes,\r\n												 bajo,\r\n												 animales,\r\n												 parcela,\r\n												 3)'),
+(630, 'admin', '2014-09-30 18:43:30', 'INSERT INTO asociaciones VALUES (,gallinas,\r\n												 medio,\r\n												 animales,\r\n												 parcela,\r\n												 3)'),
+(631, 'admin', '2014-09-30 18:43:36', 'DELETE FROM asociaciones WHERE id=6'),
+(632, 'admin', '2014-09-30 18:44:05', 'DELETE FROM asociaciones WHERE id=6'),
+(633, 'admin', '2014-09-30 18:45:34', 'DELETE FROM asociaciones WHERE id=6'),
+(634, 'admin', '2014-09-30 18:52:04', 'DELETE FROM asociaciones WHERE id=6'),
+(635, 'admin', '2014-09-30 18:52:24', 'DELETE FROM asociaciones WHERE id=6'),
+(636, 'admin', '2014-09-30 18:53:00', 'DELETE FROM asociaciones WHERE id=6'),
+(637, 'admin', '2014-09-30 18:53:23', 'DELETE FROM asociaciones WHERE id=6'),
+(638, 'admin', '2014-09-30 18:54:24', 'DELETE FROM asociaciones WHERE id=6'),
+(639, 'admin', '2014-09-30 18:54:45', 'DELETE FROM asociaciones WHERE id=7');
+INSERT INTO `acciones` (`id`, `user`, `fecha`, `accion`) VALUES
+(640, 'admin', '2014-09-30 18:54:48', 'INSERT INTO asociaciones VALUES (,cuyes,\r\n												 bajo,\r\n												 animales,\r\n												 parcela,\r\n												 3)'),
+(641, 'admin', '2014-09-30 18:55:34', 'INSERT INTO asociaciones VALUES (,vacas,\r\n												 bajo,\r\n												 animales,\r\n												 parcela,\r\n												 3)'),
+(642, 'admin', '2014-09-30 18:55:41', 'INSERT INTO asociaciones VALUES (,faike,\r\n												 bajo,\r\n												 cultivo,\r\n												 parcela,\r\n												 3)'),
+(643, 'admin', '2014-09-30 18:55:46', 'DELETE FROM asociaciones WHERE id=5'),
+(644, 'admin', '2014-09-30 18:55:50', 'DELETE FROM asociaciones WHERE id=9'),
+(645, 'admin', '2014-09-30 18:55:57', 'DELETE FROM asociaciones WHERE id=3'),
+(646, 'admin', '2014-09-30 18:55:59', 'DELETE FROM asociaciones WHERE id=2'),
+(647, 'admin', '2014-09-30 19:05:45', 'UPDATE configuracion SET \r\n				valor=chanchos,gallinas,cuyes,vacas\r\n				WHERE id=4'),
+(648, 'admin', '2014-09-30 19:34:10', 'DELETE FROM asociaciones WHERE id=8'),
+(649, 'admin', '2014-09-30 19:38:54', 'INSERT INTO asociaciones VALUES (,gallinas,\r\n												 bajo,\r\n												 animales,\r\n												 parcela,\r\n												 3)'),
+(650, 'admin', '2014-09-30 20:07:23', 'INSERT INTO asociaciones VALUES (,guayaba,\r\n												 bajo,\r\n												 cultivo,\r\n												 subparcela,\r\n												 7)'),
+(651, 'admin', '2014-09-30 20:07:29', 'INSERT INTO asociaciones VALUES (,faike,\r\n												 bajo,\r\n												 cultivo,\r\n												 subparcela,\r\n												 7)'),
+(652, 'admin', '2014-09-30 20:07:33', 'DELETE FROM asociaciones WHERE id=13'),
+(653, 'admin', '2014-09-30 20:12:20', 'INSERT INTO asociaciones VALUES (,guayaba,\r\n												 medio,\r\n												 cultivo,\r\n												 subparcela,\r\n												 8)'),
+(654, 'admin', '2014-09-30 20:15:10', 'INSERT INTO asociaciones VALUES (,faike,\r\n												 medio,\r\n												 cultivo,\r\n												 subparcela,\r\n												 9)'),
+(655, 'admin', '2014-09-30 20:15:16', 'INSERT INTO asociaciones VALUES (,guineo,\r\n												 bajo,\r\n												 cultivo,\r\n												 subparcela,\r\n												 9)'),
+(656, 'admin', '2014-09-30 20:23:35', 'INSERT INTO asociaciones VALUES (,guayaba,\r\n												 medio,\r\n												 cultivo,\r\n												 parcela,\r\n												 2)'),
+(657, 'admin', '2014-09-30 20:23:38', 'INSERT INTO asociaciones VALUES (,faike,\r\n												 bajo,\r\n												 cultivo,\r\n												 parcela,\r\n												 2)'),
+(658, 'admin', '2014-09-30 20:23:41', 'INSERT INTO asociaciones VALUES (,guineo,\r\n												 bajo,\r\n												 cultivo,\r\n												 parcela,\r\n												 2)'),
+(659, 'admin', '2014-09-30 20:23:44', 'INSERT INTO asociaciones VALUES (,gallinas,\r\n												 bajo,\r\n												 animales,\r\n												 parcela,\r\n												 2)'),
+(660, 'admin', '2014-09-30 20:23:47', 'INSERT INTO asociaciones VALUES (,cuyes,\r\n												 bajo,\r\n												 animales,\r\n												 parcela,\r\n												 2)'),
+(661, 'admin', '2014-09-30 20:25:51', 'INSERT INTO asociaciones VALUES (,cítrico,\r\n												 bajo,\r\n												 cultivo,\r\n												 subparcela,\r\n												 8)'),
+(662, 'admin', '2014-09-30 20:25:55', 'INSERT INTO asociaciones VALUES (,maíz,\r\n												 bajo,\r\n												 cultivo,\r\n												 subparcela,\r\n												 8)'),
+(663, 'admin', '2014-09-30 22:40:27', 'UPDATE configuracion SET \r\n				valor=caña,yuca,naranja,guayaba,guaba,faike,maíz,platano,cacao,huerto,papaya,pasto\r\n				WHERE id=3'),
+(664, 'admin', '2014-09-30 22:40:51', 'UPDATE configuracion SET \r\n				valor=chanchos,gallinas,cuyes,vacas,colmenas,estanque,ganado\r\n				WHERE id=4'),
+(665, 'admin', '2014-10-01 04:04:31', 'UPDATE lotes SET \r\n				id_socio=SF52,\r\n				codigo_lote=APC-00628-14,\r\n				fecha=2014-09-22 12:53:10,\r\n				peso=6.00,\r\n				humedad=12.00,\r\n				rto_descarte=20,\r\n				rto_exportable=200,\r\n				defecto_negro=0,\r\n				defecto_vinagre=0,\r\n				defecto_decolorado=0,\r\n				defecto_mordido=0,\r\n				defecto_brocado=0,\r\n				reposo=0,\r\n				moho=0,\r\n				fermento=0,\r\n				contaminado=0,\r\n				calidad=A\r\n				\r\n			where id=175'),
+(666, 'admin', '2014-10-01 05:13:45', 'UPDATE configuracion SET \r\n				valor=Nombre de la Asociación\r\n				WHERE id=7'),
+(667, 'admin', '2014-10-28 05:57:06', 'INSERT INTO analisis VALUES (,\r\n				13,\r\n				2,\r\n				3,\r\n				sub-angular,\r\n				moderado,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				franco,\r\n				,\r\n				,\r\n				)'),
+(668, 'admin', '2014-10-28 06:01:06', 'INSERT INTO analisis VALUES (,\r\n				13,\r\n				4,\r\n				3,\r\n				sub-angular,\r\n				moderado,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				1,\r\n				33,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				limoso,\r\n				,\r\n				,\r\n				)'),
+(669, 'admin', '2014-10-28 06:05:25', 'INSERT INTO analisis VALUES (,\r\n				13,\r\n				2014-10-27,\r\n				5,\r\n				44,\r\n				granular,\r\n				fuerte,\r\n				34,\r\n				,\r\n				,\r\n				34,\r\n				0,\r\n				65,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				arcilloso,\r\n				,\r\n				,\r\n				)'),
+(670, 'admin', '2014-10-28 09:24:49', 'DELETE FROM analisis WHERE id_analisis=3'),
+(671, 'admin', '2014-10-28 09:39:26', 'INSERT INTO analisis VALUES (,\r\n				13,\r\n				2014-10-27,\r\n				3,\r\n				2,\r\n				granular,\r\n				moderado,\r\n				33,\r\n				44,\r\n				55,\r\n				23,\r\n				1,\r\n				23,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				limoso,\r\n				,\r\n				,\r\n				)'),
+(672, 'admin', '2014-10-28 09:41:37', 'UPDATE analisis SET\r\n				id_subparcela=13,\r\n				fecha=2014-10-27,\r\n				muestra=3,\r\n				submuestras=2,\r\n				estructura=granular,\r\n				grado=moderado,\r\n				rocas=33,\r\n				rocas_size=44,\r\n				profundidad=55,\r\n				pendiente=23,\r\n				lombrices=1,\r\n				densidad_aparente=23.00,\r\n				observaciones=,\r\n				s_ph=0.00,\r\n				s_n=0.00,\r\n				s_p=0.00,\r\n				s_k=0.00,\r\n				s_mo=0.00,\r\n				s_textura=limoso,\r\n				f_n=0.00,\r\n				f_p=0.00,\r\n				f_k=0.00\r\n				\r\n				WHERE id_analisis='),
+(673, 'admin', '2014-10-28 09:43:21', 'UPDATE analisis SET\r\n				id_subparcela=13,\r\n				fecha=2014-10-27,\r\n				muestra=3,\r\n				submuestras=2,\r\n				estructura=granular,\r\n				grado=moderado,\r\n				rocas=33,\r\n				rocas_size=44,\r\n				profundidad=55,\r\n				pendiente=23,\r\n				lombrices=1,\r\n				densidad_aparente=23.00,\r\n				observaciones=,\r\n				s_ph=0.00,\r\n				s_n=0.00,\r\n				s_p=0.00,\r\n				s_k=0.00,\r\n				s_mo=0.00,\r\n				s_textura=limoso,\r\n				f_n=0.00,\r\n				f_p=0.00,\r\n				f_k=0.00\r\n				\r\n				WHERE id_analisis=4'),
+(674, 'admin', '2014-10-28 09:44:15', 'UPDATE analisis SET\r\n				id_subparcela=13,\r\n				fecha=2014-10-27,\r\n				muestra=3,\r\n				submuestras=2,\r\n				estructura=granular,\r\n				grado=moderado,\r\n				rocas=33,\r\n				rocas_size=44,\r\n				profundidad=55,\r\n				pendiente=23,\r\n				lombrices=1,\r\n				densidad_aparente=23.00,\r\n				observaciones=,\r\n				s_ph=0.00,\r\n				s_n=0.00,\r\n				s_p=0.00,\r\n				s_k=0.00,\r\n				s_mo=0.00,\r\n				s_textura=franco,\r\n				f_n=0.00,\r\n				f_p=0.00,\r\n				f_k=0.00\r\n				\r\n				WHERE id_analisis=4'),
+(675, 'admin', '2014-10-28 09:45:01', 'UPDATE analisis SET\r\n				id_subparcela=13,\r\n				fecha=2014-10-27,\r\n				muestra=3,\r\n				submuestras=2,\r\n				estructura=angular,\r\n				grado=moderado,\r\n				rocas=33,\r\n				rocas_size=44,\r\n				profundidad=55,\r\n				pendiente=23,\r\n				lombrices=1,\r\n				densidad_aparente=23.00,\r\n				observaciones=,\r\n				s_ph=0.00,\r\n				s_n=0.00,\r\n				s_p=0.00,\r\n				s_k=0.00,\r\n				s_mo=0.00,\r\n				s_textura=franco,\r\n				f_n=0.00,\r\n				f_p=0.00,\r\n				f_k=0.00\r\n				\r\n				WHERE id_analisis=4'),
+(676, 'admin', '2014-10-28 09:45:15', 'UPDATE analisis SET\r\n				id_subparcela=13,\r\n				fecha=2014-10-27,\r\n				muestra=3,\r\n				submuestras=2,\r\n				estructura=granular,\r\n				grado=fuerte,\r\n				rocas=33,\r\n				rocas_size=44,\r\n				profundidad=55,\r\n				pendiente=23,\r\n				lombrices=1,\r\n				densidad_aparente=23.00,\r\n				observaciones=,\r\n				s_ph=0.00,\r\n				s_n=0.00,\r\n				s_p=0.00,\r\n				s_k=0.00,\r\n				s_mo=0.00,\r\n				s_textura=franco,\r\n				f_n=0.00,\r\n				f_p=0.00,\r\n				f_k=0.00\r\n				\r\n				WHERE id_analisis=4'),
+(677, 'admin', '2014-10-28 09:45:26', 'UPDATE analisis SET\r\n				id_subparcela=13,\r\n				fecha=2014-10-27,\r\n				muestra=3,\r\n				submuestras=2,\r\n				estructura=granular,\r\n				grado=fuerte,\r\n				rocas=33,\r\n				rocas_size=44,\r\n				profundidad=55,\r\n				pendiente=23,\r\n				lombrices=0,\r\n				densidad_aparente=23.00,\r\n				observaciones=,\r\n				s_ph=0.00,\r\n				s_n=0.00,\r\n				s_p=0.00,\r\n				s_k=0.00,\r\n				s_mo=0.00,\r\n				s_textura=franco,\r\n				f_n=0.00,\r\n				f_p=0.00,\r\n				f_k=0.00\r\n				\r\n				WHERE id_analisis=4'),
+(678, 'admin', '2014-10-28 10:08:24', 'DELETE FROM analisis WHERE id_analisis=4'),
+(679, 'admin', '2014-10-28 22:02:54', 'INSERT INTO asociaciones VALUES (,yuca,\r\n												 medio,\r\n												 cultivo,\r\n												 subparcela,\r\n												 1)'),
+(680, 'admin', '2014-10-28 22:03:07', 'DELETE FROM asociaciones WHERE id=708'),
+(681, 'admin', '2014-10-28 22:03:14', 'INSERT INTO asociaciones VALUES (,cacao,\r\n												 alto,\r\n												 cultivo,\r\n												 subparcela,\r\n												 1)'),
+(682, 'admin', '2014-10-28 22:03:17', 'DELETE FROM asociaciones WHERE id=709'),
+(683, 'admin', '2014-10-29 05:14:18', 'INSERT INTO grupos VALUES(,\r\n				nuevo,\r\n				NV)'),
+(684, 'admin', '2014-10-29 05:44:00', 'DELETE FROM grupos WHERE id=24'),
+(685, 'admin', '2014-10-29 05:57:24', 'INSERT INTO grupos VALUES(,\r\n				nuevo,\r\n				NV)'),
+(686, 'admin', '2014-10-29 05:57:28', 'DELETE FROM grupos WHERE id=25'),
+(687, 'admin', '2014-10-29 06:29:26', 'INSERT INTO socios VALUES(,\r\n				Francisco,\r\n				García,\r\n				1,\r\n				,\r\n				,\r\n				,\r\n				franjmontero@gmail.com,\r\n				C/ Carmen de Burgos 3, 4J,\r\n				AGRODIN,\r\n				,\r\n				,\r\n				,)'),
+(688, 'admin', '2014-10-29 06:31:09', 'INSERT INTO socios VALUES(,\r\n				Francisco,\r\n				García,\r\n				01,\r\n				,\r\n				,\r\n				,\r\n				franjmontero@gmail.com,\r\n				C/ Carmen de Burgos 3, 4J,\r\n				,\r\n				l,\r\n				,\r\n				,)'),
+(689, 'admin', '2014-10-29 06:32:35', 'INSERT INTO socios VALUES(,\r\n				Francisco,\r\n				García,\r\n				1,\r\n				,\r\n				,\r\n				,\r\n				franjmontero@gmail.com,\r\n				C/ Carmen de Burgos 3, 4J,\r\n				FATIMA,\r\n				,\r\n				,\r\n				,)'),
+(690, 'admin', '2014-10-29 06:36:39', 'INSERT INTO socios VALUES(,\r\n				Francisco,\r\n				García,\r\n				1,\r\n				,\r\n				,\r\n				,\r\n				franjmontero@gmail.com,\r\n				C/ Carmen de Burgos 3, 4J,\r\n				EMPROAGRO,\r\n				,\r\n				,\r\n				,masculino)'),
+(691, 'admin', '2014-10-29 06:37:40', 'INSERT INTO socios VALUES(,\r\n				Francisco,\r\n				García,\r\n				LM8,\r\n				,\r\n				,\r\n				,\r\n				franjmontero@gmail.com,\r\n				C/ Carmen de Burgos 3, 4J,\r\n				EMPROAGRO,\r\n				,\r\n				,\r\n				,masculino)'),
+(692, 'admin', '2014-10-29 06:41:40', 'INSERT INTO socios VALUES(,\r\n				Francisco,\r\n				García,\r\n				LE20,\r\n				,\r\n				,\r\n				,\r\n				franjmontero@gmail.com,\r\n				C/ Carmen de Burgos 3, 4J,\r\n				ENTIERROS,\r\n				,\r\n				,\r\n				,masculino)'),
+(693, 'admin', '2014-10-30 22:03:52', 'INSERT INTO analisis VALUES (,\r\n				1,\r\n				2014-10-30,\r\n				55,\r\n				44,\r\n				granular,\r\n				moderado,\r\n				55,\r\n				,\r\n				,\r\n				,\r\n				0,\r\n				14.2,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				,\r\n				15.6,\r\n				45.9,\r\n				,\r\n				franco,\r\n				,\r\n				,\r\n				)'),
+(694, 'admin', '2014-10-30 22:06:08', 'UPDATE analisis SET\r\n				id_subparcela=1,\r\n				fecha=2014-10-30,\r\n				muestra=55,\r\n				submuestras=44,\r\n				estructura=granular,\r\n				grado=moderado,\r\n				rocas=55,\r\n				rocas_size=0,\r\n				profundidad=0,\r\n				pendiente=0,\r\n				lombrices=0,\r\n				densidad_aparente=14.20,\r\n				observaciones=,\r\n				s_ph=0.00,\r\n				s_n=0.00,\r\n				s_p=0.00,\r\n				s_k=80.2,\r\n				s_ca=,\r\n				s_mg=,\r\n				s_mo=0.00,\r\n				s_textura=franco,\r\n				f_n=0.00,\r\n				f_p=0.00,\r\n				f_k=0.00\r\n				\r\n				WHERE id_analisis=1'),
+(695, 'admin', '2014-10-30 22:07:12', 'UPDATE analisis SET\r\n				id_subparcela=1,\r\n				fecha=2014-10-30,\r\n				muestra=55,\r\n				submuestras=44,\r\n				estructura=granular,\r\n				grado=moderado,\r\n				rocas=55,\r\n				rocas_size=0,\r\n				profundidad=0,\r\n				pendiente=0,\r\n				lombrices=0,\r\n				densidad_aparente=14.20,\r\n				observaciones=,\r\n				s_ph=0.00,\r\n				s_n=0.00,\r\n				s_p=0.00,\r\n				s_k=65.9,\r\n				s_ca=45.7,\r\n				s_mg=34.9,\r\n				s_mo=0.00,\r\n				s_textura=franco,\r\n				f_n=0.00,\r\n				f_p=0.00,\r\n				f_k=567\r\n				\r\n				WHERE id_analisis=1'),
+(696, 'admin', '2014-10-30 22:07:24', 'UPDATE analisis SET\r\n				id_subparcela=1,\r\n				fecha=2014-10-30,\r\n				muestra=55,\r\n				submuestras=44,\r\n				estructura=granular,\r\n				grado=moderado,\r\n				rocas=55,\r\n				rocas_size=0,\r\n				profundidad=0,\r\n				pendiente=0,\r\n				lombrices=1,\r\n				densidad_aparente=14.20,\r\n				observaciones=,\r\n				s_ph=0.00,\r\n				s_n=0.00,\r\n				s_p=0.00,\r\n				s_k=65.90,\r\n				s_ca=45.70,\r\n				s_mg=34.90,\r\n				s_mo=0.00,\r\n				s_textura=franco,\r\n				f_n=0.00,\r\n				f_p=0.00,\r\n				f_k=567.00\r\n				\r\n				WHERE id_analisis=1'),
+(697, 'admin', '2014-10-30 22:12:00', 'DELETE FROM analisis WHERE id_analisis=1'),
+(698, 'admin', '2014-12-12 23:51:21', 'DELETE FROM lotes WHERE id=176'),
+(699, 'admin', '2014-12-12 23:51:52', 'DELETE FROM lotes WHERE id=175'),
+(700, 'admin', '2014-12-12 23:52:02', 'DELETE FROM lotes WHERE id=174'),
+(701, 'admin', '2014-12-12 23:52:09', 'DELETE FROM lotes WHERE id=173'),
+(702, 'admin', '2015-01-12 02:38:24', 'INSERT INTO analisis VALUES (,\r\n				1,\r\n				2015-01-11,\r\n				2,\r\n				2,\r\n				angular,\r\n				débil,\r\n				25,\r\n				10,\r\n				25,\r\n				30,\r\n				1,\r\n				25,\r\n				,\r\n				5.5,\r\n				12.2,\r\n				15.2,\r\n				15.6,\r\n				45.2,\r\n				25,\r\n				25,\r\n				arcilloso,\r\n				25,\r\n				50,\r\n				124)'),
+(703, 'admin', '2015-01-12 02:47:02', 'INSERT INTO analisis VALUES (,\r\n				12,\r\n				2015-01-11,\r\n				3,\r\n				4,\r\n				granular,\r\n				débil,\r\n				44,\r\n				44,\r\n				44,\r\n				44,\r\n				0,\r\n				44,\r\n				,\r\n				44,\r\n				44,\r\n				44,\r\n				44,\r\n				4,\r\n				44,\r\n				44,\r\n				arenoso,\r\n				44,\r\n				44,\r\n				44)'),
+(704, 'admin', '2015-01-29 02:55:01', 'INSERT INTO despachos VALUES(,\r\n				APC-164,\r\n				2015-01-28 16:54:43,\r\n				1,\r\n				4)'),
+(705, 'admin', '2015-03-19 02:14:37', 'INSERT INTO usuarios VALUES(,\r\n				jose,\r\n				jose,\r\n				9115,\r\n				1)');
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `altas`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `altas`;
 CREATE TABLE IF NOT EXISTS `altas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
@@ -312,23 +993,66 @@ CREATE TABLE IF NOT EXISTS `altas` (
   `estado` text COLLATE latin1_spanish_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_alta_SOCIO_idx` (`id_socio`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=48 ;
 
 --
--- RELACIONES PARA LA TABLA `altas`:
---   `id_socio`
---       `socios` -> `id_socio`
+-- Volcado de datos para la tabla `altas`
 --
+
+INSERT INTO `altas` (`id`, `id_socio`, `fecha`, `estado`) VALUES
+(2, 31, '2014-06-05 20:15:38', 'ingreso'),
+(3, 32, '2014-06-05 20:15:38', 'ingreso'),
+(4, 33, '2014-06-05 20:15:38', 'ingreso'),
+(5, 34, '2014-06-05 20:15:38', 'ingreso'),
+(6, 35, '2014-06-05 20:15:38', 'ingreso'),
+(7, 36, '2014-06-05 20:15:38', 'ingreso'),
+(8, 37, '2014-06-05 20:15:38', 'ingreso'),
+(9, 38, '2014-06-05 20:15:38', 'ingreso'),
+(10, 39, '2014-06-05 20:15:38', 'ingreso'),
+(11, 40, '2014-06-05 20:15:38', 'ingreso'),
+(12, 41, '2014-06-05 20:15:38', 'ingreso'),
+(13, 42, '2014-06-05 20:15:38', 'ingreso'),
+(14, 43, '2014-06-05 20:15:38', 'ingreso'),
+(15, 44, '2014-06-05 20:15:38', 'ingreso'),
+(16, 45, '2014-06-05 20:15:38', 'ingreso'),
+(17, 23, '2014-06-05 20:15:38', 'ingreso'),
+(18, 299, '2014-06-05 20:15:38', 'ingreso'),
+(19, 1, '2014-06-05 20:15:38', 'ingreso'),
+(20, 2, '2014-06-05 20:15:38', 'ingreso'),
+(21, 3, '2014-06-05 20:15:38', 'ingreso'),
+(22, 4, '2014-06-05 20:15:38', 'ingreso'),
+(23, 5, '2014-06-05 20:15:38', 'ingreso'),
+(24, 6, '2014-06-05 20:15:38', 'ingreso'),
+(25, 7, '2014-06-05 20:15:38', 'ingreso'),
+(26, 8, '2014-06-05 20:15:38', 'ingreso'),
+(27, 9, '2014-06-05 20:15:38', 'ingreso'),
+(28, 10, '2014-06-05 20:15:38', 'ingreso'),
+(29, 11, '2014-06-05 20:15:38', 'ingreso'),
+(30, 12, '2014-06-05 20:15:38', 'ingreso'),
+(31, 13, '2014-06-05 20:15:38', 'ingreso'),
+(32, 14, '2014-06-05 20:15:38', 'ingreso'),
+(33, 15, '2014-06-05 20:15:38', 'ingreso'),
+(34, 16, '2014-06-05 20:15:38', 'ingreso'),
+(35, 17, '2014-06-05 20:15:38', 'ingreso'),
+(36, 18, '2014-06-05 20:15:38', 'ingreso'),
+(37, 19, '2014-06-05 20:15:38', 'ingreso'),
+(38, 20, '2014-06-05 20:15:38', 'ingreso'),
+(39, 21, '2014-06-05 20:15:38', 'ingreso'),
+(40, 22, '2014-06-05 20:15:38', 'ingreso'),
+(41, 24, '2014-06-05 20:15:38', 'ingreso'),
+(42, 25, '2014-06-05 20:15:38', 'ingreso'),
+(43, 26, '2014-06-05 20:15:38', 'ingreso'),
+(44, 27, '2014-06-05 20:15:38', 'ingreso'),
+(45, 28, '2014-06-05 20:15:38', 'ingreso'),
+(46, 29, '2014-06-05 20:15:38', 'ingreso'),
+(47, 30, '2014-06-05 20:15:38', 'ingreso');
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `analisis`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `analisis`;
 CREATE TABLE IF NOT EXISTS `analisis` (
   `id_analisis` int(11) NOT NULL AUTO_INCREMENT,
   `id_subparcela` int(11) NOT NULL,
@@ -359,21 +1083,12 @@ CREATE TABLE IF NOT EXISTS `analisis` (
   KEY `fk_subparcela_analisis_idx` (`id_subparcela`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
 
---
--- RELACIONES PARA LA TABLA `analisis`:
---   `id_subparcela`
---       `subparcelas` -> `id`
---
-
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `asociaciones`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `asociaciones`;
 CREATE TABLE IF NOT EXISTS `asociaciones` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `concepto` text COLLATE latin1_spanish_ci NOT NULL,
@@ -383,23 +1098,234 @@ CREATE TABLE IF NOT EXISTS `asociaciones` (
   `subparcela_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_SUBPARCELA_ASOCIACION_idx` (`subparcela_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=706 ;
 
 --
--- RELACIONES PARA LA TABLA `asociaciones`:
---   `subparcela_id`
---       `subparcelas` -> `id`
+-- Volcado de datos para la tabla `asociaciones`
 --
+
+INSERT INTO `asociaciones` (`id`, `concepto`, `valor`, `tipo`, `elemento`, `subparcela_id`) VALUES
+(1, 'cacao', '', 'cultivo', 'parcela', 3),
+(2, 'cacao', '', 'cultivo', 'parcela', 4),
+(3, 'cacao', '', 'cultivo', 'parcela', 5),
+(4, 'cacao', '', 'cultivo', 'parcela', 8),
+(5, 'cacao', '', 'cultivo', 'parcela', 13),
+(6, 'cacao', '', 'cultivo', 'parcela', 14),
+(7, 'cacao', '', 'cultivo', 'parcela', 20),
+(8, 'cacao', '', 'cultivo', 'parcela', 37),
+(9, 'cacao', '', 'cultivo', 'parcela', 47),
+(10, 'cacao', '', 'cultivo', 'parcela', 48),
+(11, 'cacao', '', 'cultivo', 'parcela', 52),
+(12, 'cacao', '', 'cultivo', 'parcela', 64),
+(13, 'cacao', '', 'cultivo', 'parcela', 69),
+(14, 'cacao', '', 'cultivo', 'parcela', 70),
+(15, 'cacao', '', 'cultivo', 'parcela', 72),
+(16, 'cacao', '', 'cultivo', 'parcela', 73),
+(17, 'cacao', '', 'cultivo', 'parcela', 75),
+(37, 'cacao', '', 'cultivo', 'parcela', 296),
+(38, 'colmenas', '', 'animales', 'parcela', 5),
+(39, 'colmenas', '', 'animales', 'parcela', 8),
+(40, 'colmenas', '', 'animales', 'parcela', 20),
+(41, 'colmenas', '', 'animales', 'parcela', 34),
+(42, 'colmenas', '', 'animales', 'parcela', 48),
+(53, 'estanque', '', 'animales', 'parcela', 5),
+(54, 'estanque', '', 'animales', 'parcela', 8),
+(55, 'estanque', '', 'animales', 'parcela', 19),
+(56, 'estanque', '', 'animales', 'parcela', 33),
+(57, 'estanque', '', 'animales', 'parcela', 37),
+(58, 'estanque', '', 'animales', 'parcela', 43),
+(59, 'estanque', '', 'animales', 'parcela', 61),
+(60, 'estanque', '', 'animales', 'parcela', 64),
+(61, 'estanque', '', 'animales', 'parcela', 66),
+(62, 'estanque', '', 'animales', 'parcela', 92),
+(85, 'ganado', '', 'animales', 'parcela', 3),
+(86, 'ganado', '', 'animales', 'parcela', 5),
+(87, 'ganado', '', 'animales', 'parcela', 9),
+(88, 'ganado', '', 'animales', 'parcela', 10),
+(89, 'ganado', '', 'animales', 'parcela', 13),
+(90, 'ganado', '', 'animales', 'parcela', 18),
+(91, 'ganado', '', 'animales', 'parcela', 33),
+(92, 'ganado', '', 'animales', 'parcela', 34),
+(93, 'ganado', '', 'animales', 'parcela', 36),
+(94, 'ganado', '', 'animales', 'parcela', 37),
+(95, 'ganado', '', 'animales', 'parcela', 39),
+(96, 'ganado', '', 'animales', 'parcela', 42),
+(97, 'ganado', '', 'animales', 'parcela', 43),
+(98, 'ganado', '', 'animales', 'parcela', 45),
+(99, 'ganado', '', 'animales', 'parcela', 46),
+(100, 'ganado', '', 'animales', 'parcela', 47),
+(101, 'ganado', '', 'animales', 'parcela', 51),
+(102, 'ganado', '', 'animales', 'parcela', 65),
+(103, 'ganado', '', 'animales', 'parcela', 66),
+(104, 'ganado', '', 'animales', 'parcela', 73),
+(105, 'ganado', '', 'animales', 'parcela', 75),
+(106, 'ganado', '', 'animales', 'parcela', 89),
+(107, 'ganado', '', 'animales', 'parcela', 91),
+(108, 'ganado', '', 'animales', 'parcela', 92),
+(186, 'ganado', '', 'animales', 'parcela', 296),
+(187, 'ganado', '', 'animales', 'parcela', 297),
+(190, 'guayaba', '', 'cultivo', 'parcela', 3),
+(191, 'guayaba', '', 'cultivo', 'parcela', 4),
+(192, 'guayaba', '', 'cultivo', 'parcela', 13),
+(193, 'guayaba', '', 'cultivo', 'parcela', 33),
+(194, 'guayaba', '', 'cultivo', 'parcela', 35),
+(195, 'guayaba', '', 'cultivo', 'parcela', 39),
+(196, 'guayaba', '', 'cultivo', 'parcela', 43),
+(197, 'guayaba', '', 'cultivo', 'parcela', 44),
+(198, 'guayaba', '', 'cultivo', 'parcela', 45),
+(199, 'guayaba', '', 'cultivo', 'parcela', 48),
+(200, 'guayaba', '', 'cultivo', 'parcela', 50),
+(201, 'guayaba', '', 'cultivo', 'parcela', 52),
+(202, 'guayaba', '', 'cultivo', 'parcela', 62),
+(203, 'guayaba', '', 'cultivo', 'parcela', 64),
+(204, 'guayaba', '', 'cultivo', 'parcela', 66),
+(205, 'guayaba', '', 'cultivo', 'parcela', 88),
+(206, 'guayaba', '', 'cultivo', 'parcela', 91),
+(207, 'guayaba', '', 'cultivo', 'parcela', 92),
+(247, 'guayaba', '', 'cultivo', 'parcela', 296),
+(248, 'huerto', '', 'cultivo', 'parcela', 3),
+(249, 'huerto', '', 'cultivo', 'parcela', 4),
+(250, 'huerto', '', 'cultivo', 'parcela', 7),
+(251, 'huerto', '', 'cultivo', 'parcela', 8),
+(252, 'huerto', '', 'cultivo', 'parcela', 15),
+(253, 'huerto', '', 'cultivo', 'parcela', 16),
+(254, 'huerto', '', 'cultivo', 'parcela', 21),
+(255, 'huerto', '', 'cultivo', 'parcela', 33),
+(256, 'huerto', '', 'cultivo', 'parcela', 35),
+(257, 'huerto', '', 'cultivo', 'parcela', 37),
+(258, 'huerto', '', 'cultivo', 'parcela', 39),
+(259, 'huerto', '', 'cultivo', 'parcela', 40),
+(260, 'huerto', '', 'cultivo', 'parcela', 42),
+(261, 'huerto', '', 'cultivo', 'parcela', 44),
+(262, 'huerto', '', 'cultivo', 'parcela', 45),
+(263, 'huerto', '', 'cultivo', 'parcela', 46),
+(264, 'huerto', '', 'cultivo', 'parcela', 48),
+(265, 'huerto', '', 'cultivo', 'parcela', 50),
+(266, 'huerto', '', 'cultivo', 'parcela', 51),
+(267, 'huerto', '', 'cultivo', 'parcela', 52),
+(268, 'huerto', '', 'cultivo', 'parcela', 53),
+(269, 'huerto', '', 'cultivo', 'parcela', 61),
+(270, 'huerto', '', 'cultivo', 'parcela', 69),
+(271, 'huerto', '', 'cultivo', 'parcela', 73),
+(272, 'huerto', '', 'cultivo', 'parcela', 88),
+(273, 'huerto', '', 'cultivo', 'parcela', 92),
+(322, 'huerto', '', 'cultivo', 'parcela', 297),
+(324, 'naranja', '', 'cultivo', 'parcela', 1),
+(325, 'naranja', '', 'cultivo', 'parcela', 3),
+(326, 'naranja', '', 'cultivo', 'parcela', 4),
+(327, 'naranja', '', 'cultivo', 'parcela', 8),
+(328, 'naranja', '', 'cultivo', 'parcela', 18),
+(329, 'naranja', '', 'cultivo', 'parcela', 19),
+(330, 'naranja', '', 'cultivo', 'parcela', 35),
+(331, 'naranja', '', 'cultivo', 'parcela', 44),
+(332, 'naranja', '', 'cultivo', 'parcela', 46),
+(333, 'naranja', '', 'cultivo', 'parcela', 47),
+(334, 'naranja', '', 'cultivo', 'parcela', 48),
+(335, 'naranja', '', 'cultivo', 'parcela', 50),
+(336, 'naranja', '', 'cultivo', 'parcela', 51),
+(337, 'naranja', '', 'cultivo', 'parcela', 52),
+(338, 'naranja', '', 'cultivo', 'parcela', 54),
+(339, 'naranja', '', 'cultivo', 'parcela', 64),
+(340, 'naranja', '', 'cultivo', 'parcela', 70),
+(341, 'naranja', '', 'cultivo', 'parcela', 72),
+(342, 'naranja', '', 'cultivo', 'parcela', 73),
+(343, 'naranja', '', 'cultivo', 'parcela', 75),
+(401, 'naranja', '', 'cultivo', 'parcela', 296),
+(402, 'papaya', '', 'cultivo', 'parcela', 7),
+(403, 'papaya', '', 'cultivo', 'parcela', 8),
+(404, 'papaya', '', 'cultivo', 'parcela', 14),
+(405, 'papaya', '', 'cultivo', 'parcela', 16),
+(406, 'papaya', '', 'cultivo', 'parcela', 18),
+(407, 'papaya', '', 'cultivo', 'parcela', 39),
+(408, 'papaya', '', 'cultivo', 'parcela', 42),
+(409, 'papaya', '', 'cultivo', 'parcela', 48),
+(410, 'papaya', '', 'cultivo', 'parcela', 50),
+(411, 'papaya', '', 'cultivo', 'parcela', 53),
+(412, 'papaya', '', 'cultivo', 'parcela', 54),
+(413, 'papaya', '', 'cultivo', 'parcela', 70),
+(414, 'papaya', '', 'cultivo', 'parcela', 73),
+(441, 'papaya', '', 'cultivo', 'parcela', 296),
+(442, 'pasto', '', 'cultivo', 'parcela', 3),
+(443, 'pasto', '', 'cultivo', 'parcela', 4),
+(444, 'pasto', '', 'cultivo', 'parcela', 5),
+(445, 'pasto', '', 'cultivo', 'parcela', 9),
+(446, 'pasto', '', 'cultivo', 'parcela', 10),
+(447, 'pasto', '', 'cultivo', 'parcela', 13),
+(448, 'pasto', '', 'cultivo', 'parcela', 18),
+(449, 'pasto', '', 'cultivo', 'parcela', 33),
+(450, 'pasto', '', 'cultivo', 'parcela', 35),
+(451, 'pasto', '', 'cultivo', 'parcela', 36),
+(452, 'pasto', '', 'cultivo', 'parcela', 39),
+(453, 'pasto', '', 'cultivo', 'parcela', 42),
+(454, 'pasto', '', 'cultivo', 'parcela', 43),
+(455, 'pasto', '', 'cultivo', 'parcela', 44),
+(456, 'pasto', '', 'cultivo', 'parcela', 45),
+(457, 'pasto', '', 'cultivo', 'parcela', 47),
+(458, 'pasto', '', 'cultivo', 'parcela', 51),
+(459, 'pasto', '', 'cultivo', 'parcela', 54),
+(460, 'pasto', '', 'cultivo', 'parcela', 65),
+(461, 'pasto', '', 'cultivo', 'parcela', 66),
+(462, 'pasto', '', 'cultivo', 'parcela', 70),
+(463, 'pasto', '', 'cultivo', 'parcela', 73),
+(464, 'pasto', '', 'cultivo', 'parcela', 75),
+(465, 'pasto', '', 'cultivo', 'parcela', 89),
+(466, 'pasto', '', 'cultivo', 'parcela', 91),
+(467, 'pasto', '', 'cultivo', 'parcela', 92),
+(545, 'pasto', '', 'cultivo', 'parcela', 296),
+(547, 'platano', '', 'cultivo', 'parcela', 1),
+(548, 'platano', '', 'cultivo', 'parcela', 2),
+(549, 'platano', '', 'cultivo', 'parcela', 3),
+(550, 'platano', '', 'cultivo', 'parcela', 7),
+(551, 'platano', '', 'cultivo', 'parcela', 8),
+(552, 'platano', '', 'cultivo', 'parcela', 9),
+(553, 'platano', '', 'cultivo', 'parcela', 10),
+(554, 'platano', '', 'cultivo', 'parcela', 13),
+(555, 'platano', '', 'cultivo', 'parcela', 14),
+(556, 'platano', '', 'cultivo', 'parcela', 15),
+(557, 'platano', '', 'cultivo', 'parcela', 16),
+(558, 'platano', '', 'cultivo', 'parcela', 18),
+(559, 'platano', '', 'cultivo', 'parcela', 19),
+(560, 'platano', '', 'cultivo', 'parcela', 20),
+(561, 'platano', '', 'cultivo', 'parcela', 21),
+(562, 'platano', '', 'cultivo', 'parcela', 33),
+(563, 'platano', '', 'cultivo', 'parcela', 35),
+(564, 'platano', '', 'cultivo', 'parcela', 36),
+(565, 'platano', '', 'cultivo', 'parcela', 37),
+(566, 'platano', '', 'cultivo', 'parcela', 39),
+(567, 'platano', '', 'cultivo', 'parcela', 40),
+(568, 'platano', '', 'cultivo', 'parcela', 42),
+(569, 'platano', '', 'cultivo', 'parcela', 43),
+(570, 'platano', '', 'cultivo', 'parcela', 44),
+(571, 'platano', '', 'cultivo', 'parcela', 45),
+(572, 'platano', '', 'cultivo', 'parcela', 46),
+(573, 'platano', '', 'cultivo', 'parcela', 47),
+(574, 'platano', '', 'cultivo', 'parcela', 48),
+(575, 'platano', '', 'cultivo', 'parcela', 50),
+(576, 'platano', '', 'cultivo', 'parcela', 51),
+(577, 'platano', '', 'cultivo', 'parcela', 52),
+(578, 'platano', '', 'cultivo', 'parcela', 53),
+(579, 'platano', '', 'cultivo', 'parcela', 54),
+(580, 'platano', '', 'cultivo', 'parcela', 58),
+(581, 'platano', '', 'cultivo', 'parcela', 61),
+(582, 'platano', '', 'cultivo', 'parcela', 62),
+(583, 'platano', '', 'cultivo', 'parcela', 64),
+(584, 'platano', '', 'cultivo', 'parcela', 65),
+(585, 'platano', '', 'cultivo', 'parcela', 66),
+(586, 'platano', '', 'cultivo', 'parcela', 70),
+(587, 'platano', '', 'cultivo', 'parcela', 72),
+(588, 'platano', '', 'cultivo', 'parcela', 73),
+(589, 'platano', '', 'cultivo', 'parcela', 75),
+(590, 'platano', '', 'cultivo', 'parcela', 88),
+(591, 'platano', '', 'cultivo', 'parcela', 89),
+(592, 'platano', '', 'cultivo', 'parcela', 92),
+(705, 'platano', '', 'cultivo', 'parcela', 296);
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `catas`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `catas`;
 CREATE TABLE IF NOT EXISTS `catas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lote` int(11) NOT NULL,
@@ -445,23 +1371,165 @@ CREATE TABLE IF NOT EXISTS `catas` (
   `d_general` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk:CATA_LOTE_idx` (`lote`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=146 ;
 
 --
--- RELACIONES PARA LA TABLA `catas`:
---   `lote`
---       `lotes` -> `id`
+-- Volcado de datos para la tabla `catas`
 --
+
+INSERT INTO `catas` (`id`, `lote`, `fecha`, `catador`, `tostado`, `fragancia`, `tipo_aroma1`, `nota_aroma`, `sabor`, `tipo_sabor`, `nota_sabor`, `sabor_residual`, `tipo_sabor_residual`, `nota_sabor_residual`, `acidez`, `cuerpo`, `uniformidad`, `balance`, `puntaje_catador`, `taza_limpia`, `dulzor`, `nota_catacion`, `puntuacion`, `d_fermento`, `d_metalico`, `d_quimico`, `d_vinagre`, `d_stinker`, `d_fenol`, `d_reposo`, `d_moho`, `d_terroso`, `d_extrano`, `d_sucio`, `d_astringente`, `d_quaquers`, `dl_cereal`, `dl_fermento`, `dl_reposo`, `dl_moho`, `dl_astringencia`, `d_general`) VALUES
+(1, 131, '2014-08-06 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 87.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(2, 28, '2014-06-24 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 86.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(3, 39, '2014-06-24 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 86.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(4, 44, '2014-06-27 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 86.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(5, 52, '2014-07-01 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 86.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(6, 93, '2014-07-28 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 86.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(7, 169, '2014-08-14 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 86.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(8, 112, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(9, 120, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(10, 125, '2014-08-05 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(11, 46, '2014-06-27 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(12, 15, '2014-06-02 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(13, 34, '2014-06-20 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(14, 40, '2014-06-26 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(15, 41, '2014-06-26 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(16, 50, '2014-06-30 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(17, 55, '2014-07-03 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(18, 95, '2014-07-28 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(19, 111, '2014-08-01 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(20, 123, '2014-08-05 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 85.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(21, 162, '2014-08-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(22, 53, '2014-07-02 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(23, 60, '2014-07-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(24, 85, '2014-07-23 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(25, 97, '2014-07-29 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(26, 117, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(27, 119, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(28, 133, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(29, 134, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(30, 135, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(31, 137, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(32, 142, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(33, 161, '2014-08-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(34, 165, '2014-08-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(35, 170, '2014-08-18 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(36, 67, '2014-07-14 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(37, 74, '2014-07-16 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(38, 13, '2014-02-06 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(39, 33, '2014-06-11 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(40, 24, '2014-06-11 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(41, 31, '2014-06-18 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(42, 42, '2014-06-19 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(43, 37, '2014-06-24 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(44, 42, '2014-06-26 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(45, 49, '2014-06-30 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(46, 51, '2014-06-30 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(47, 63, '2014-07-10 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(48, 65, '2014-07-11 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(49, 73, '2014-07-16 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(50, 79, '2014-07-21 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(51, 80, '2014-07-21 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(52, 99, '2014-07-30 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(53, 100, '2014-07-30 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(54, 101, '2014-07-31 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(55, 102, '2014-07-31 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(56, 104, '2014-07-31 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(57, 107, '2014-08-01 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(58, 108, '2014-08-01 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(59, 109, '2014-08-01 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(60, 113, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(61, 118, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(62, 122, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(63, 126, '2014-08-05 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(64, 127, '2014-08-05 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(65, 129, '2014-08-06 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(66, 130, '2014-08-06 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(67, 132, '2014-08-06 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(68, 136, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(69, 138, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(70, 147, '2014-08-08 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(71, 149, '2014-08-08 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(72, 157, '2014-08-11 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(73, 163, '2014-08-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(74, 166, '2014-08-13 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(75, 167, '2014-08-13 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(76, 171, '2014-08-18 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(77, 48, '2014-06-27 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(78, 57, '2014-07-03 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(79, 59, '2014-07-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(80, 62, '2014-07-10 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(81, 64, '2014-07-10 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(82, 66, '2014-07-14 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(83, 69, '2014-07-14 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(84, 77, '2014-07-17 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(85, 84, '2014-07-23 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(86, 87, '2014-07-24 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(87, 89, '2014-07-24 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(88, 90, '2014-07-24 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(89, 92, '2014-07-25 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(90, 94, '2014-07-28 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(91, 103, '2014-07-31 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(92, 114, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(93, 121, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(94, 140, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(95, 143, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(96, 152, '2014-08-08 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(97, 164, '2014-08-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(98, 168, '2014-08-14 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(99, 47, '2014-06-27 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(100, 56, '2014-07-03 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(101, 88, '2014-07-24 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(102, 105, '2014-08-01 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 'FERMENTO', 83.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(103, 110, '2014-08-01 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 'FERMENTO', 83.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(104, 128, '2014-08-06 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(105, 151, '2014-08-08 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(106, 14, '2014-06-02 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(107, 18, '2014-06-03 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(108, 27, '2014-06-02 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(109, 21, '2014-06-10 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(110, 26, '2014-06-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(111, 27, '2014-06-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(112, 29, '2014-06-17 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(113, 30, '2014-06-17 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(114, 36, '2014-06-20 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(115, 54, '2014-07-02 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(116, 75, '2014-07-17 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(117, 78, '2014-07-21 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(118, 96, '2014-07-29 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 83.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(119, 70, '2014-07-15 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 82.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(120, 83, '2014-07-22 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 82.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(121, 150, '2014-08-08 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 82.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(122, 159, '2014-08-11 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 82.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(123, 45, '2014-06-27 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 82.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(124, 86, '2014-07-23 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 82.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(125, 91, '2014-07-24 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 82.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(126, 98, '2014-07-29 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 'FERMENTO', 82.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(127, 115, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 'hongos', 82.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(128, 154, '2014-08-11 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 82.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(129, 156, '2014-08-11 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 82.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(130, 61, '2014-07-10 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.75, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(131, 124, '2014-08-05 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(132, 16, '2014-06-02 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(133, 25, '2014-06-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(134, 58, '2014-07-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(135, 68, '2014-07-14 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(136, 82, '2014-07-21 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(137, 116, '2014-08-04 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 'FERMENTO', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(138, 139, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(139, 141, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(140, 153, '2014-08-11 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(141, 158, '2014-08-11 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 81.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(142, 148, '2014-08-08 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 80.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(143, 28, '2014-06-16 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 77.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(144, 160, '2014-09-17 04:15:07', 'juanito', 6, 8.50, 'Frutal,Caramelo,Vainilla', '', 9.50, 'Chocolate amargo,Articulado', '', 6.75, 'Limpio,Dulce', '', 9.00, 8.50, 9.50, 8.75, 9.25, 9.50, 8.75, '', 86.00, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 1, 2),
+(145, 23, '2014-09-28 20:09:18', 'Catador', 6, 8.75, 'Herbal,Vainilla,Neutral', '', 8.00, 'Caramelo,Chocolate dulce', '', 8.25, 'Refrescante,Dulce', '', 9.50, 8.00, 8.75, 8.00, 9.00, 8.25, 8.75, '', 85.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `certificacion`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `certificacion`;
 CREATE TABLE IF NOT EXISTS `certificacion` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
@@ -469,30 +1537,82 @@ CREATE TABLE IF NOT EXISTS `certificacion` (
   `estatus` text COLLATE latin1_spanish_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_:SOCIO_CERTIFICACION_idx` (`id_socio`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=2 ;
-
---
--- RELACIONES PARA LA TABLA `certificacion`:
---   `id_socio`
---       `socios` -> `id_socio`
---
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=332 ;
 
 --
 -- Volcado de datos para la tabla `certificacion`
 --
 
 INSERT INTO `certificacion` (`id`, `id_socio`, `year`, `estatus`) VALUES
-(1, 306, 2147483647, 'ORGANICO');
+(2, 1, 2009, 'BO'),
+(3, 2, 2009, 'BO'),
+(4, 3, 2009, 'BO'),
+(5, 4, 2009, 'BO'),
+(6, 5, 2009, 'BO'),
+(7, 6, 2009, 'BO'),
+(8, 7, 2009, 'BO'),
+(9, 8, 2009, 'BO'),
+(10, 9, 2009, 'BO'),
+(11, 10, 2009, 'BO'),
+(12, 11, 2009, 'BO'),
+(13, 12, 2009, 'BO'),
+(14, 13, 2009, 'BO'),
+(15, 14, 2009, 'BO'),
+(16, 15, 2009, ''),
+(17, 16, 2009, 'BO'),
+(18, 17, 2009, ''),
+(19, 18, 2009, ''),
+(20, 19, 2009, ''),
+(21, 20, 2009, ''),
+(22, 21, 2009, ''),
+(23, 22, 2009, ''),
+(24, 23, 2009, ''),
+(25, 24, 2009, ''),
+(26, 25, 2009, ''),
+(27, 26, 2009, ''),
+(28, 27, 2009, ''),
+(29, 28, 2009, ''),
+(30, 29, 2009, ''),
+(31, 30, 2009, ''),
+(32, 299, 2009, ''),
+(301, 1, 2010, 'BO'),
+(302, 2, 2010, 'BO'),
+(303, 3, 2010, 'BO'),
+(304, 4, 2010, 'BO'),
+(305, 5, 2010, 'BO'),
+(306, 6, 2010, 'BO'),
+(307, 7, 2010, 'BO'),
+(308, 8, 2010, 'BO'),
+(309, 9, 2010, 'BO'),
+(310, 10, 2010, 'BO'),
+(311, 11, 2010, 'BO'),
+(312, 12, 2010, 'BO'),
+(313, 13, 2010, 'BO'),
+(314, 14, 2010, 'BO'),
+(315, 15, 2010, ''),
+(316, 16, 2010, ''),
+(317, 17, 2010, ''),
+(318, 18, 2010, 'BO'),
+(319, 19, 2010, 'BO'),
+(320, 20, 2010, ''),
+(321, 21, 2010, ''),
+(322, 22, 2010, ''),
+(323, 23, 2010, ''),
+(324, 24, 2010, ''),
+(325, 25, 2010, ''),
+(326, 26, 2010, ''),
+(327, 27, 2010, ''),
+(328, 28, 2010, ''),
+(329, 29, 2010, ''),
+(330, 30, 2010, ''),
+(331, 299, 2010, '');
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `comentario`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `comentario`;
 CREATE TABLE IF NOT EXISTS `comentario` (
   `id_COMENTARIO` int(11) NOT NULL AUTO_INCREMENT,
   `Comentario` varchar(45) DEFAULT NULL,
@@ -503,23 +1623,12 @@ CREATE TABLE IF NOT EXISTS `comentario` (
   KEY `FK_Foto_COmentario_idx` (`Id_foto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
---
--- RELACIONES PARA LA TABLA `comentario`:
---   `id_usuario`
---       `usuarios` -> `id`
---   `Id_foto`
---       `fotos` -> `id`
---
-
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `configuracion`
 --
--- Creación: 01-05-2015 a las 16:42:24
---
 
-DROP TABLE IF EXISTS `configuracion`;
 CREATE TABLE IF NOT EXISTS `configuracion` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `parametro` text COLLATE latin1_spanish_ci NOT NULL,
@@ -547,10 +1656,7 @@ INSERT INTO `configuracion` (`id`, `parametro`, `descripcion`, `valor`) VALUES
 --
 -- Estructura de tabla para la tabla `despachos`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `despachos`;
 CREATE TABLE IF NOT EXISTS `despachos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lote` int(11) NOT NULL,
@@ -560,25 +1666,27 @@ CREATE TABLE IF NOT EXISTS `despachos` (
   PRIMARY KEY (`id`),
   KEY `fk_despacho_lote_idx` (`lote`),
   KEY `FK_DESPACHO_ENVIO_idx` (`envio`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=8 ;
 
 --
--- RELACIONES PARA LA TABLA `despachos`:
---   `envio`
---       `envios` -> `id`
---   `lote`
---       `lotes` -> `id`
+-- Volcado de datos para la tabla `despachos`
 --
+
+INSERT INTO `despachos` (`id`, `lote`, `fecha`, `cantidad`, `envio`) VALUES
+(1, 37, '2014-09-25 04:18:41', 2.50, 1),
+(2, 37, '2014-09-25 04:19:22', 1.93, 2),
+(3, 170, '2014-09-25 04:57:14', 4.00, 3),
+(4, 170, '2014-09-28 23:01:57', 3.12, 2),
+(5, 37, '2014-09-28 23:02:33', 0.57, 3),
+(6, 35, '2014-09-28 23:03:20', 4.50, 2),
+(7, 171, '2015-01-29 02:54:43', 1.00, 4);
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `envios`
 --
--- Creación: 01-05-2015 a las 16:42:24
---
 
-DROP TABLE IF EXISTS `envios`;
 CREATE TABLE IF NOT EXISTS `envios` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -586,17 +1694,24 @@ CREATE TABLE IF NOT EXISTS `envios` (
   `chofer` text COLLATE latin1_spanish_ci NOT NULL,
   `responsable` text COLLATE latin1_spanish_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=5 ;
+
+--
+-- Volcado de datos para la tabla `envios`
+--
+
+INSERT INTO `envios` (`id`, `fecha`, `destino`, `chofer`, `responsable`) VALUES
+(1, '2014-06-03 20:15:22', 'FAPECAFES', 'manolo', 'cosmel'),
+(2, '2014-06-04 20:30:26', 'ZAMORA', 'Juanitosss', 'Manolo'),
+(3, '2014-06-03 22:19:54', 'Loja', 'Albertito', 'Manolo'),
+(4, '2014-06-07 05:15:17', 'Quito', 'Manolo', 'Juanito');
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `estimacion`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `estimacion`;
 CREATE TABLE IF NOT EXISTS `estimacion` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
@@ -605,23 +1720,51 @@ CREATE TABLE IF NOT EXISTS `estimacion` (
   `entregados` double(10,2) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk:_Estimacion_socio_idx` (`id_socio`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=33 ;
 
 --
--- RELACIONES PARA LA TABLA `estimacion`:
---   `id_socio`
---       `socios` -> `id_socio`
+-- Volcado de datos para la tabla `estimacion`
 --
+
+INSERT INTO `estimacion` (`id`, `id_socio`, `year`, `estimados`, `entregados`) VALUES
+(2, 1, 2011, 0.00, 2.00),
+(3, 2, 2011, 0.00, 16.00),
+(4, 3, 2011, 0.00, 24.00),
+(5, 4, 2011, 0.00, 54.00),
+(6, 5, 2011, 0.00, 16.00),
+(7, 6, 2011, 0.00, 13.00),
+(8, 7, 2011, 0.00, 120.00),
+(9, 8, 2011, 0.00, 35.00),
+(10, 9, 2011, 0.00, 59.00),
+(11, 10, 2011, 0.00, 10.00),
+(12, 11, 2011, 0.00, 31.00),
+(13, 12, 2011, 0.00, 18.00),
+(14, 13, 2011, 0.00, 0.00),
+(15, 14, 2011, 0.00, 29.00),
+(16, 15, 2011, 0.00, 21.00),
+(17, 16, 2011, 0.00, 5.00),
+(18, 17, 2011, 0.00, 3.00),
+(19, 18, 2011, 0.00, 3.00),
+(20, 19, 2011, 0.00, 38.00),
+(21, 20, 2011, 0.00, 0.00),
+(22, 21, 2011, 0.00, 0.00),
+(23, 22, 2011, 0.00, 0.00),
+(24, 23, 2011, 0.00, 0.00),
+(25, 24, 2011, 0.00, 0.00),
+(26, 25, 2011, 0.00, 0.00),
+(27, 26, 2011, 0.00, 0.00),
+(28, 27, 2011, 0.00, 0.00),
+(29, 28, 2011, 0.00, 0.00),
+(30, 29, 2011, 0.00, 0.00),
+(31, 30, 2011, 0.00, 0.00),
+(32, 299, 2011, 0.00, 0.00);
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `fotos`
 --
--- Creación: 01-05-2015 a las 16:42:24
---
 
-DROP TABLE IF EXISTS `fotos`;
 CREATE TABLE IF NOT EXISTS `fotos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `foto` text COLLATE latin1_spanish_ci NOT NULL,
@@ -633,10 +1776,7 @@ CREATE TABLE IF NOT EXISTS `fotos` (
 --
 -- Estructura de tabla para la tabla `grupos`
 --
--- Creación: 01-05-2015 a las 16:42:24
---
 
-DROP TABLE IF EXISTS `grupos`;
 CREATE TABLE IF NOT EXISTS `grupos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `grupo` text COLLATE latin1_spanish_ci NOT NULL,
@@ -677,10 +1817,7 @@ INSERT INTO `grupos` (`id`, `grupo`, `codigo_grupo`) VALUES
 --
 -- Estructura de tabla para la tabla `lotes`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `lotes`;
 CREATE TABLE IF NOT EXISTS `lotes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
@@ -703,13 +1840,7 @@ CREATE TABLE IF NOT EXISTS `lotes` (
   PRIMARY KEY (`id`),
   KEY `id` (`id`),
   KEY `FK_SOCIO_LOTE_idx` (`id_socio`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=174 ;
-
---
--- RELACIONES PARA LA TABLA `lotes`:
---   `id_socio`
---       `socios` -> `id_socio`
---
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=172 ;
 
 --
 -- Volcado de datos para la tabla `lotes`
@@ -886,41 +2017,37 @@ INSERT INTO `lotes` (`id`, `id_socio`, `codigo_lote`, `fecha`, `peso`, `humedad`
 (168, 61, 'APC-161', '2014-08-14 10:00:00', 2.50, 12.00, 18, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
 (169, 290, 'APC-162', '2014-08-14 10:00:00', 1.57, 12.00, 10, 191, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
 (170, 50, 'APC-163', '2014-08-18 10:00:00', 7.12, 12.00, 12, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(171, 297, 'APC-164', '2014-08-18 10:00:00', 2.22, 12.00, 23, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(173, 306, 'APC-00001-15', '2015-04-28 05:00:00', 12.00, 12.00, 12, 12, 12, 12, 12, 12, 12, 1, 1, 0, 0, 'B');
+(171, 297, 'APC-164', '2014-08-18 10:00:00', 2.22, 12.00, 23, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A');
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `niveles`
 --
--- Creación: 01-05-2015 a las 16:42:24
---
 
-DROP TABLE IF EXISTS `niveles`;
 CREATE TABLE IF NOT EXISTS `niveles` (
   `id_niveles` int(11) NOT NULL AUTO_INCREMENT,
   `nivel` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id_niveles`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=6 ;
 
 --
 -- Volcado de datos para la tabla `niveles`
 --
 
 INSERT INTO `niveles` (`id_niveles`, `nivel`) VALUES
-(1, 'admin'),
-(2, 'socio');
+(1, 'administrador'),
+(2, 'contador'),
+(3, 'bodeguero'),
+(4, 'catador'),
+(5, 'socio');
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `pagos`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `pagos`;
 CREATE TABLE IF NOT EXISTS `pagos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lote` int(11) NOT NULL,
@@ -937,12 +2064,6 @@ CREATE TABLE IF NOT EXISTS `pagos` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=4 ;
 
 --
--- RELACIONES PARA LA TABLA `pagos`:
---   `lote`
---       `lotes` -> `id`
---
-
---
 -- Volcado de datos para la tabla `pagos`
 --
 
@@ -956,10 +2077,7 @@ INSERT INTO `pagos` (`id`, `lote`, `fecha`, `exportable`, `descarte`, `fuera`, `
 --
 -- Estructura de tabla para la tabla `parcelas`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `parcelas`;
 CREATE TABLE IF NOT EXISTS `parcelas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_socio` int(11) NOT NULL,
@@ -974,12 +2092,6 @@ CREATE TABLE IF NOT EXISTS `parcelas` (
   PRIMARY KEY (`id`),
   KEY `FK_PARCELA_SOCIO_idx` (`id_socio`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=298 ;
-
---
--- RELACIONES PARA LA TABLA `parcelas`:
---   `id_socio`
---       `socios` -> `id_socio`
---
 
 --
 -- Volcado de datos para la tabla `parcelas`
@@ -1086,15 +2198,11 @@ INSERT INTO `parcelas` (`id`, `id_socio`, `coorX`, `coorY`, `alti`, `sup_total`,
 --
 -- Estructura de tabla para la tabla `persona`
 --
--- Creación: 01-05-2015 a las 16:42:24
---
 
-DROP TABLE IF EXISTS `persona`;
 CREATE TABLE IF NOT EXISTS `persona` (
   `id_persona` int(11) NOT NULL AUTO_INCREMENT,
   `nombres` text,
   `apellidos` text,
-  `codigo` text,
   `cedula` bigint(20) DEFAULT NULL,
   `celular` int(10) NOT NULL,
   `f_nacimiento` date DEFAULT NULL,
@@ -1105,327 +2213,323 @@ CREATE TABLE IF NOT EXISTS `persona` (
   `foto` text,
   `genero` char(1) DEFAULT NULL,
   PRIMARY KEY (`id_persona`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=309 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=305 ;
 
 --
 -- Volcado de datos para la tabla `persona`
 --
 
-INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `codigo`, `cedula`, `celular`, `f_nacimiento`, `email`, `direccion`, `canton`, `provincia`, `foto`, `genero`) VALUES
-(2, ' Baltazar Francisco', 'Alvarez Michay', NULL, 1102029814, 0, '1960-01-08', '', '', '', 'Zamora', '', ''),
-(3, ' Manuela Bernarda', 'Cevallos Michay', NULL, 1900055300, 0, '1944-12-04', '', '', '', 'Zamora', '', ''),
-(4, ' Angel Benigno', 'Gaona Torres', NULL, 1101903662, 0, '1956-04-19', '', '', '', 'Zamora', '', ''),
-(5, ' Gloria Elisa', 'Guarinda Ceballos', NULL, 1103418503, 983520805, '1976-03-27', '', '', '', 'Zamora', '', ''),
-(6, ' Cosme Gabriel', 'Merino Alvarez', NULL, 1103888911, 0, '1981-12-11', 'cmerino@apecap.org', '', '', 'Zamora', '', ''),
-(7, ' Milton', 'Rosillo Troya', NULL, 1102507728, 992200071, '1966-08-26', '', '', '', 'Zamora', '', ''),
-(8, ' Polidoro', 'Rosillo Troya', NULL, 1101976270, 0, '1960-08-13', '', '', '', 'Zamora', '', ''),
-(9, ' Jose Vidal', 'Erazo Narvaez', NULL, 1900053875, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(10, ' Silvio', 'Diaz Zumba', NULL, 1900255447, 959500344, '1969-04-25', '', '', '', 'Zamora', '', ''),
-(11, ' Juan Francisco', 'Robles Patino', NULL, 1101444469, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(12, ' Cesar Luis', 'Rosillo Troya', NULL, 1101976262, 0, '1957-05-15', '', '', '', 'Zamora', '', ''),
-(13, ' Manecio Amable', 'Avila Rojas', NULL, 1900080951, 990252603, '1950-06-05', '', '', '', 'Zamora', '', ''),
-(14, ' Ana Petronila', 'Alvarez Michay', NULL, 1900184951, 988734350, '1964-07-25', '', '', '', 'Zamora', '', ''),
-(15, ' Juan Daniel', 'Alvarez Merino', NULL, 1900427376, 969006512, '1978-08-15', '', '', '', 'Zamora', '', ''),
-(16, ' Jose Bartolo', 'Jiron Vicente', NULL, 1105143190, 0, '1989-07-25', '', '', '', 'Zamora', '', ''),
-(17, ' Manuel', 'Pintado Cordero', NULL, 1103550966, 959812954, '1990-07-25', '', '', '', 'Zamora', '', ''),
-(18, ' Anguisaca Zumba', 'Luis Antonio', NULL, 1103562250, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(19, '  Augusto Martin', 'Chuquimarca Chinchay', NULL, 1100839008, 994684353, '1958-12-07', '', '', '', 'Zamora', '', ''),
-(20, ' Felipe Parmenio', 'Rosillo Guerrero', NULL, 1104570245, 0, '1987-04-22', '', '', '', 'Zamora', '', ''),
-(21, ' Luis Matias', 'Erazo Riofrio', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(22, ' Silvio', 'Jiron Vicente', NULL, 1104884729, 0, '1987-01-01', '', '', '', 'Zamora', '', ''),
-(23, ' Ilda', 'Ramon Juarez', NULL, 1101069043, 0, '1955-09-21', '', '', '', 'Zamora', '', ''),
-(24, ' Nery Germania', 'Abad Jimenez', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(25, ' Luis Roberto', 'Gerrero Merino', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(26, ' Herman Segundo', 'Velez Chinchay', NULL, 1102733324, 0, '1966-02-06', '', '', '', 'Zamora', '', ''),
-(27, ' Rodrigo', 'Ruiz Chugchilan', NULL, 1500902265, 0, '1988-04-19', '', '', '', 'Zamora', '', ''),
-(28, ' Hermi', 'Rosales Correa', NULL, 1900221795, 0, '1964-06-07', '', '', '', 'Zamora', '', ''),
-(29, ' Mario Francisco', 'Guerrero Troya', NULL, 1103191993, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(30, ' Miguel Angel', 'Torres Calle', NULL, 1102056882, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(31, ' Vidal Valentin', 'Alverca Zumba', NULL, 1103660435, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(32, ' Victoria Angelica', 'Alberca Peña', NULL, 1900558733, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(33, ' Efren', 'Alberca Jimenez', NULL, 1900092956, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(34, ' Oliveros', 'Alberca Pena', NULL, 1900402361, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(35, ' Manuel', 'Jimenez Jimenez', NULL, 1900187624, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(36, ' Domingo', 'Alvarez Pedro', NULL, 1900187624, 0, '1958-05-04', '', '', '', 'Zamora', '', ''),
-(37, ' Jose Miguel', 'Arvarez Jimenez', NULL, 1900239367, 0, '1967-03-21', '', '', '', 'Zamora', '', ''),
-(38, 'Geremias ', 'Alverca', NULL, 1900110576, 0, '1955-11-08', '', '', '', 'Zamora', '', ''),
-(39, ' Anibal Arcenio', 'Diaz Zumba', NULL, 1900174325, 0, '1963-01-05', '', '', '', 'Zamora', '', ''),
-(40, ' Darwin Marcelo', 'Diaz Jimenez', NULL, 1724016397, 0, '1989-01-16', '', '', '', 'Zamora', '', ''),
-(41, ' Salvador', 'Cordero Jose', NULL, 1900255264, 0, '1968-11-28', '', '', '', 'Zamora', '', ''),
-(42, ' Jose Marcos', 'Alverca Cordero', NULL, 1900797809, 0, '1994-03-07', '', '', '', 'Zamora', '', ''),
-(43, ' Jose Marcial', 'Jimenez Pintado', NULL, 1101824777, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(44, ' Jose Santiago', 'Jimenez Cueva', NULL, 1101824777, 0, '1958-09-30', '', '', '', 'Zamora', '', ''),
-(45, ' Francel Andres', 'Alverca Peña', NULL, 1900459908, 0, '1980-10-30', '', '', '', 'Zamora', '', ''),
-(46, ' Horacio Cristobal', 'Alvarez Alvarez', NULL, 1900797331, 0, '1992-08-08', '', '', '', 'Zamora', '', ''),
-(47, ' Aureliano', 'Tillaguango Calva', NULL, 1101581559, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(48, ' Instalin', 'Tamayo Castillo', NULL, 1900324714, 0, '1971-10-06', '', '', '', 'Zamora', '', ''),
-(49, ' Miguel Angel', 'Abarca Aldaz', NULL, 1102831946, 0, '1969-05-25', '', '', '', 'Zamora', '', ''),
-(50, ' German Enixon', 'Tillaguango Vega', NULL, 1900288497, 0, '1971-06-10', '', '', '', 'Zamora', '', ''),
-(51, ' Carlos Marino', 'Correa Cumbicus', NULL, 1900322866, 0, '1976-03-26', '', '', '', 'Zamora', '', ''),
-(52, ' Juan Antonio', 'Tillagungo Abad', NULL, 1104005168, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(53, ' Gilber Efren', 'Abarca Aldaz', NULL, 1103725923, 0, '1975-07-16', '', '', '', 'Zamora', '', ''),
-(54, ' Jimenez Jimenez', 'Elsa Natalia', NULL, 1103411888, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(55, ' Jose Moises', 'Jaramillo Carrion', NULL, 1103481311, 0, '1973-10-26', '', '', '', 'Zamora', '', ''),
-(56, ' Maria Lastenia', 'Tamayo Castillo', NULL, 0, 0, '1985-08-11', '', '', '', 'Zamora', '', ''),
-(57, ' Nidia Esperanza', 'Tillaguango Pintado', NULL, 1900585504, 0, '1985-12-11', '', '', '', 'Zamora', '', ''),
-(58, ' Sergio Feliciano', 'Tillaguango Pintado', NULL, 1900305382, 0, '1974-11-01', '', '', '', 'Zamora', '', ''),
-(59, ' Jiose Luis', 'Guayanay Masache', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(60, ' Marcela Eloisa', 'Tillaguango Pintado', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(61, ' Fernando', 'Abad Jimenez', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(62, ' Victor Manuel', 'Calva Pintado', NULL, 1102927322, 0, '1987-02-20', '', '', '', 'Zamora', '', ''),
-(63, ' Olivio', 'Gaona Abad', NULL, 1900265537, 0, '1971-12-10', '', '', '', 'Zamora', '', ''),
-(64, ' Gerardo Florentino', 'Salinas Castillo', NULL, 1900196930, 0, '1960-10-16', '', '', '', 'Zamora', '', ''),
-(65, ' Hipolito', 'Salinas Castillo', NULL, 1900093244, 0, '1949-08-08', '', '', '', 'Zamora', '', ''),
-(66, ' Segundo Ramon', 'Salinas Castillo', NULL, 1900159144, 0, '1962-10-17', '', '', '', 'Zamora', '', ''),
-(67, ' Josefino De Jesus', 'Suarez Bravo', NULL, 1103208110, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(68, ' Gaona Castillo', 'Vilma Francisca', NULL, 1105101149, 0, '1991-07-24', '', '', '', 'Zamora', '', ''),
-(69, ' Indalecio', 'Abad Abad', '', 1104518863, 0, '1981-01-29', '', '', '', 'Zamora', '', 'm'),
-(70, ' Segundo Aurelio', 'Calva Abad', NULL, 1900255355, 0, '1963-11-16', '', '', '', 'Zamora', '', ''),
-(71, ' Jose Marcial', 'Abad Pintado', NULL, 1900324615, 0, '1973-04-15', '', '', '', 'Zamora', '', ''),
-(72, ' Simon Bolivar', 'Gaona Calva', NULL, 1103147862, 0, '1971-10-08', '', '', '', 'Zamora', '', ''),
-(73, ' Bolivar', 'Gaona Jose', NULL, 1103596362, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(74, ' Francisco Eleodoro', 'Salinas Gaona', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(75, ' Norverto', 'Requelme Campoverde', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(76, ' Luis Celestin', 'Salinas Gaona', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(77, ' Jose Miguel', 'Jimenez Abad', NULL, 1105637357, 0, '1991-06-12', '', '', '', 'Zamora', '', ''),
-(78, ' Olivio Ramiro', 'Ortiz Salinas', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(79, ' Juan Oswaldo', 'Gaona Reinoso', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(80, ' Jose Vicente', 'Abad Troya', NULL, 1900315639, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(81, ' Jose Benecio', 'Tamayo Gaona', NULL, 1103649412, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(82, ' Dixon Francel', 'Pardo Tamayo', NULL, 1103924138, 0, '1980-04-23', '', '', '', 'Zamora', '', ''),
-(83, ' Jose Fredy', 'Jimenez Minga', NULL, 1900323864, 0, '1975-01-25', '', '', '', 'Zamora', '', ''),
-(84, ' Roberto', 'Tamayo Moreno', NULL, 1102252457, 0, '1959-05-13', '', '', '', 'Zamora', '', ''),
-(85, ' Froilan Heriberto', 'Perez Pardo', NULL, 1900655919, 0, '1990-05-31', '', '', '', 'Zamora', '', ''),
-(86, ' Agustin Camilo', 'Tamayo Jiron', NULL, 1104293012, 0, '1981-11-01', '', '', '', 'Zamora', '', ''),
-(87, ' Lola Esperanza', 'Pardo Tamayo', NULL, 1900444413, 0, '1981-08-05', '', '', '', 'Zamora', '', ''),
-(88, ' Manuel Francisco', 'Cordero Alverca', NULL, 1900323252, 0, '1975-04-07', '', '', '', 'Zamora', '', ''),
-(89, ' Luz Del Carmen', 'Alverca Castillo', NULL, 1100497534, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(90, ' Pedro Julio', 'Escobar Vicente', NULL, 1101951059, 0, '1957-07-07', '', '', '', 'Zamora', '', ''),
-(91, ' Cesar Manuel', 'Jimenez Giron', NULL, 1102652078, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(92, ' Segundo Eduardo', 'Jimenez Abad', NULL, 1900182724, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(93, ' Teodoro', 'Calva Guayanay', NULL, 1101974630, 0, '1960-09-08', '', '', '', 'Zamora', '', ''),
-(94, ' Fausto', 'Calva Castillo', NULL, 1900239862, 0, '1969-10-03', '', '', '', 'Zamora', '', ''),
-(95, ' Luis', 'Giron Jimenez', NULL, 1102083068, 0, '1962-08-15', '', '', '', 'Zamora', '', ''),
-(96, ' Manuel Arnoldo', 'Giron Salazar', NULL, 1100531092, 0, '1942-12-15', '', '', '', 'Zamora', '', ''),
-(97, ' Jose Ambrocio', 'Jimenez Jimenez', NULL, 1900055953, 0, '1934-01-08', '', '', '', 'Zamora', '', ''),
-(98, ' Maria Esthela', 'Jimenez Gonzaga', NULL, 1900239854, 0, '1971-11-06', '', '', '', 'Zamora', '', ''),
-(99, ' Gonzaga', 'Miguel Angeljimenez', NULL, 1900093335, 0, '1940-03-13', '', '', '', 'Zamora', '', ''),
-(100, ' Onecimo', 'Jimenez Manuel', NULL, 1900122423, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(101, ' Angel Miguel', 'Giron Jimenez', NULL, 1102079418, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(102, ' Manuel Fernando', 'Jimenez Gaona', NULL, 1103042485, 0, '1972-04-24', '', '', '', 'Zamora', '', ''),
-(103, ' Jose Cesario', 'Giron Jimenez', NULL, 1900098581, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(104, 'Margarita', 'Salazar', NULL, 1103111199, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(105, ' Jose Librando', 'Jimenez Merino', NULL, 1102227632, 0, '1960-12-12', '', '', '', 'Zamora', '', ''),
-(106, ' Jesus Amable', 'Alberca Zumba', NULL, 1900194927, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(107, ' Octaviano', 'Alverca Troya', NULL, 1900203439, 0, '1962-05-25', '', '', '', 'Zamora', '', ''),
-(108, ' Gabriel', 'Alverca Troya', NULL, 1900202738, 0, '1965-06-19', '', '', '', 'Zamora', '', ''),
-(109, ' Marco Jose', 'Benavidez Romero', NULL, 1900443209, 0, '1981-11-05', '', '', '', 'Zamora', '', ''),
-(110, ' Juan Jose', 'Alverca Abad', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(111, ' Juan Angel', 'Alejo Gonzaga', NULL, 1104173883, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(112, ' Julio Orlando', 'Avila Torres', NULL, 1103101430, 0, '1968-02-19', '', '', '', 'Zamora', '', ''),
-(113, ' Franco Efrain', 'Avila Torres', NULL, 1102890397, 0, '1963-07-23', '', '', '', 'Zamora', '', ''),
-(114, ' Juan Bartolo', 'Castillo Jimenez', NULL, 1900092790, 0, '1954-08-24', '', '', '', 'Zamora', '', ''),
-(115, ' Gonzalo', 'Castillo Jimenez', NULL, 1102976576, 0, '1971-02-21', '', '', '', 'Zamora', '', ''),
-(116, ' Jose Vicente', 'Calva Jimenez', NULL, 1100514700, 0, '1944-12-28', '', '', '', 'Zamora', '', ''),
-(117, ' Lucia Marlene', 'Calva Paccha', NULL, 1103515308, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(118, ' Angel Servilio', 'Calva Paccha', NULL, 1103155402, 0, '1970-07-04', '', '', '', 'Zamora', '', ''),
-(119, ' Juan Ramon', 'Calva Paccha', NULL, 1102659305, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(120, ' Julio Orlando', 'Calva Paccha', NULL, 1103276232, 0, '1972-05-24', '', '', '', 'Zamora', '', ''),
-(121, ' Juan Vicente', 'Jimenez Avila', NULL, 1900054857, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(122, ' Jose Juaquin', 'Pacha Villalta', NULL, 1103110621, 0, '1971-05-03', '', '', '', 'Zamora', '', ''),
-(123, ' Jose Antonio', 'Reyes Merino', NULL, 1714661251, 0, '1982-06-05', '', '', '', 'Zamora', '', ''),
-(124, ' Vitaliano Efrain', 'Sanchez Paccha', NULL, 1900201045, 0, '1966-01-27', '', '', '', 'Zamora', '', ''),
-(125, ' Jose Maria', 'Sanchez Chinchay', NULL, 1900054790, 0, '1943-10-01', '', '', '', 'Zamora', '', ''),
-(126, ' Angel Polivio', 'Avila Torres', NULL, 1708544224, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(127, ' Ronald Ivan', 'Rodriguez Lima', NULL, 1104563448, 0, '1986-03-27', '', '', '', 'Zamora', '', ''),
-(128, ' Rosa Esperanza', 'Abad Villalta', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(129, ' Luz Maria', 'Jimenez Castillo', NULL, 1104281124, 0, '1985-09-27', '', '', '', 'Zamora', '', ''),
-(130, ' Vicente Polivio', 'Jimenez Castillo', NULL, 1708544224, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(131, ' Rosa Del Carmen', 'Sanchez Avila', NULL, 1716741507, 0, '1982-05-14', '', '', '', 'Zamora', '', ''),
-(132, ' Rosela Marujita', 'Calva Paccha', NULL, 1103412290, 0, '1974-08-14', '', '', '', 'Zamora', '', ''),
-(133, ' Maria Carmen', 'Calva Paccha', NULL, 1103844344, 0, '1981-04-14', '', '', '', 'Zamora', '', ''),
-(134, ' Elvia Maruja', 'Jimenez Castillo', NULL, 1900380815, 0, '1980-03-01', '', '', '', 'Zamora', '', ''),
-(135, ' Felizino', 'Lima Darwin', NULL, 1104037443, 0, '1982-12-26', '', '', '', 'Zamora', '', ''),
-(136, ' Maria Graciela', 'Troya Paccha', NULL, 1103182224, 0, '1968-01-20', '', '', '', 'Zamora', '', ''),
-(137, ' Jose Bolivar', 'Malacatus Chainchay', NULL, 1103576995, 0, '1966-02-17', '', '', '', 'Zamora', '', ''),
-(138, ' Luis Jaime', 'Castillo Jimenez', NULL, 110399819, 0, '1980-11-03', '', '', '', 'Zamora', '', ''),
-(139, ' Jose Antonio', 'Armijos Patino', NULL, 1900199918, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(140, ' Telmo Camilo', 'Luzuriaga Maza', NULL, 1900465335, 0, '1982-02-17', '', '', '', 'Zamora', '', ''),
-(141, ' Jorge', 'Granda Quinche', NULL, 1900055441, 0, '1947-06-22', '', '', '', 'Zamora', '', ''),
-(142, ' Jose Efredin', 'Sanches Troya', NULL, 1900278795, 0, '1968-08-01', '', '', '', 'Zamora', '', ''),
-(143, ' Domingo Santiago', 'Lojan Zumba', NULL, 1102372529, 0, '1962-05-12', '', '', '', 'Zamora', '', ''),
-(144, ' Chuquiguanca Gonzaga', 'Luis Martin', NULL, 1102880372, 0, '1969-03-28', '', '', '', 'Zamora', '', ''),
-(145, ' Jose Benito', 'Pizarro Jimenez', NULL, 1900200690, 0, '1965-12-06', '', '', '', 'Zamora', '', ''),
-(146, ' Patricia Yolanda', 'Gaona Villalta', NULL, 1103513907, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(147, ' Camilo Jacobo', 'Castillo Guarnizo', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(148, ' Carlos Mayco', 'Reinoso Capa', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(149, ' Jose Benito', 'Chuquiguanca Calva', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(150, ' Arcelio', 'Avila Jose', NULL, 1900348127, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(151, 'Benito', 'Luzuriga', NULL, 1104640618, 0, '1986-09-01', '', '', '', 'Zamora', '', ''),
-(152, ' Henry Jose', 'Romero Puzma', NULL, 1900258797, 0, '1968-01-10', '', '', '', 'Zamora', '', ''),
-(153, ' Bayron Enrrique', 'Avila Torres', NULL, 1104923386, 0, '1988-07-13', '', '', '', 'Zamora', '', ''),
-(154, ' Andres Marcelino', 'Cuenca Avila', NULL, 1103213534, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(155, ' Victor Alonzo', 'Jimenez Merino', NULL, 1900066067, 0, '1974-10-03', '', '', '', 'Zamora', '', ''),
-(156, 'Andres ', 'Luzuriaga', NULL, 1900751098, 0, '1990-04-05', '', '', '', 'Zamora', '', ''),
-(157, ' Gabriel', 'Garrido Ordoñez', NULL, 1900055516, 0, '1944-09-16', '', '', '', 'Zamora', '', ''),
-(158, ' Alejandro Francisco', 'Ávila Jiménez', NULL, 1104625981, 0, '1985-05-17', '', '', '', 'Zamora', '', ''),
-(159, ' Samuel Francisco', 'Abad Pintado', NULL, 1104069263, 0, '1977-05-18', '', '', '', 'Zamora', '', ''),
-(160, ' Luis Alberto', 'Garrido Flores', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(161, ' Francisco Ramon', 'Abad Gaona', NULL, 1105845133, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(162, ' Hortencio', 'Abad Troya', NULL, 1104982739, 0, '1981-07-07', '', '', '', 'Zamora', '', ''),
-(163, ' Alfredo Daniel', 'Castillo Tamay', NULL, 1103423917, 0, '1976-12-07', '', '', '', 'Zamora', '', ''),
-(164, ' Milton Noe', 'Garcia Abad', NULL, 1104665722, 0, '1985-12-14', '', '', '', 'Zamora', '', ''),
-(165, ' Luis Reinaldo', 'Abad Troya', NULL, 1900543735, 0, '1983-04-15', '', '', '', 'Zamora', '', ''),
-(166, ' Abraham Eduardo', 'Castillo Avila', NULL, 1900601236, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(167, ' Nelson Darwin', 'Rodriguez Reinosa', NULL, 1900595586, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(168, ' Danilo', 'Abad Troya', NULL, 1104666753, 0, '1986-06-06', '', '', '', 'Zamora', '', ''),
-(169, ' Elkin Abad', 'Abad Troya', NULL, 1900842525, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(170, ' Germania Piedad', 'Abad Troya', NULL, 1104887250, 0, '1984-06-21', '', '', '', 'Zamora', '', ''),
-(171, ' Jose Francisco', 'Abad Troya', NULL, 1104925787, 0, '1988-09-20', '', '', '', 'Zamora', '', ''),
-(172, ' Juan Servilio', 'Abad Troya', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(173, ' Crimildo', 'Abad Troya', NULL, 1104666746, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(174, ' Bolivar', 'Troya Manuel', NULL, 1102997168, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(175, ' Rosana Ecliceria', 'Jaramillo Tamay', NULL, 1101914875, 0, '1945-05-13', '', '', '', 'Zamora', '', ''),
-(176, ' Segundo Gilberto', 'Capa Cueva', NULL, 1102183637, 0, '1959-09-16', '', '', '', 'Zamora', '', ''),
-(177, ' Maria Cecilia', 'Arevalo Acaro', NULL, 1900093459, 0, '1953-12-22', '', '', '', 'Zamora', '', ''),
-(178, ' Hugo Homero', 'Ramon Capa', NULL, 1900081090, 0, '1950-09-22', '', '', '', 'Zamora', '', ''),
-(179, ' Leticia Lidia', 'Castillo Bravo', NULL, 1900199728, 0, '1965-03-27', '', '', '', 'Zamora', '', ''),
-(180, ' Elvia Graciela', 'Iñiguez Tamay', NULL, 1100662459, 0, '1950-03-29', '', '', '', 'Zamora', '', ''),
-(181, ' Raquel Cumanda', 'Carrion Jaramillo', NULL, 1103269443, 0, '1972-02-12', '', '', '', 'Zamora', '', ''),
-(182, ' Luciano', 'Lojan Zumba', NULL, 1101864161, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(183, ' Carlos', 'Minga Sanchez', NULL, 1102564331, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(184, ' Ramon Castillo', 'Diomer Jovani', NULL, 1717738304, 0, '1982-10-22', '', '', '', 'Zamora', '', ''),
-(185, ' Luisa Amada', 'Giron Guerrero', NULL, 1102415195, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(186, ' Ismenia', 'Herrera Monica', NULL, 1900550649, 0, '1985-12-01', '', '', '', 'Zamora', '', ''),
-(187, ' Michael', 'Tilden Marsh', NULL, 1750869008, 0, '1951-11-04', '', '', '', 'Zamora', '', ''),
-(188, ' Aureliano', 'Alvarez Cordero', NULL, 1100561305, 0, '1951-04-23', '', '', '', 'Zamora', '', ''),
-(189, ' Angel', 'Alvarez Guerrero', NULL, 1103276596, 0, '1974-04-25', '', '', '', 'Zamora', '', ''),
-(190, ' Jose Lorenzo', 'Alvarez Guerrero', NULL, 1900457449, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(191, ' Pedro Antonio', 'Alvarez Guerrero', NULL, 1103276570, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(192, ' Hermelinda', 'Guerrero Pintado', NULL, 1102254909, 0, '1959-10-17', '', '', '', 'Zamora', '', ''),
-(193, ' Jose Esteban', 'Pintado Alvarez', NULL, 1102114962, 0, '1961-08-03', '', '', '', 'Zamora', '', ''),
-(194, ' Santos Nolberto', 'Zumba Diaz', NULL, 1900211259, 0, '1965-06-06', '', '', '', 'Zamora', '', ''),
-(195, ' Rosa Elvira', 'Abad Jimenez', NULL, 1100534526, 0, '1946-12-15', '', '', '', 'Zamora', '', 'f'),
-(196, ' Jose Isrrael', 'Jimenez Guayanay', NULL, 701735615, 0, '1962-10-06', '', '', '', 'Zamora', '', ''),
-(197, ' Teresa Dolores', 'Jimenez Anguisaca', NULL, 1900200989, 0, '1968-11-25', '', '', '', 'Zamora', '', ''),
-(198, ' Milton Vidal', 'Guerrero Pintado', NULL, 1102745815, 0, '1966-01-21', '', '', '', 'Zamora', '', ''),
-(199, ' Veronica Lucia', 'Jimenez Anguiazaca', NULL, 1103232367, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(200, '  Luis Francisco', 'Alvarez Anguisaca', NULL, 1104549181, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(201, ' Segundo Isaias', 'Paccha Troya', NULL, 1100756954, 0, '1953-04-15', '', '', '', 'Zamora', '', ''),
-(202, ' Melecio Teodomiro', 'Merino Sarango', NULL, 1102316666, 0, '1968-07-16', '', '', '', 'Zamora', '', ''),
-(203, ' Sergio Bolivar', 'Troya Paccha', NULL, 1102716832, 0, '1964-04-18', '', '', '', 'Zamora', '', ''),
-(204, ' Celiano Manuel', 'Jimenez Merino', NULL, 1101591640, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(205, ' Angel Arcivar', 'Merino Sarango', NULL, 1102316765, 0, '1960-02-08', '', '', '', 'Zamora', '', ''),
-(206, ' Diego Jaime', 'Paccha Jimenez', NULL, 1900635150, 0, '1987-01-17', '', '', '', 'Zamora', '', ''),
-(207, ' Silvia Vicenta', 'Giron Merino', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(208, ' Maria Elizabeth', 'Merino Alvarez', NULL, 1104446875, 0, '1987-07-07', '', '', '', 'Zamora', '', ''),
-(209, ' Gloria Hermandina', 'Ontaneda Castillo', NULL, 1101497608, 0, '1953-04-12', '', '', '', 'Zamora', '', ''),
-(210, ' Luis Antonio', 'Garcia Jimenez', NULL, 1101566766, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(211, ' Hector Eduardo', 'Cumbicus Jimenez', NULL, 1101783452, 0, '1953-08-19', '', '', '', 'Zamora', '', ''),
-(212, ' Arnoldo', 'Jimenez Alvarez', NULL, 1101933909, 0, '1957-06-15', '', '', '', 'Zamora', '', ''),
-(213, ' Cosme Efrain', 'Rosales Rosillo', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(214, ' Francisco Alfredo', 'Salazar Salinas', NULL, 1900190693, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(215, ' Jose Ildibrando', 'Gaona Villalta', NULL, 1900391085, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(216, ' Carlos', 'Guayanay Jimenez', NULL, 1900170539, 0, '1958-06-24', '', '', '', 'Zamora', '', ''),
-(217, ' Juan Carlos', 'Tamayo Rosillo', NULL, 1103419667, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(218, ' Dalton Alexander', 'Tamayo Rosillo', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(219, ' Elsa Dolores', 'Soto Jaramillo', NULL, 1900260017, 0, '1971-11-04', '', '', '', 'Zamora', '', ''),
-(220, ' Sabulon', 'Garcia Jimenez', NULL, 1900081140, 0, '1944-10-29', '', '', '', 'Zamora', '', ''),
-(221, ' Melecio', 'Rosillo Calva', NULL, 1707851679, 0, '1963-04-15', '', '', '', 'Zamora', '', ''),
-(222, ' Angel Dionicio', 'Garrido Jimenez', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(223, ' Guilo Romel', 'Herrera Encarnacion', NULL, 1900459312, 0, '1981-06-08', '', '', '', 'Zamora', '', ''),
-(224, ' Blanca Enid', 'Herrera Encarnacion', NULL, 1900174838, 0, '1962-05-12', '', '', '', 'Zamora', '', ''),
-(225, ' Henrry Paul', 'Avila Alvarez', NULL, 1104892599, 0, '1992-09-24', '', '', '', 'Zamora', '', ''),
-(226, ' German Gilberto', 'Reinoso Rengel', NULL, 1103661912, 0, '1980-04-22', '', '', '', 'Zamora', '', ''),
-(227, ' Mario Enrrique', 'Reinoso Rengel', NULL, 1103523369, 0, '1976-02-20', '', '', '', 'Zamora', '', ''),
-(228, ' Pepe Raul', 'Rodriguez Reinoso', NULL, 1105433690, 0, '1990-09-22', '', '', '', 'Zamora', '', ''),
-(229, ' Luis Esteban', 'Avila Rojas', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(230, ' Pablo Vinicio', 'Soto Chamba', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(231, ' Rita Maribel', 'Salazar Minga', NULL, 1900723790, 0, '1991-03-05', '', '', '', 'Zamora', '', ''),
-(232, ' Edghar', 'Cumbicus Salazar', NULL, 1900349505, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(233, ' Eduardo', 'Jiménez Ordoñez', NULL, 1103537443, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(234, ' Diego Agustin', 'Castillo Jiménez', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(235, ' Sergio David', 'Abad Jimenez', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(236, ' Denis Sebastian', 'Abad Mendoza', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(237, ' Luis Antonio', 'Jimenez Gaona', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(238, ' Jose Florentino', 'Avila Avila', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(239, ' Jose Isaias', 'Puchaicela Angamarca', NULL, 1104111669, 0, '1982-09-06', '', '', '', 'Zamora', '', ''),
-(240, ' Miguel Francisco', 'Abad Flores', NULL, 1900150846, 0, '1956-09-27', '', '', '', 'Zamora', '', ''),
-(241, ' Jaime Efrain', 'Jinenez Pintado', NULL, 1900533033, 0, '1984-02-05', '', '', '', 'Zamora', '', ''),
-(242, ' Edgar Patricio', 'Jimenez Pintado', NULL, 1900571686, 0, '1985-06-29', '', '', '', 'Zamora', '', ''),
-(243, ' Patricia Elizabeth', 'Puchaicela Angamarca', NULL, 1104180706, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(244, ' Rosa Peregrina', 'Pintado Castillo', NULL, 1102444310, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(245, ' Vicente', 'Abad Simon', NULL, 1102252010, 0, '1957-11-25', '', '', '', 'Zamora', '', ''),
-(246, ' Edgar Omar', 'Morocho Angamarca', NULL, 1900547009, 0, '1983-05-24', '', '', '', 'Zamora', '', ''),
-(247, ' Juan Miguel', 'Avila Ontaneda', NULL, 1900651827, 0, '1988-10-17', '', '', '', 'Zamora', '', ''),
-(248, ' Francisco Antonio', 'Ontaneda Pintado', NULL, 1900872654, 0, '1994-03-26', '', '', '', 'Zamora', '', ''),
-(249, ' Antonio', 'Abad Luis', NULL, 1103727481, 0, '1970-07-26', '', '', '', 'Zamora', '', ''),
-(250, ' Jose Nain', 'Lalangui Chacon', NULL, 1104506462, 0, '1984-06-13', '', '', '', 'Zamora', '', ''),
-(251, ' Luis', 'Jimenez Jimenez', NULL, 1102249909, 0, '1960-10-13', '', '', '', 'Zamora', '', ''),
-(252, ' Jose Eduardo', 'Tocto Rivar', NULL, 1900221431, 0, '1966-11-20', '', '', '', 'Zamora', '', ''),
-(253, ' Carmen Benita', 'Garrido Jimenez', NULL, 1103267082, 0, '1976-05-06', '', '', '', 'Zamora', '', ''),
-(254, ' Angel Maria', 'Puchaicela Anguisaca', NULL, 1102061841, 0, '1958-07-11', '', '', '', 'Zamora', '', ''),
-(255, ' Pedro Moises', 'Abad Guayanay', NULL, 1900719384, 0, '2012-11-23', '', '', '', 'Zamora', '', ''),
-(256, 'Orlando Benjamin', 'Tocto Tocto', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(257, ' Jose Querubin', 'Calderon Pinta', NULL, 1708599061, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(258, ' Fabian Sebastian', 'Herrera Pinta', NULL, 1103370050, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(259, ' Segundo Jacinto', 'Herrera Pinta', NULL, 1102089131, 0, '1962-08-28', '', '', '', 'Zamora', '', ''),
-(260, ' Jose Isauro', 'Herrera Pinta', NULL, 1714531314, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(261, 'Maximo', 'Luzuriga', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(262, ' Agustina Marina', 'Herrera Encarnacion', NULL, 1101805818, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(263, ' Adita Alexandra', 'Luzuriaga Herrera', NULL, 1104174451, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(264, ' Angel', 'Castillo Acaro', NULL, 1900567031, 0, '1984-08-02', '', '', '', 'Zamora', '', ''),
-(265, ' Hector Manuel', 'Jimenez Jimenez', NULL, 1102120100, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(266, ' Jose', 'Tillaguango Vitaliano', NULL, 1400512008, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(267, ' Rolando', 'Jimenez Marco', NULL, 1104866998, 0, '1986-10-19', '', '', '', 'Zamora', '', ''),
-(268, ' Maria Catalina', 'Garrido Jimenez', NULL, 1900360122, 0, '1978-04-29', '', '', '', 'Zamora', '', ''),
-(269, ' Miguel Antonio', 'Herrera Pinta', NULL, 1103726285, 0, '1978-11-11', '', '', '', 'Zamora', '', ''),
-(270, ' Juana Livia', 'Gaona Villalta', NULL, 1102010046, 0, '1960-06-16', '', '', '', 'Zamora', '', ''),
-(271, ' Francisco De Jesus', 'Mendoza Granda', NULL, 1102502315, 0, '1965-09-20', '', '', '', 'Zamora', '', ''),
-(272, ' Leonardo Mauricio', 'Jaramillo Mendoza', NULL, 1104390875, 0, '1984-01-29', '', '', '', 'Zamora', '', ''),
-(273, 'Rosario', 'Paute', NULL, 1102181532, 0, '1961-10-21', '', '', '', 'Zamora', '', ''),
-(274, ' Jose Oswaldo', 'Lanche Jara', NULL, 1102724059, 0, '1966-08-28', '', '', '', 'Zamora', '', ''),
-(275, ' Carmen', 'Jaramillo Leon', NULL, 1900081454, 0, '1946-07-16', '', '', '', 'Zamora', '', ''),
-(276, ' Jesus Rene', 'Mendoza Granda', NULL, 1109719355, 0, '1987-03-23', '', '', '', 'Zamora', '', ''),
-(277, ' Pedro Antonio', 'Bastidas Paute', NULL, 1105104259, 0, '1989-08-20', '', '', '', 'Zamora', '', ''),
-(278, '  Jimenez Jose Daniel', 'Jimenez ', NULL, 1100490265, 0, '1944-04-08', '', '', '', 'Zamora', '', ''),
-(279, ' Jose Felix', 'Troya Gordillo', NULL, 1900185131, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(280, ' Paul Norlander', 'Zumba Avila', NULL, 1900525310, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(281, ' Ilvar Rodrigo', 'Zumba Avila', NULL, 1900525328, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(282, ' Claudio Edgar', 'Zumba Zumba', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(283, ' Santiago', 'Giron Angel', NULL, 1104039761, 0, '1981-11-15', '', '', '', 'Zamora', '', ''),
-(284, ' Marcelo Miguel', 'Garrido Hidalgo', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(285, ' Rodrigo Efrain', 'Abad Jaramillo', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(286, ' Luis Felipe', 'Abad Flores', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', 'm'),
-(287, ' Roberto Miguel', 'Salazar Ortiz', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(288, ' Oswaldo Marcelo', 'Jimenez Gonzaga', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(289, ' Melecio Mauricio', 'Mayo Hidalgo', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(290, ' Wuilman Efren', 'Mayo Hidalgo', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(291, ' Bolivar', 'Merino Escobar', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(292, ' Artimidoro', 'Merino Escobar', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(293, ' Carlos Napoleon', 'Mayo Hidalgo', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(294, ' Ilda Maria', 'Mayo Hidalgo', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(295, ' David Rodrigo', 'Chamba Escobar', NULL, 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(296, ' Jose Maria', 'Mayo Hidalgo', NULL, 1103170294, 0, '1972-09-01', '', '', '', 'Zamora', '', ''),
-(297, ' Juan Manuel', 'Chamba Escobar', NULL, 1104291990, 0, '1983-04-20', '', '', '', 'Zamora', '', ''),
-(298, ' Cesar Vitaliano', 'Chamba Arevalo', NULL, 1101800363, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
-(299, ' Efrain', 'Abad Marco', NULL, 2100329677, 0, '1979-12-06', '', '', '', 'Zamora', '', ''),
-(300, 'Juan', 'Hartman Merino', NULL, 0, 0, '0000-00-00', '', '', 'Zamora', 'Zamora', '', 'm'),
-(301, 'Gilver', 'Rosillo', NULL, 0, 0, '0000-00-00', '', '', 'Zamora', 'Zamora', '', 'm'),
-(302, 'Harvey', 'Merino', NULL, 0, 0, '0000-00-00', '', '', 'Zamora', 'Zamora', '', 'm'),
-(303, 'Manuel', 'Tillaguango', NULL, 0, 0, '0000-00-00', '', '', 'Zamora', 'Zamora', '', 'm'),
-(304, 'Jose', 'Cueva', NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(308, 'nuevo', 'nuevo', 'EL62', 1121, 0, '2000-01-12', '', '', '', '', NULL, 'm');
+INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`, `f_nacimiento`, `email`, `direccion`, `canton`, `provincia`, `foto`, `genero`) VALUES
+(2, ' Baltazar Francisco', 'Alvarez Michay', 1102029814, 0, '1960-01-08', '', '', '', 'Zamora', '', ''),
+(3, ' Manuela Bernarda', 'Cevallos Michay', 1900055300, 0, '1944-12-04', '', '', '', 'Zamora', '', ''),
+(4, ' Angel Benigno', 'Gaona Torres', 1101903662, 0, '1956-04-19', '', '', '', 'Zamora', '', ''),
+(5, ' Gloria Elisa', 'Guarinda Ceballos', 1103418503, 983520805, '1976-03-27', '', '', '', 'Zamora', '', ''),
+(6, ' Cosme Gabriel', 'Merino Alvarez', 1103888911, 0, '1981-12-11', 'cmerino@apecap.org', '', '', 'Zamora', '', ''),
+(7, ' Milton', 'Rosillo Troya', 1102507728, 992200071, '1966-08-26', '', '', '', 'Zamora', '', ''),
+(8, ' Polidoro', 'Rosillo Troya', 1101976270, 0, '1960-08-13', '', '', '', 'Zamora', '', ''),
+(9, ' Jose Vidal', 'Erazo Narvaez', 1900053875, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(10, ' Silvio', 'Diaz Zumba', 1900255447, 959500344, '1969-04-25', '', '', '', 'Zamora', '', ''),
+(11, ' Juan Francisco', 'Robles Patino', 1101444469, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(12, ' Cesar Luis', 'Rosillo Troya', 1101976262, 0, '1957-05-15', '', '', '', 'Zamora', '', ''),
+(13, ' Manecio Amable', 'Avila Rojas', 1900080951, 990252603, '1950-06-05', '', '', '', 'Zamora', '', ''),
+(14, ' Ana Petronila', 'Alvarez Michay', 1900184951, 988734350, '1964-07-25', '', '', '', 'Zamora', '', ''),
+(15, ' Juan Daniel', 'Alvarez Merino', 1900427376, 969006512, '1978-08-15', '', '', '', 'Zamora', '', ''),
+(16, ' Jose Bartolo', 'Jiron Vicente', 1105143190, 0, '1989-07-25', '', '', '', 'Zamora', '', ''),
+(17, ' Manuel', 'Pintado Cordero', 1103550966, 959812954, '1990-07-25', '', '', '', 'Zamora', '', ''),
+(18, ' Anguisaca Zumba', 'Luis Antonio', 1103562250, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(19, '  Augusto Martin', 'Chuquimarca Chinchay', 1100839008, 994684353, '1958-12-07', '', '', '', 'Zamora', '', ''),
+(20, ' Felipe Parmenio', 'Rosillo Guerrero', 1104570245, 0, '1987-04-22', '', '', '', 'Zamora', '', ''),
+(21, ' Luis Matias', 'Erazo Riofrio', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(22, ' Silvio', 'Jiron Vicente', 1104884729, 0, '1987-01-01', '', '', '', 'Zamora', '', ''),
+(23, ' Ilda', 'Ramon Juarez', 1101069043, 0, '1955-09-21', '', '', '', 'Zamora', '', ''),
+(24, ' Nery Germania', 'Abad Jimenez', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(25, ' Luis Roberto', 'Gerrero Merino', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(26, ' Herman Segundo', 'Velez Chinchay', 1102733324, 0, '1966-02-06', '', '', '', 'Zamora', '', ''),
+(27, ' Rodrigo', 'Ruiz Chugchilan', 1500902265, 0, '1988-04-19', '', '', '', 'Zamora', '', ''),
+(28, ' Hermi', 'Rosales Correa', 1900221795, 0, '1964-06-07', '', '', '', 'Zamora', '', ''),
+(29, ' Mario Francisco', 'Guerrero Troya', 1103191993, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(30, ' Miguel Angel', 'Torres Calle', 1102056882, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(31, ' Vidal Valentin', 'Alverca Zumba', 1103660435, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(32, ' Victoria Angelica', 'Alberca Peña', 1900558733, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(33, ' Efren', 'Alberca Jimenez', 1900092956, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(34, ' Oliveros', 'Alberca Pena', 1900402361, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(35, ' Manuel', 'Jimenez Jimenez', 1900187624, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(36, ' Domingo', 'Alvarez Pedro', 1900187624, 0, '1958-05-04', '', '', '', 'Zamora', '', ''),
+(37, ' Jose Miguel', 'Arvarez Jimenez', 1900239367, 0, '1967-03-21', '', '', '', 'Zamora', '', ''),
+(38, 'Geremias ', 'Alverca', 1900110576, 0, '1955-11-08', '', '', '', 'Zamora', '', ''),
+(39, ' Anibal Arcenio', 'Diaz Zumba', 1900174325, 0, '1963-01-05', '', '', '', 'Zamora', '', ''),
+(40, ' Darwin Marcelo', 'Diaz Jimenez', 1724016397, 0, '1989-01-16', '', '', '', 'Zamora', '', ''),
+(41, ' Salvador', 'Cordero Jose', 1900255264, 0, '1968-11-28', '', '', '', 'Zamora', '', ''),
+(42, ' Jose Marcos', 'Alverca Cordero', 1900797809, 0, '1994-03-07', '', '', '', 'Zamora', '', ''),
+(43, ' Jose Marcial', 'Jimenez Pintado', 1101824777, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(44, ' Jose Santiago', 'Jimenez Cueva', 1101824777, 0, '1958-09-30', '', '', '', 'Zamora', '', ''),
+(45, ' Francel Andres', 'Alverca Peña', 1900459908, 0, '1980-10-30', '', '', '', 'Zamora', '', ''),
+(46, ' Horacio Cristobal', 'Alvarez Alvarez', 1900797331, 0, '1992-08-08', '', '', '', 'Zamora', '', ''),
+(47, ' Aureliano', 'Tillaguango Calva', 1101581559, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(48, ' Instalin', 'Tamayo Castillo', 1900324714, 0, '1971-10-06', '', '', '', 'Zamora', '', ''),
+(49, ' Miguel Angel', 'Abarca Aldaz', 1102831946, 0, '1969-05-25', '', '', '', 'Zamora', '', ''),
+(50, ' German Enixon', 'Tillaguango Vega', 1900288497, 0, '1971-06-10', '', '', '', 'Zamora', '', ''),
+(51, ' Carlos Marino', 'Correa Cumbicus', 1900322866, 0, '1976-03-26', '', '', '', 'Zamora', '', ''),
+(52, ' Juan Antonio', 'Tillagungo Abad', 1104005168, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(53, ' Gilber Efren', 'Abarca Aldaz', 1103725923, 0, '1975-07-16', '', '', '', 'Zamora', '', ''),
+(54, ' Jimenez Jimenez', 'Elsa Natalia', 1103411888, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(55, ' Jose Moises', 'Jaramillo Carrion', 1103481311, 0, '1973-10-26', '', '', '', 'Zamora', '', ''),
+(56, ' Maria Lastenia', 'Tamayo Castillo', 0, 0, '1985-08-11', '', '', '', 'Zamora', '', ''),
+(57, ' Nidia Esperanza', 'Tillaguango Pintado', 1900585504, 0, '1985-12-11', '', '', '', 'Zamora', '', ''),
+(58, ' Sergio Feliciano', 'Tillaguango Pintado', 1900305382, 0, '1974-11-01', '', '', '', 'Zamora', '', ''),
+(59, ' Jiose Luis', 'Guayanay Masache', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(60, ' Marcela Eloisa', 'Tillaguango Pintado', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(61, ' Fernando', 'Abad Jimenez', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(62, ' Victor Manuel', 'Calva Pintado', 1102927322, 0, '1987-02-20', '', '', '', 'Zamora', '', ''),
+(63, ' Olivio', 'Gaona Abad', 1900265537, 0, '1971-12-10', '', '', '', 'Zamora', '', ''),
+(64, ' Gerardo Florentino', 'Salinas Castillo', 1900196930, 0, '1960-10-16', '', '', '', 'Zamora', '', ''),
+(65, ' Hipolito', 'Salinas Castillo', 1900093244, 0, '1949-08-08', '', '', '', 'Zamora', '', ''),
+(66, ' Segundo Ramon', 'Salinas Castillo', 1900159144, 0, '1962-10-17', '', '', '', 'Zamora', '', ''),
+(67, ' Josefino De Jesus', 'Suarez Bravo', 1103208110, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(68, ' Gaona Castillo', 'Vilma Francisca', 1105101149, 0, '1991-07-24', '', '', '', 'Zamora', '', ''),
+(69, ' Indalecio', 'Abad Abad', 1104518863, 0, '1981-01-29', '', '', '', 'Zamora', '', ''),
+(70, ' Segundo Aurelio', 'Calva Abad', 1900255355, 0, '1963-11-16', '', '', '', 'Zamora', '', ''),
+(71, ' Jose Marcial', 'Abad Pintado', 1900324615, 0, '1973-04-15', '', '', '', 'Zamora', '', ''),
+(72, ' Simon Bolivar', 'Gaona Calva', 1103147862, 0, '1971-10-08', '', '', '', 'Zamora', '', ''),
+(73, ' Bolivar', 'Gaona Jose', 1103596362, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(74, ' Francisco Eleodoro', 'Salinas Gaona', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(75, ' Norverto', 'Requelme Campoverde', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(76, ' Luis Celestin', 'Salinas Gaona', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(77, ' Jose Miguel', 'Jimenez Abad', 1105637357, 0, '1991-06-12', '', '', '', 'Zamora', '', ''),
+(78, ' Olivio Ramiro', 'Ortiz Salinas', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(79, ' Juan Oswaldo', 'Gaona Reinoso', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(80, ' Jose Vicente', 'Abad Troya', 1900315639, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(81, ' Jose Benecio', 'Tamayo Gaona', 1103649412, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(82, ' Dixon Francel', 'Pardo Tamayo', 1103924138, 0, '1980-04-23', '', '', '', 'Zamora', '', ''),
+(83, ' Jose Fredy', 'Jimenez Minga', 1900323864, 0, '1975-01-25', '', '', '', 'Zamora', '', ''),
+(84, ' Roberto', 'Tamayo Moreno', 1102252457, 0, '1959-05-13', '', '', '', 'Zamora', '', ''),
+(85, ' Froilan Heriberto', 'Perez Pardo', 1900655919, 0, '1990-05-31', '', '', '', 'Zamora', '', ''),
+(86, ' Agustin Camilo', 'Tamayo Jiron', 1104293012, 0, '1981-11-01', '', '', '', 'Zamora', '', ''),
+(87, ' Lola Esperanza', 'Pardo Tamayo', 1900444413, 0, '1981-08-05', '', '', '', 'Zamora', '', ''),
+(88, ' Manuel Francisco', 'Cordero Alverca', 1900323252, 0, '1975-04-07', '', '', '', 'Zamora', '', ''),
+(89, ' Luz Del Carmen', 'Alverca Castillo', 1100497534, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(90, ' Pedro Julio', 'Escobar Vicente', 1101951059, 0, '1957-07-07', '', '', '', 'Zamora', '', ''),
+(91, ' Cesar Manuel', 'Jimenez Giron', 1102652078, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(92, ' Segundo Eduardo', 'Jimenez Abad', 1900182724, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(93, ' Teodoro', 'Calva Guayanay', 1101974630, 0, '1960-09-08', '', '', '', 'Zamora', '', ''),
+(94, ' Fausto', 'Calva Castillo', 1900239862, 0, '1969-10-03', '', '', '', 'Zamora', '', ''),
+(95, ' Luis', 'Giron Jimenez', 1102083068, 0, '1962-08-15', '', '', '', 'Zamora', '', ''),
+(96, ' Manuel Arnoldo', 'Giron Salazar', 1100531092, 0, '1942-12-15', '', '', '', 'Zamora', '', ''),
+(97, ' Jose Ambrocio', 'Jimenez Jimenez', 1900055953, 0, '1934-01-08', '', '', '', 'Zamora', '', ''),
+(98, ' Maria Esthela', 'Jimenez Gonzaga', 1900239854, 0, '1971-11-06', '', '', '', 'Zamora', '', ''),
+(99, ' Gonzaga', 'Miguel Angeljimenez', 1900093335, 0, '1940-03-13', '', '', '', 'Zamora', '', ''),
+(100, ' Onecimo', 'Jimenez Manuel', 1900122423, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(101, ' Angel Miguel', 'Giron Jimenez', 1102079418, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(102, ' Manuel Fernando', 'Jimenez Gaona', 1103042485, 0, '1972-04-24', '', '', '', 'Zamora', '', ''),
+(103, ' Jose Cesario', 'Giron Jimenez', 1900098581, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(104, 'Margarita', 'Salazar', 1103111199, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(105, ' Jose Librando', 'Jimenez Merino', 1102227632, 0, '1960-12-12', '', '', '', 'Zamora', '', ''),
+(106, ' Jesus Amable', 'Alberca Zumba', 1900194927, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(107, ' Octaviano', 'Alverca Troya', 1900203439, 0, '1962-05-25', '', '', '', 'Zamora', '', ''),
+(108, ' Gabriel', 'Alverca Troya', 1900202738, 0, '1965-06-19', '', '', '', 'Zamora', '', ''),
+(109, ' Marco Jose', 'Benavidez Romero', 1900443209, 0, '1981-11-05', '', '', '', 'Zamora', '', ''),
+(110, ' Juan Jose', 'Alverca Abad', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(111, ' Juan Angel', 'Alejo Gonzaga', 1104173883, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(112, ' Julio Orlando', 'Avila Torres', 1103101430, 0, '1968-02-19', '', '', '', 'Zamora', '', ''),
+(113, ' Franco Efrain', 'Avila Torres', 1102890397, 0, '1963-07-23', '', '', '', 'Zamora', '', ''),
+(114, ' Juan Bartolo', 'Castillo Jimenez', 1900092790, 0, '1954-08-24', '', '', '', 'Zamora', '', ''),
+(115, ' Gonzalo', 'Castillo Jimenez', 1102976576, 0, '1971-02-21', '', '', '', 'Zamora', '', ''),
+(116, ' Jose Vicente', 'Calva Jimenez', 1100514700, 0, '1944-12-28', '', '', '', 'Zamora', '', ''),
+(117, ' Lucia Marlene', 'Calva Paccha', 1103515308, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(118, ' Angel Servilio', 'Calva Paccha', 1103155402, 0, '1970-07-04', '', '', '', 'Zamora', '', ''),
+(119, ' Juan Ramon', 'Calva Paccha', 1102659305, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(120, ' Julio Orlando', 'Calva Paccha', 1103276232, 0, '1972-05-24', '', '', '', 'Zamora', '', ''),
+(121, ' Juan Vicente', 'Jimenez Avila', 1900054857, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(122, ' Jose Juaquin', 'Pacha Villalta', 1103110621, 0, '1971-05-03', '', '', '', 'Zamora', '', ''),
+(123, ' Jose Antonio', 'Reyes Merino', 1714661251, 0, '1982-06-05', '', '', '', 'Zamora', '', ''),
+(124, ' Vitaliano Efrain', 'Sanchez Paccha', 1900201045, 0, '1966-01-27', '', '', '', 'Zamora', '', ''),
+(125, ' Jose Maria', 'Sanchez Chinchay', 1900054790, 0, '1943-10-01', '', '', '', 'Zamora', '', ''),
+(126, ' Angel Polivio', 'Avila Torres', 1708544224, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(127, ' Ronald Ivan', 'Rodriguez Lima', 1104563448, 0, '1986-03-27', '', '', '', 'Zamora', '', ''),
+(128, ' Rosa Esperanza', 'Abad Villalta', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(129, ' Luz Maria', 'Jimenez Castillo', 1104281124, 0, '1985-09-27', '', '', '', 'Zamora', '', ''),
+(130, ' Vicente Polivio', 'Jimenez Castillo', 1708544224, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(131, ' Rosa Del Carmen', 'Sanchez Avila', 1716741507, 0, '1982-05-14', '', '', '', 'Zamora', '', ''),
+(132, ' Rosela Marujita', 'Calva Paccha', 1103412290, 0, '1974-08-14', '', '', '', 'Zamora', '', ''),
+(133, ' Maria Carmen', 'Calva Paccha', 1103844344, 0, '1981-04-14', '', '', '', 'Zamora', '', ''),
+(134, ' Elvia Maruja', 'Jimenez Castillo', 1900380815, 0, '1980-03-01', '', '', '', 'Zamora', '', ''),
+(135, ' Felizino', 'Lima Darwin', 1104037443, 0, '1982-12-26', '', '', '', 'Zamora', '', ''),
+(136, ' Maria Graciela', 'Troya Paccha', 1103182224, 0, '1968-01-20', '', '', '', 'Zamora', '', ''),
+(137, ' Jose Bolivar', 'Malacatus Chainchay', 1103576995, 0, '1966-02-17', '', '', '', 'Zamora', '', ''),
+(138, ' Luis Jaime', 'Castillo Jimenez', 110399819, 0, '1980-11-03', '', '', '', 'Zamora', '', ''),
+(139, ' Jose Antonio', 'Armijos Patino', 1900199918, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(140, ' Telmo Camilo', 'Luzuriaga Maza', 1900465335, 0, '1982-02-17', '', '', '', 'Zamora', '', ''),
+(141, ' Jorge', 'Granda Quinche', 1900055441, 0, '1947-06-22', '', '', '', 'Zamora', '', ''),
+(142, ' Jose Efredin', 'Sanches Troya', 1900278795, 0, '1968-08-01', '', '', '', 'Zamora', '', ''),
+(143, ' Domingo Santiago', 'Lojan Zumba', 1102372529, 0, '1962-05-12', '', '', '', 'Zamora', '', ''),
+(144, ' Chuquiguanca Gonzaga', 'Luis Martin', 1102880372, 0, '1969-03-28', '', '', '', 'Zamora', '', ''),
+(145, ' Jose Benito', 'Pizarro Jimenez', 1900200690, 0, '1965-12-06', '', '', '', 'Zamora', '', ''),
+(146, ' Patricia Yolanda', 'Gaona Villalta', 1103513907, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(147, ' Camilo Jacobo', 'Castillo Guarnizo', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(148, ' Carlos Mayco', 'Reinoso Capa', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(149, ' Jose Benito', 'Chuquiguanca Calva', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(150, ' Arcelio', 'Avila Jose', 1900348127, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(151, 'Benito', 'Luzuriga', 1104640618, 0, '1986-09-01', '', '', '', 'Zamora', '', ''),
+(152, ' Henry Jose', 'Romero Puzma', 1900258797, 0, '1968-01-10', '', '', '', 'Zamora', '', ''),
+(153, ' Bayron Enrrique', 'Avila Torres', 1104923386, 0, '1988-07-13', '', '', '', 'Zamora', '', ''),
+(154, ' Andres Marcelino', 'Cuenca Avila', 1103213534, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(155, ' Victor Alonzo', 'Jimenez Merino', 1900066067, 0, '1974-10-03', '', '', '', 'Zamora', '', ''),
+(156, 'Andres ', 'Luzuriaga', 1900751098, 0, '1990-04-05', '', '', '', 'Zamora', '', ''),
+(157, ' Gabriel', 'Garrido Ordoñez', 1900055516, 0, '1944-09-16', '', '', '', 'Zamora', '', ''),
+(158, ' Alejandro Francisco', 'Ávila Jiménez', 1104625981, 0, '1985-05-17', '', '', '', 'Zamora', '', ''),
+(159, ' Samuel Francisco', 'Abad Pintado', 1104069263, 0, '1977-05-18', '', '', '', 'Zamora', '', ''),
+(160, ' Luis Alberto', 'Garrido Flores', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(161, ' Francisco Ramon', 'Abad Gaona', 1105845133, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(162, ' Hortencio', 'Abad Troya', 1104982739, 0, '1981-07-07', '', '', '', 'Zamora', '', ''),
+(163, ' Alfredo Daniel', 'Castillo Tamay', 1103423917, 0, '1976-12-07', '', '', '', 'Zamora', '', ''),
+(164, ' Milton Noe', 'Garcia Abad', 1104665722, 0, '1985-12-14', '', '', '', 'Zamora', '', ''),
+(165, ' Luis Reinaldo', 'Abad Troya', 1900543735, 0, '1983-04-15', '', '', '', 'Zamora', '', ''),
+(166, ' Abraham Eduardo', 'Castillo Avila', 1900601236, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(167, ' Nelson Darwin', 'Rodriguez Reinosa', 1900595586, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(168, ' Danilo', 'Abad Troya', 1104666753, 0, '1986-06-06', '', '', '', 'Zamora', '', ''),
+(169, ' Elkin Abad', 'Abad Troya', 1900842525, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(170, ' Germania Piedad', 'Abad Troya', 1104887250, 0, '1984-06-21', '', '', '', 'Zamora', '', ''),
+(171, ' Jose Francisco', 'Abad Troya', 1104925787, 0, '1988-09-20', '', '', '', 'Zamora', '', ''),
+(172, ' Juan Servilio', 'Abad Troya', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(173, ' Crimildo', 'Abad Troya', 1104666746, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(174, ' Bolivar', 'Troya Manuel', 1102997168, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(175, ' Rosana Ecliceria', 'Jaramillo Tamay', 1101914875, 0, '1945-05-13', '', '', '', 'Zamora', '', ''),
+(176, ' Segundo Gilberto', 'Capa Cueva', 1102183637, 0, '1959-09-16', '', '', '', 'Zamora', '', ''),
+(177, ' Maria Cecilia', 'Arevalo Acaro', 1900093459, 0, '1953-12-22', '', '', '', 'Zamora', '', ''),
+(178, ' Hugo Homero', 'Ramon Capa', 1900081090, 0, '1950-09-22', '', '', '', 'Zamora', '', ''),
+(179, ' Leticia Lidia', 'Castillo Bravo', 1900199728, 0, '1965-03-27', '', '', '', 'Zamora', '', ''),
+(180, ' Elvia Graciela', 'Iñiguez Tamay', 1100662459, 0, '1950-03-29', '', '', '', 'Zamora', '', ''),
+(181, ' Raquel Cumanda', 'Carrion Jaramillo', 1103269443, 0, '1972-02-12', '', '', '', 'Zamora', '', ''),
+(182, ' Luciano', 'Lojan Zumba', 1101864161, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(183, ' Carlos', 'Minga Sanchez', 1102564331, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(184, ' Ramon Castillo', 'Diomer Jovani', 1717738304, 0, '1982-10-22', '', '', '', 'Zamora', '', ''),
+(185, ' Luisa Amada', 'Giron Guerrero', 1102415195, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(186, ' Ismenia', 'Herrera Monica', 1900550649, 0, '1985-12-01', '', '', '', 'Zamora', '', ''),
+(187, ' Michael', 'Tilden Marsh', 1750869008, 0, '1951-11-04', '', '', '', 'Zamora', '', ''),
+(188, ' Aureliano', 'Alvarez Cordero', 1100561305, 0, '1951-04-23', '', '', '', 'Zamora', '', ''),
+(189, ' Angel', 'Alvarez Guerrero', 1103276596, 0, '1974-04-25', '', '', '', 'Zamora', '', ''),
+(190, ' Jose Lorenzo', 'Alvarez Guerrero', 1900457449, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(191, ' Pedro Antonio', 'Alvarez Guerrero', 1103276570, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(192, ' Hermelinda', 'Guerrero Pintado', 1102254909, 0, '1959-10-17', '', '', '', 'Zamora', '', ''),
+(193, ' Jose Esteban', 'Pintado Alvarez', 1102114962, 0, '1961-08-03', '', '', '', 'Zamora', '', ''),
+(194, ' Santos Nolberto', 'Zumba Diaz', 1900211259, 0, '1965-06-06', '', '', '', 'Zamora', '', ''),
+(195, ' Rosa Elvira', 'Abad Jimenez', 1100534526, 0, '1946-12-15', '', '', '', 'Zamora', '', 'f'),
+(196, ' Jose Isrrael', 'Jimenez Guayanay', 701735615, 0, '1962-10-06', '', '', '', 'Zamora', '', ''),
+(197, ' Teresa Dolores', 'Jimenez Anguisaca', 1900200989, 0, '1968-11-25', '', '', '', 'Zamora', '', ''),
+(198, ' Milton Vidal', 'Guerrero Pintado', 1102745815, 0, '1966-01-21', '', '', '', 'Zamora', '', ''),
+(199, ' Veronica Lucia', 'Jimenez Anguiazaca', 1103232367, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(200, '  Luis Francisco', 'Alvarez Anguisaca', 1104549181, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(201, ' Segundo Isaias', 'Paccha Troya', 1100756954, 0, '1953-04-15', '', '', '', 'Zamora', '', ''),
+(202, ' Melecio Teodomiro', 'Merino Sarango', 1102316666, 0, '1968-07-16', '', '', '', 'Zamora', '', ''),
+(203, ' Sergio Bolivar', 'Troya Paccha', 1102716832, 0, '1964-04-18', '', '', '', 'Zamora', '', ''),
+(204, ' Celiano Manuel', 'Jimenez Merino', 1101591640, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(205, ' Angel Arcivar', 'Merino Sarango', 1102316765, 0, '1960-02-08', '', '', '', 'Zamora', '', ''),
+(206, ' Diego Jaime', 'Paccha Jimenez', 1900635150, 0, '1987-01-17', '', '', '', 'Zamora', '', ''),
+(207, ' Silvia Vicenta', 'Giron Merino', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(208, ' Maria Elizabeth', 'Merino Alvarez', 1104446875, 0, '1987-07-07', '', '', '', 'Zamora', '', ''),
+(209, ' Gloria Hermandina', 'Ontaneda Castillo', 1101497608, 0, '1953-04-12', '', '', '', 'Zamora', '', ''),
+(210, ' Luis Antonio', 'Garcia Jimenez', 1101566766, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(211, ' Hector Eduardo', 'Cumbicus Jimenez', 1101783452, 0, '1953-08-19', '', '', '', 'Zamora', '', ''),
+(212, ' Arnoldo', 'Jimenez Alvarez', 1101933909, 0, '1957-06-15', '', '', '', 'Zamora', '', ''),
+(213, ' Cosme Efrain', 'Rosales Rosillo', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(214, ' Francisco Alfredo', 'Salazar Salinas', 1900190693, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(215, ' Jose Ildibrando', 'Gaona Villalta', 1900391085, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(216, ' Carlos', 'Guayanay Jimenez', 1900170539, 0, '1958-06-24', '', '', '', 'Zamora', '', ''),
+(217, ' Juan Carlos', 'Tamayo Rosillo', 1103419667, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(218, ' Dalton Alexander', 'Tamayo Rosillo', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(219, ' Elsa Dolores', 'Soto Jaramillo', 1900260017, 0, '1971-11-04', '', '', '', 'Zamora', '', ''),
+(220, ' Sabulon', 'Garcia Jimenez', 1900081140, 0, '1944-10-29', '', '', '', 'Zamora', '', ''),
+(221, ' Melecio', 'Rosillo Calva', 1707851679, 0, '1963-04-15', '', '', '', 'Zamora', '', ''),
+(222, ' Angel Dionicio', 'Garrido Jimenez', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(223, ' Guilo Romel', 'Herrera Encarnacion', 1900459312, 0, '1981-06-08', '', '', '', 'Zamora', '', ''),
+(224, ' Blanca Enid', 'Herrera Encarnacion', 1900174838, 0, '1962-05-12', '', '', '', 'Zamora', '', ''),
+(225, ' Henrry Paul', 'Avila Alvarez', 1104892599, 0, '1992-09-24', '', '', '', 'Zamora', '', ''),
+(226, ' German Gilberto', 'Reinoso Rengel', 1103661912, 0, '1980-04-22', '', '', '', 'Zamora', '', ''),
+(227, ' Mario Enrrique', 'Reinoso Rengel', 1103523369, 0, '1976-02-20', '', '', '', 'Zamora', '', ''),
+(228, ' Pepe Raul', 'Rodriguez Reinoso', 1105433690, 0, '1990-09-22', '', '', '', 'Zamora', '', ''),
+(229, ' Luis Esteban', 'Avila Rojas', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(230, ' Pablo Vinicio', 'Soto Chamba', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(231, ' Rita Maribel', 'Salazar Minga', 1900723790, 0, '1991-03-05', '', '', '', 'Zamora', '', ''),
+(232, ' Edghar', 'Cumbicus Salazar', 1900349505, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(233, ' Eduardo', 'Jiménez Ordoñez', 1103537443, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(234, ' Diego Agustin', 'Castillo Jiménez', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(235, ' Sergio David', 'Abad Jimenez', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(236, ' Denis Sebastian', 'Abad Mendoza', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(237, ' Luis Antonio', 'Jimenez Gaona', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(238, ' Jose Florentino', 'Avila Avila', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(239, ' Jose Isaias', 'Puchaicela Angamarca', 1104111669, 0, '1982-09-06', '', '', '', 'Zamora', '', ''),
+(240, ' Miguel Francisco', 'Abad Flores', 1900150846, 0, '1956-09-27', '', '', '', 'Zamora', '', ''),
+(241, ' Jaime Efrain', 'Jinenez Pintado', 1900533033, 0, '1984-02-05', '', '', '', 'Zamora', '', ''),
+(242, ' Edgar Patricio', 'Jimenez Pintado', 1900571686, 0, '1985-06-29', '', '', '', 'Zamora', '', ''),
+(243, ' Patricia Elizabeth', 'Puchaicela Angamarca', 1104180706, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(244, ' Rosa Peregrina', 'Pintado Castillo', 1102444310, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(245, ' Vicente', 'Abad Simon', 1102252010, 0, '1957-11-25', '', '', '', 'Zamora', '', ''),
+(246, ' Edgar Omar', 'Morocho Angamarca', 1900547009, 0, '1983-05-24', '', '', '', 'Zamora', '', ''),
+(247, ' Juan Miguel', 'Avila Ontaneda', 1900651827, 0, '1988-10-17', '', '', '', 'Zamora', '', ''),
+(248, ' Francisco Antonio', 'Ontaneda Pintado', 1900872654, 0, '1994-03-26', '', '', '', 'Zamora', '', ''),
+(249, ' Antonio', 'Abad Luis', 1103727481, 0, '1970-07-26', '', '', '', 'Zamora', '', ''),
+(250, ' Jose Nain', 'Lalangui Chacon', 1104506462, 0, '1984-06-13', '', '', '', 'Zamora', '', ''),
+(251, ' Luis', 'Jimenez Jimenez', 1102249909, 0, '1960-10-13', '', '', '', 'Zamora', '', ''),
+(252, ' Jose Eduardo', 'Tocto Rivar', 1900221431, 0, '1966-11-20', '', '', '', 'Zamora', '', ''),
+(253, ' Carmen Benita', 'Garrido Jimenez', 1103267082, 0, '1976-05-06', '', '', '', 'Zamora', '', ''),
+(254, ' Angel Maria', 'Puchaicela Anguisaca', 1102061841, 0, '1958-07-11', '', '', '', 'Zamora', '', ''),
+(255, ' Pedro Moises', 'Abad Guayanay', 1900719384, 0, '2012-11-23', '', '', '', 'Zamora', '', ''),
+(256, 'Orlando Benjamin', 'Tocto Tocto', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(257, ' Jose Querubin', 'Calderon Pinta', 1708599061, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(258, ' Fabian Sebastian', 'Herrera Pinta', 1103370050, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(259, ' Segundo Jacinto', 'Herrera Pinta', 1102089131, 0, '1962-08-28', '', '', '', 'Zamora', '', ''),
+(260, ' Jose Isauro', 'Herrera Pinta', 1714531314, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(261, 'Maximo', 'Luzuriga', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(262, ' Agustina Marina', 'Herrera Encarnacion', 1101805818, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(263, ' Adita Alexandra', 'Luzuriaga Herrera', 1104174451, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(264, ' Angel', 'Castillo Acaro', 1900567031, 0, '1984-08-02', '', '', '', 'Zamora', '', ''),
+(265, ' Hector Manuel', 'Jimenez Jimenez', 1102120100, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(266, ' Jose', 'Tillaguango Vitaliano', 1400512008, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(267, ' Rolando', 'Jimenez Marco', 1104866998, 0, '1986-10-19', '', '', '', 'Zamora', '', ''),
+(268, ' Maria Catalina', 'Garrido Jimenez', 1900360122, 0, '1978-04-29', '', '', '', 'Zamora', '', ''),
+(269, ' Miguel Antonio', 'Herrera Pinta', 1103726285, 0, '1978-11-11', '', '', '', 'Zamora', '', ''),
+(270, ' Juana Livia', 'Gaona Villalta', 1102010046, 0, '1960-06-16', '', '', '', 'Zamora', '', ''),
+(271, ' Francisco De Jesus', 'Mendoza Granda', 1102502315, 0, '1965-09-20', '', '', '', 'Zamora', '', ''),
+(272, ' Leonardo Mauricio', 'Jaramillo Mendoza', 1104390875, 0, '1984-01-29', '', '', '', 'Zamora', '', ''),
+(273, 'Rosario', 'Paute', 1102181532, 0, '1961-10-21', '', '', '', 'Zamora', '', ''),
+(274, ' Jose Oswaldo', 'Lanche Jara', 1102724059, 0, '1966-08-28', '', '', '', 'Zamora', '', ''),
+(275, ' Carmen', 'Jaramillo Leon', 1900081454, 0, '1946-07-16', '', '', '', 'Zamora', '', ''),
+(276, ' Jesus Rene', 'Mendoza Granda', 1109719355, 0, '1987-03-23', '', '', '', 'Zamora', '', ''),
+(277, ' Pedro Antonio', 'Bastidas Paute', 1105104259, 0, '1989-08-20', '', '', '', 'Zamora', '', ''),
+(278, '  Jimenez Jose Daniel', 'Jimenez ', 1100490265, 0, '1944-04-08', '', '', '', 'Zamora', '', ''),
+(279, ' Jose Felix', 'Troya Gordillo', 1900185131, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(280, ' Paul Norlander', 'Zumba Avila', 1900525310, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(281, ' Ilvar Rodrigo', 'Zumba Avila', 1900525328, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(282, ' Claudio Edgar', 'Zumba Zumba', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(283, ' Santiago', 'Giron Angel', 1104039761, 0, '1981-11-15', '', '', '', 'Zamora', '', ''),
+(284, ' Marcelo Miguel', 'Garrido Hidalgo', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(285, ' Rodrigo Efrain', 'Abad Jaramillo', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(286, ' Luis Felipe', 'Abad Flores', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', 'm'),
+(287, ' Roberto Miguel', 'Salazar Ortiz', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(288, ' Oswaldo Marcelo', 'Jimenez Gonzaga', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(289, ' Melecio Mauricio', 'Mayo Hidalgo', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(290, ' Wuilman Efren', 'Mayo Hidalgo', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(291, ' Bolivar', 'Merino Escobar', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(292, ' Artimidoro', 'Merino Escobar', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(293, ' Carlos Napoleon', 'Mayo Hidalgo', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(294, ' Ilda Maria', 'Mayo Hidalgo', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(295, ' David Rodrigo', 'Chamba Escobar', 0, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(296, ' Jose Maria', 'Mayo Hidalgo', 1103170294, 0, '1972-09-01', '', '', '', 'Zamora', '', ''),
+(297, ' Juan Manuel', 'Chamba Escobar', 1104291990, 0, '1983-04-20', '', '', '', 'Zamora', '', ''),
+(298, ' Cesar Vitaliano', 'Chamba Arevalo', 1101800363, 0, '0000-00-00', '', '', '', 'Zamora', '', ''),
+(299, ' Efrain', 'Abad Marco', 2100329677, 0, '1979-12-06', '', '', '', 'Zamora', '', ''),
+(300, 'Juan', 'Hartman Merino', 0, 0, '0000-00-00', '', '', 'Zamora', 'Zamora', '', 'm'),
+(301, 'Gilver', 'Rosillo', 0, 0, '0000-00-00', '', '', 'Zamora', 'Zamora', '', 'm'),
+(302, 'Harvey', 'Merino', 0, 0, '0000-00-00', '', '', 'Zamora', 'Zamora', '', 'm'),
+(303, 'Manuel', 'Tillaguango', 0, 0, '0000-00-00', '', '', 'Zamora', 'Zamora', '', 'm'),
+(304, 'Jose', 'Cueva', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `socios`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `socios`;
 CREATE TABLE IF NOT EXISTS `socios` (
   `id_socio` int(11) NOT NULL AUTO_INCREMENT,
   `id_grupo` int(11) DEFAULT NULL,
@@ -1435,15 +2539,7 @@ CREATE TABLE IF NOT EXISTS `socios` (
   KEY `id_socio` (`id_socio`),
   KEY `FK_SOCIO_GRUPO_idx` (`id_grupo`),
   KEY `FK_PERSONA_SOCIO_idx` (`id_persona`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=307 ;
-
---
--- RELACIONES PARA LA TABLA `socios`:
---   `id_persona`
---       `persona` -> `id_persona`
---   `id_grupo`
---       `grupos` -> `id`
---
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=303 ;
 
 --
 -- Volcado de datos para la tabla `socios`
@@ -1751,18 +2847,14 @@ INSERT INTO `socios` (`id_socio`, `id_grupo`, `id_persona`, `codigo`) VALUES
 (299, 2, 301, 'AN53'),
 (300, 2, 302, 'AN57'),
 (301, 2, 303, 'AN54'),
-(302, 11, 120, 'IJ13'),
-(306, 7, 308, 'EL62');
+(302, 11, 120, 'IJ13');
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `subparcelas`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `subparcelas`;
 CREATE TABLE IF NOT EXISTS `subparcelas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_parcela` int(11) NOT NULL,
@@ -1781,12 +2873,6 @@ CREATE TABLE IF NOT EXISTS `subparcelas` (
   `duracion_cosecha` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=298 ;
-
---
--- RELACIONES PARA LA TABLA `subparcelas`:
---   `id`
---       `parcelas` -> `id`
---
 
 --
 -- Volcado de datos para la tabla `subparcelas`
@@ -1893,10 +2979,7 @@ INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `varied
 --
 -- Estructura de tabla para la tabla `usuarios`
 --
--- Creación: 01-05-2015 a las 16:53:31
---
 
-DROP TABLE IF EXISTS `usuarios`;
 CREATE TABLE IF NOT EXISTS `usuarios` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
@@ -1904,17 +2987,9 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `id_nivel` int(11) NOT NULL,
   `id_persona` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK_USUARIO_SOCIO_idx` (`id_persona`),
-  KEY `fk_user_nivel` (`id_nivel`)
+  KEY `USUARIOS_NIVELES` (`id_nivel`),
+  KEY `USUARIOS_PERSONA` (`id_persona`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=2 ;
-
---
--- RELACIONES PARA LA TABLA `usuarios`:
---   `id_persona`
---       `persona` -> `id_persona`
---   `id_nivel`
---       `niveles` -> `id_niveles`
---
 
 --
 -- Volcado de datos para la tabla `usuarios`
@@ -1931,91 +3006,91 @@ INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`) VALUES
 -- Filtros para la tabla `altas`
 --
 ALTER TABLE `altas`
-  ADD CONSTRAINT `fk_alta_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_alta_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `analisis`
 --
 ALTER TABLE `analisis`
-  ADD CONSTRAINT `fk_subparcela_analisis` FOREIGN KEY (`id_subparcela`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_subparcela_analisis` FOREIGN KEY (`id_subparcela`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
-  ADD CONSTRAINT `FK_SUBPARCELA_ASOCIACION` FOREIGN KEY (`subparcela_id`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_SUBPARCELA_ASOCIACION` FOREIGN KEY (`subparcela_id`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `catas`
 --
 ALTER TABLE `catas`
-  ADD CONSTRAINT `fk_CATA_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_CATA_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
-  ADD CONSTRAINT `fk_SOCIO_CERTIFICACION` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_SOCIO_CERTIFICACION` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `comentario`
 --
 ALTER TABLE `comentario`
-  ADD CONSTRAINT `FK_Comentario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `FK_Foto_COmentario` FOREIGN KEY (`Id_foto`) REFERENCES `fotos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_Comentario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `FK_Foto_COmentario` FOREIGN KEY (`Id_foto`) REFERENCES `fotos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `despachos`
 --
 ALTER TABLE `despachos`
-  ADD CONSTRAINT `FK_DESPACHO_ENVIO` FOREIGN KEY (`envio`) REFERENCES `envios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_despacho_lote` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_DESPACHO_ENVIO` FOREIGN KEY (`envio`) REFERENCES `envios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_despacho_lote` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
-  ADD CONSTRAINT `fk_Estimacion_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_Estimacion_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `lotes`
 --
 ALTER TABLE `lotes`
-  ADD CONSTRAINT `FK_SOCIO_LOTE` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_SOCIO_LOTE` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  ADD CONSTRAINT `FK_PAGO_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_PAGO_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
-  ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `socios`
 --
 ALTER TABLE `socios`
-  ADD CONSTRAINT `FK_PERSONA_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `FK_SOCIO_GRUPO` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_socio_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`);
+ADD CONSTRAINT `FK_PERSONA_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `FK_SOCIO_GRUPO` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_socio_persona` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`);
 
 --
 -- Filtros para la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-  ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id`) REFERENCES `parcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id`) REFERENCES `parcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD CONSTRAINT `FK_USUARIO_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_user_nivel` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`);
-COMMIT;
+ADD CONSTRAINT `FK_USUARIO_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_user_nivel` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`);
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
