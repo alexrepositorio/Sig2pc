@@ -4,7 +4,7 @@ include ("envios_funciones.php");
 
 if(isset ($_POST["fecha"])){
 //FUNCION
-list($cadena, $resultado, $nuevo_id)=ingresar_nuevo_envio($_POST["fecha"],$_POST["destino"],$_POST["chofer"],$_POST["responsable"],$link);
+list($cadena, $resultado, $nuevo_id)=ingresar_nuevo_envio($_POST["fecha"],$_POST["destino"],$_POST["chofer"],$_POST["responsable"]);
 
 //Metodo de historial en uno.php
 guarda_historial($cadena);

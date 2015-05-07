@@ -21,7 +21,7 @@ list($SQL,$_texto)=busquedas($criterio,$vacio) ;
 $criterio="<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> es <i>''$_texto''</i></h4>";
 }
 //FUNCION
-list($resultado,$cuenta,$envios)=resultado_sentencias($link,$SQL);
+list($resultado,$cuenta,$envios)=resultado_sentencias($SQL);
 
 echo "<div align=center><h1>Listado de envíos</h1><br><br>";
 echo "<table border=0 cellpadding=15 cellspacing=0><tr>";
@@ -61,7 +61,7 @@ if(isset($envios))
 		unset($contenido);
 		unset($cantidades);
 		//FUNCION
-		list ($contenido,$cantidades)=presentacion_datos($envio["id"],$link);		
+		list ($contenido,$cantidades)=presentacion_datos($envio["id"]);		
 		echo "<tr>";
 		echo "<td><a href=ficha_envio.php?envio=".$envio["id"]."><h3>".$envio["destino"]."<br><h4>".date("d-m-Y H:i",strtotime($envio["fecha"]))."<br>Chófer: ".$envio["chofer"]."<br>Responsable: ".$envio["responsable"]."</td>";
 		echo "</td>";

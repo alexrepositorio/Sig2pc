@@ -1,7 +1,7 @@
 <?php
 
 include ("cabecera.php");
-
+require("conect.php");
 $SQL="SELECT * FROM envios WHERE id = '".$_GET["envio"]."'";
 //echo "$SQL";                         
 $resultado=mysqli_query($link, $SQL);

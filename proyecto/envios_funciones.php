@@ -9,7 +9,8 @@
 	}
 	//Implementada en linea 23 de envios.php
 
-	function resultado_sentencias($link,$SQL){			
+	function resultado_sentencias($SQL){	
+			require("conect.php");   	
 			$cuenta=mysqli_num_rows($SQL);
 			while ($row = mysqli_fetch_array($SQL,MYSQLI_ASSOC)){
 				$envios[]=$row;	
@@ -29,7 +30,8 @@
 	}
 
 	//Implementada en linea 63 de envios.php
-	function presentacion_datos($envio,$link){
+	function presentacion_datos($envio){			
+		require("conect.php");   
 		$SQL="SELECT * FROM despachos WHERE envio='".$envio."' order by fecha desc";
 		$resultado=mysqli_query($link, $SQL);
 		$cuenta_despachos=mysqli_num_rows($resultado);
@@ -46,7 +48,7 @@
 	}
 
 	//Implementada en linea 6 de ficha_envio_nuevo.php
-	function ingresar_nuevo_envio($fecha,$destino,$chofer,$responsable,$link)
+	function ingresar_nuevo_envio($fecha,$destino,$chofer,$responsable)
 		{	
 			require("conect.php");   				
 			$SQL_edit="call SP_envios_ins(
@@ -61,17 +63,18 @@
 		}
 
 	//Implementada en linea 5 de ficha_envio_editar.php
-	function editar_envio_presentar($envio,$link)
+	function editar_envio_presentar($envio)
 		{	
-			$SQL="SELECT * FROM envios WHERE id='".$_GET["envio"]."' order by fecha desc";
+			require("conect.php");   
+			$SQL="SELECT * FROM envios WHERE id='".$envio."' order by fecha desc";
 			$resultado=mysqli_query($link, $SQL);
 			$cuenta=mysqli_num_rows($resultado);
 			$envio = mysqli_fetch_array($resultado,MYSQLI_ASSOC);
 			return array($resultado,$cuenta,$envio);
 		}
 
-	//Implementada en linea 8 de ficha_envio_editar.php
-	function editar_envio_actualizar($fecha,$destino,$chofer,$responsable,$envio,$link)
+	//Implementada en linea 8 de ficha_envio_editar.php REVISAR NO FUNCIONA¡¡¡¡ss
+	function editar_envio_actualizar($fecha,$destino,$chofer,$responsable,$envio)
 		{	
 			require("conect.php"); 
 			$SQL_edit="call SP_envios_upd(

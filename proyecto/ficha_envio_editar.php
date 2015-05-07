@@ -3,10 +3,10 @@ include ("cabecera.php");
 include ("envios_funciones.php");
 
 //funcion
-list($resultado,$cuenta,$envio)=editar_envio_presentar($_GET["envio"],$link);
+list($resultado,$cuenta,$envio)=editar_envio_presentar($_GET["envio"]);
 if(isset ($_POST["fecha"])){
 	//FUNCION
-	list($resultado,$nuevo_id,$cadena)=editar_envio_actualizar($_POST["fecha"],$_POST["destino"],$_POST["chofer"],$_POST["responsable"],$_GET["envio"],$link);
+	list($resultado,$nuevo_id,$cadena)=editar_envio_actualizar($_POST["fecha"],$_POST["destino"],$_POST["chofer"],$_POST["responsable"],$_GET["envio"]);
 	//FUNCION
 	guarda_historial($cadena);
 	echo "<div align=center><h1>GUARDANDO, ESPERA...
