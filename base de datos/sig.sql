@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-05-2015 a las 18:14:04
+-- Tiempo de generación: 08-05-2015 a las 18:47:08
 -- Versión del servidor: 5.6.21
 -- Versión de PHP: 5.6.3
 
@@ -1326,14 +1326,38 @@ CREATE TABLE IF NOT EXISTS `canton` (
 `id_canton` int(11) NOT NULL,
   `canton` varchar(45) DEFAULT NULL,
   `id_provincia` int(11) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `canton`
 --
 
 INSERT INTO `canton` (`id_canton`, `canton`, `id_provincia`) VALUES
-(1, 'Zamora', 1);
+(1, 'Zamora', 1),
+(2, 'Yantazaza', 1),
+(3, 'Yacuambi', 1),
+(4, 'Paquisha', 1),
+(5, 'Palanda', 1),
+(6, 'Nagaritza', 1),
+(7, 'El Pangui', 1),
+(8, 'Chimchipe', 1),
+(9, 'Centinela del Condor', 1),
+(10, 'Alamor', 2),
+(11, 'Catamayo', 2),
+(12, 'Celica', 2),
+(13, 'Chaguarpamba', 2),
+(14, 'Espíndola', 2),
+(15, 'Gonzanamá', 2),
+(16, 'Loja', 2),
+(17, 'Macará', 2),
+(18, 'Olmedo', 2),
+(19, 'Paltas', 2),
+(20, 'Pindal', 2),
+(21, 'Puyango', 2),
+(22, 'Quilanga', 2),
+(23, 'Saraguro', 2),
+(24, 'Sozoranga', 2),
+(25, 'Zapotillo', 2);
 
 -- --------------------------------------------------------
 
@@ -3167,7 +3191,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=706;
 -- AUTO_INCREMENT de la tabla `canton`
 --
 ALTER TABLE `canton`
-MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=26;
 --
 -- AUTO_INCREMENT de la tabla `catas`
 --
