@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-05-2015 a las 17:47:39
+-- Tiempo de generación: 08-05-2015 a las 18:14:04
 -- Versión del servidor: 5.6.21
 -- Versión de PHP: 5.6.3
 
@@ -1326,7 +1326,14 @@ CREATE TABLE IF NOT EXISTS `canton` (
 `id_canton` int(11) NOT NULL,
   `canton` varchar(45) DEFAULT NULL,
   `id_provincia` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `canton`
+--
+
+INSERT INTO `canton` (`id_canton`, `canton`, `id_provincia`) VALUES
+(1, 'Zamora', 1);
 
 -- --------------------------------------------------------
 
@@ -2193,14 +2200,14 @@ CREATE TABLE IF NOT EXISTS `persona` (
   `direccion` text,
   `foto` text,
   `genero` char(1) DEFAULT NULL,
-  `id_provincia` int(10) DEFAULT NULL
+  `id_canton` int(10) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=305 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `persona`
 --
 
-INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`, `f_nacimiento`, `email`, `direccion`, `foto`, `genero`, `id_provincia`) VALUES
+INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`, `f_nacimiento`, `email`, `direccion`, `foto`, `genero`, `id_canton`) VALUES
 (2, ' Baltazar Francisco', 'Alvarez Michay', 1102029814, 0, '1960-01-08', '', '', '', '', 1),
 (3, ' Manuela Bernarda', 'Cevallos Michay', 1900055300, 0, '1944-12-04', '', '', '', '', 1),
 (4, ' Angel Benigno', 'Gaona Torres', 1101903662, 0, '1956-04-19', '', '', '', '', 1),
@@ -2514,14 +2521,15 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 CREATE TABLE IF NOT EXISTS `provincia` (
 `id_provincia` int(11) NOT NULL,
   `provincia` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `provincia`
 --
 
 INSERT INTO `provincia` (`id_provincia`, `provincia`) VALUES
-(1, 'Zamora');
+(1, 'Zamora Chinchipe'),
+(2, 'Loja');
 
 -- --------------------------------------------------------
 
@@ -3105,7 +3113,7 @@ ALTER TABLE `parcelas`
 -- Indices de la tabla `persona`
 --
 ALTER TABLE `persona`
- ADD PRIMARY KEY (`id_persona`), ADD KEY `FK_id_provincia_idx` (`id_provincia`);
+ ADD PRIMARY KEY (`id_persona`), ADD KEY `FK_id_provincia_idx` (`id_canton`);
 
 --
 -- Indices de la tabla `provincia`
@@ -3159,7 +3167,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=706;
 -- AUTO_INCREMENT de la tabla `canton`
 --
 ALTER TABLE `canton`
-MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `catas`
 --
@@ -3234,7 +3242,7 @@ MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=305;
 -- AUTO_INCREMENT de la tabla `provincia`
 --
 ALTER TABLE `provincia`
-MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `socios`
 --
@@ -3332,7 +3340,7 @@ ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (
 -- Filtros para la tabla `persona`
 --
 ALTER TABLE `persona`
-ADD CONSTRAINT `FK_id_provincia` FOREIGN KEY (`id_provincia`) REFERENCES `provincia` (`id_provincia`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_canton` FOREIGN KEY (`id_canton`) REFERENCES `canton` (`id_canton`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `socios`
