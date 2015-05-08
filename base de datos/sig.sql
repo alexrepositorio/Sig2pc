@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-05-2015 a las 18:47:08
+-- Tiempo de generación: 08-05-2015 a las 21:16:34
 -- Versión del servidor: 5.6.21
 -- Versión de PHP: 5.6.3
 
@@ -1326,7 +1326,7 @@ CREATE TABLE IF NOT EXISTS `canton` (
 `id_canton` int(11) NOT NULL,
   `canton` varchar(45) DEFAULT NULL,
   `id_provincia` int(11) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=222 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `canton`
@@ -1357,7 +1357,203 @@ INSERT INTO `canton` (`id_canton`, `canton`, `id_provincia`) VALUES
 (22, 'Quilanga', 2),
 (23, 'Saraguro', 2),
 (24, 'Sozoranga', 2),
-(25, 'Zapotillo', 2);
+(25, 'Zapotillo', 2),
+(26, 'Chordeleg', 3),
+(27, 'Cuenca', 3),
+(28, 'El Pan', 3),
+(29, 'Girón', 3),
+(30, 'Guachapala', 3),
+(31, 'Gualaceo', 3),
+(32, 'Nabón', 3),
+(33, 'Oña', 3),
+(34, 'Paute', 3),
+(35, 'Ponce Enriquez', 3),
+(36, 'Pucará', 3),
+(37, 'San Fernando', 3),
+(38, 'Santa Isabel', 3),
+(39, 'Sevilla de Oro', 3),
+(40, 'Sígsig', 3),
+(41, 'Caluma', 4),
+(42, 'Chillanes', 4),
+(43, 'Chimbo', 4),
+(44, 'Echeandía', 4),
+(45, 'Guaranda', 4),
+(46, 'Las Naves', 4),
+(47, 'San Miguel', 4),
+(48, 'Azoguez', 5),
+(49, 'Biblián', 5),
+(50, 'Cañar', 5),
+(51, 'Déleg', 5),
+(52, 'El Tambo', 5),
+(53, 'La Troncal', 5),
+(54, 'Suscal', 5),
+(55, 'Bolívar', 6),
+(56, 'Espejo', 6),
+(57, 'Mira', 6),
+(58, 'Montúfar', 6),
+(59, 'San Pedro de Huaca', 6),
+(60, 'Tulcán', 6),
+(61, 'Alausí', 7),
+(62, 'Chambo', 7),
+(63, 'Chunchi', 7),
+(64, 'Colta', 7),
+(65, 'Cumandá', 7),
+(66, 'Guamote', 7),
+(67, 'Guano', 7),
+(68, 'Pallatanga', 7),
+(69, 'Peine', 7),
+(70, 'Riobamba', 7),
+(71, 'La Maná', 8),
+(72, 'Latacunga', 8),
+(73, 'Pangua', 8),
+(74, 'Pujilí', 8),
+(75, 'Salcedo', 8),
+(76, 'Saquisilí', 8),
+(77, 'Sigchos', 8),
+(78, 'Arenilla', 9),
+(79, 'Atahualpa', 9),
+(80, 'Balsas', 9),
+(81, 'Chilla', 9),
+(82, 'El Guabo', 9),
+(83, 'Huaquillas', 9),
+(84, 'Las Lajas', 9),
+(85, 'Machala', 9),
+(86, 'Marcabelí', 9),
+(87, 'Pasaje', 9),
+(88, 'Piñas', 9),
+(89, 'Portovelo', 9),
+(90, 'Santa Rosa', 9),
+(91, 'Zaruma', 9),
+(92, 'Esmeraldas', 10),
+(93, 'Eloy Alfaro', 10),
+(94, 'Muisne', 10),
+(95, 'Quinindé', 10),
+(96, 'San Lorenzo', 10),
+(97, 'Atacames', 10),
+(98, 'Río Verde', 10),
+(99, 'Isabela', 11),
+(100, 'San Cristóbal', 11),
+(101, 'Santa Cruz', 11),
+(102, 'Guayaquil', 12),
+(103, 'Alfredo Baquerizo Moreno', 12),
+(104, 'Balao', 12),
+(105, 'Balzar', 12),
+(106, 'Colimes', 12),
+(107, 'Daule', 12),
+(108, 'El Empalme', 12),
+(109, 'El Triunfo', 12),
+(110, 'Durán', 12),
+(111, 'General Antonio Elizalde', 12),
+(112, 'Playas', 12),
+(113, 'Isidro Ayora', 12),
+(114, 'Lomas de Sargentillo', 12),
+(115, 'Marcelino Maridueña', 12),
+(116, 'Milagro', 12),
+(117, 'Naranjal', 12),
+(118, 'Naranjito', 12),
+(119, 'Nobol', 12),
+(120, 'Palestina', 12),
+(121, 'Pedro Carbo', 12),
+(122, 'Salitre', 12),
+(123, 'Samborondón', 12),
+(124, 'Santa Lucía', 12),
+(125, 'Simón Bolívar', 12),
+(126, 'Yaguachi', 12),
+(127, 'Antonio Ante', 13),
+(128, 'Cotacachi', 13),
+(129, 'Ibarra', 13),
+(130, 'Otavalo', 13),
+(131, 'Pimampiro', 13),
+(132, 'San Miguel de Urcuquí', 13),
+(133, 'Baba', 14),
+(134, 'Babahoyo', 14),
+(135, 'Buena Fe', 14),
+(136, 'Mocache', 14),
+(137, 'Montalvo', 14),
+(138, 'Palenque', 14),
+(139, 'Publoviejo', 14),
+(140, 'Quevedo', 14),
+(141, 'Quinsaloma', 14),
+(142, 'Urdaneta', 14),
+(143, 'Valencia', 14),
+(144, 'Ventanas', 14),
+(145, 'Vinces', 14),
+(146, 'Bolívar', 15),
+(147, 'Chone', 15),
+(148, 'El Carmen', 15),
+(149, 'Flavio Alfaro', 15),
+(150, 'Jama', 15),
+(151, 'Jaramijó', 15),
+(152, 'Jipijapa', 15),
+(153, 'Junín', 15),
+(154, 'Manta', 15),
+(155, 'Montecristi', 15),
+(156, 'Olmedo', 15),
+(157, 'Paján', 15),
+(158, 'Pedernales', 15),
+(159, 'Pichincha', 15),
+(160, 'Portoviejo', 15),
+(161, 'Puerto López', 15),
+(162, 'Rocafuerte', 15),
+(163, 'San Vicente', 15),
+(164, 'Santa Ana', 15),
+(165, 'Sucre', 15),
+(166, 'Tosagua', 15),
+(167, 'Veinticuatro de mayo', 15),
+(168, 'Gualaquiza', 16),
+(169, 'Huamboya', 16),
+(170, 'Limón Indanza', 16),
+(171, 'Logroño', 16),
+(172, 'Morona', 16),
+(173, 'Pablo Sexto', 16),
+(174, 'Palora', 16),
+(175, 'San Juan Bosco', 16),
+(176, 'Santiago', 16),
+(177, 'Sucúa', 16),
+(178, 'Taisha', 16),
+(179, 'Tiwintza', 16),
+(180, 'Archidona', 17),
+(181, 'Carlos Julio Arosemena Tola', 17),
+(182, 'El Chaco', 17),
+(183, 'Quijos', 17),
+(184, 'Tena', 17),
+(185, 'Aguarico', 18),
+(186, 'Orellana', 18),
+(187, 'La Joya de los Sachas', 18),
+(188, 'Loreto', 18),
+(189, 'Arajuno', 19),
+(190, 'Mera', 19),
+(191, 'Pastaza', 19),
+(192, 'Santa Clara', 19),
+(193, 'Cayambe', 20),
+(194, 'Mejía', 20),
+(195, 'Pedro Moncayo', 20),
+(196, 'Pedro Vicente Maldonado', 20),
+(197, 'Puerto Quito', 20),
+(198, 'Quito', 20),
+(199, 'Rumiñahui', 20),
+(200, 'San Miguel de los Bancos', 20),
+(201, 'La Libertad', 21),
+(202, 'Salina', 21),
+(203, 'Santa Elena', 21),
+(204, 'Santo Domingo', 22),
+(205, 'La Concordia', 22),
+(206, 'Cascales', 23),
+(207, 'Cuyabeno', 23),
+(208, 'Gonzalo Pizarro', 23),
+(209, 'Lago Agrio', 23),
+(210, 'Putumayo', 23),
+(211, 'Shushufindi', 23),
+(212, 'Sucumbíos', 23),
+(213, 'Ambato', 24),
+(214, 'Baños', 24),
+(215, 'Cevallos', 24),
+(216, 'Mocha', 24),
+(217, 'Patate', 24),
+(218, 'Pelileo', 24),
+(219, 'Píllaro', 24),
+(220, 'Quero', 24),
+(221, 'Tisaleo', 24);
 
 -- --------------------------------------------------------
 
@@ -2545,7 +2741,7 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 CREATE TABLE IF NOT EXISTS `provincia` (
 `id_provincia` int(11) NOT NULL,
   `provincia` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `provincia`
@@ -2553,7 +2749,29 @@ CREATE TABLE IF NOT EXISTS `provincia` (
 
 INSERT INTO `provincia` (`id_provincia`, `provincia`) VALUES
 (1, 'Zamora Chinchipe'),
-(2, 'Loja');
+(2, 'Loja'),
+(3, 'Azuay'),
+(4, 'Bolívar'),
+(5, 'Cañar'),
+(6, 'Carchi'),
+(7, 'Chiborazo'),
+(8, 'Cotopaxi'),
+(9, 'El Oro'),
+(10, 'Esmeraldas'),
+(11, 'Gálapagos'),
+(12, 'Guayas'),
+(13, 'Imbabura'),
+(14, 'Los Ríos'),
+(15, 'Manabí'),
+(16, 'Morona Santiago'),
+(17, 'Napo'),
+(18, 'Orellana'),
+(19, 'Pastaza'),
+(20, 'Pichincha'),
+(21, 'Santa Elena'),
+(22, 'Santo Domingo de los Tsáchilas'),
+(23, 'Sucumbios'),
+(24, 'Tungurahua');
 
 -- --------------------------------------------------------
 
@@ -3191,7 +3409,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=706;
 -- AUTO_INCREMENT de la tabla `canton`
 --
 ALTER TABLE `canton`
-MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=26;
+MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=222;
 --
 -- AUTO_INCREMENT de la tabla `catas`
 --
@@ -3266,7 +3484,7 @@ MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=305;
 -- AUTO_INCREMENT de la tabla `provincia`
 --
 ALTER TABLE `provincia`
-MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT de la tabla `socios`
 --
