@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-05-2015 a las 21:16:34
+-- Tiempo de generación: 12-05-2015 a las 21:33:18
 -- Versión del servidor: 5.6.21
 -- Versión de PHP: 5.6.3
 
@@ -243,6 +243,23 @@ UPDATE socios
 set id_grupo=@id, codigo=in_codigo 
 			where id_socio=in_id; 
             
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_usuarios_ins`(
+in in_usuario varchar(50),
+in in_contra varchar (15),
+in in_nivel varchar(10),
+in in_persona varchar(100)
+)
+BEGIN
+	insert into usuarios(user,pass) values (in_usuario,in_contra);
+
+SELECT id_niveles into @nivel from niveles where nivel=in_nivel;
+  
+select id_persona into @persona from persona where nombres and apellidos=in_persona ;
+  
+	insert into usuarios(id_niveles,id_persona) values (@nivel,@persona);
+  
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_usuario_find`(
@@ -2250,11 +2267,11 @@ CREATE TABLE IF NOT EXISTS `niveles` (
 --
 
 INSERT INTO `niveles` (`id_niveles`, `nivel`) VALUES
-(1, 'administrador'),
-(2, 'contador'),
-(3, 'bodeguero'),
-(4, 'catador'),
-(5, 'socio');
+(1, 'Administrador'),
+(2, 'Contador'),
+(3, 'Bodeguero'),
+(4, 'Catador'),
+(5, 'Socio');
 
 -- --------------------------------------------------------
 
@@ -2421,7 +2438,7 @@ CREATE TABLE IF NOT EXISTS `persona` (
   `foto` text,
   `genero` char(1) DEFAULT NULL,
   `id_canton` int(10) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=305 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=306 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `persona`
@@ -2730,7 +2747,8 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 (301, 'Gilver', 'Rosillo', 0, 0, '0000-00-00', '', '', '', 'm', 1),
 (302, 'Harvey', 'Merino', 0, 0, '0000-00-00', '', '', '', 'm', 1),
 (303, 'Manuel', 'Tillaguango', 0, 0, '0000-00-00', '', '', '', 'm', 1),
-(304, 'Jose', 'Cueva', NULL, 0, NULL, NULL, NULL, NULL, NULL, 1);
+(304, 'Jose', 'Cueva', NULL, 0, NULL, NULL, NULL, NULL, NULL, 1),
+(305, 'Usuario de', 'Prueba', NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3230,14 +3248,21 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `pass` text COLLATE latin1_spanish_ci NOT NULL,
   `id_nivel` int(11) NOT NULL,
   `id_persona` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
 INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`) VALUES
-(1, 'admin', 'admin', 1, 304);
+(1, 'admin', 'admin', 1, 304),
+(20, 'Jafv', '1234', 1, 305),
+(21, 'Jafvas', '12', 2, 304),
+(22, 'asd', '12', 3, 305),
+(23, 'asdr', '12d', 4, 304),
+(24, 'asddad', '122', 5, 305),
+(25, '12asd', '21sd', 3, 305),
+(26, 'asd', '12', 4, 304);
 
 --
 -- Índices para tablas volcadas
@@ -3479,7 +3504,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=305;
+MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=306;
 --
 -- AUTO_INCREMENT de la tabla `provincia`
 --
@@ -3499,7 +3524,7 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=27;
 --
 -- Restricciones para tablas volcadas
 --
@@ -3602,7 +3627,7 @@ ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id`) REFERENCES `parcelas` 
 --
 ALTER TABLE `usuarios`
 ADD CONSTRAINT `FK_USUARIO_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `fk_user_nivel` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`);
+ADD CONSTRAINT `fk_nivel` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

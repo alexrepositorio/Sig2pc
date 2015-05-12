@@ -1,28 +1,19 @@
 <?php
 include ("cabecera.php");
+include ("users_funciones.php") ;
 
 if(isset ($_POST["user"])){
 	
 
-$SQL_edit="INSERT INTO usuarios VALUES('',
-				'".$_POST["user"]."',
-				'".$_POST["pass"]."',
-				'".rand(0,9999)."',
-				'".$_POST["nivel"]."')";
-
-$resultado=mysqli_query($link, $SQL_edit);
-$nuevo_id=mysqli_insert_id($link);
+insertar_Usuarios($_POST["user"],$_POST["pass"],$_POST["nivel"],$_POST["nombre"]);
 
 
-$cadena=str_replace("'", "", $SQL_edit);
-guarda_historial($cadena);
-
-//echo "$SQL_edit";
+//recordar que la cadenda sql tiene  que ir a la taba acciones
 
 echo "<div align=center><h1>GUARDANDO, ESPERA...
 <meta http-equiv='Refresh' content='2;url=usuarios.php'></font></h1></div>";
 
-//echo "$SQL_edit";
+
 }
 
 
@@ -36,17 +27,30 @@ echo "<div align=center><h1>NUEVO USUARIO</h1><br>";
 echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 echo "<table class=tablas>";
 echo "<tr><th><h4>Usuario</th><td><input type='text' name=user></td></tr>";
-echo "<tr><th><h4>Contraseña</th><td><input type='text' name=pass></td></tr>";
-echo "<tr><th><h4>Nivel</th><td>";
-			echo "<select name=nivel>";
-			echo "<option value='1'>Administrador</option>";
-			echo "<option value='2'>Contable</option>";
-			echo "<option value='3'>Bodeguero</option>";
-			echo "<option value='4'>Socio</option>";
-			echo "<option value='5'>Catador</option>";
-			echo "</select></td></tr>";
-echo "</table><br>";
+echo "<tr><th><h4>Contraseña</th><td><input type='password' name=pass></td></tr>";
 
+echo "<tr><th><h4>Niveles</th><td>";
+echo "<select name=nivel required>";
+			echo "<option value=''>Elija un nivel</option>";
+			$result=obtenerNiveles();
+  	 $niveless=obtenerNiveles();
+ foreach ($niveless as $nivel)
+	{
+		echo "<option value='$localidad'>".$nivel["nivel"]."</option>";
+	}
+echo "</select></td></tr>";
+
+echo "<tr><th><h4>Nombres</th><td>";
+echo "<select name=nombre required>";
+			echo "<option value=''>Verifique que sus nombres esten en la base</option>";
+			$result=obtenerNombres();
+  	 $nombress=obtenerNombres();
+ foreach ($nombress as $nombre)
+	{
+		echo "<option value='$localidad'>".$nombre["nombres"]." ".$nombre["apellidos"]."</option>";
+	}
+echo "</select></td></tr>";
+echo "</table><br>";
 echo "<input type='submit' value='Guardar'>";
 echo "</form>";
 }
