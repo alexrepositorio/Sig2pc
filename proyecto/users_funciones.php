@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Alex
- * Date: 08/04/2015
- * Time: 20:23
- */
-
 
 function consultarCriterio(){
     require("conect.php");
@@ -16,7 +9,33 @@ function consultarCriterio(){
 
 			}  
     return($usuarios);
-
 }
 
+function obtenerNombres(){
+
+    require("conect.php");
+    $sql="SELECT nombres, apellidos FROM persona ORDER BY nombres ASC";
+    $resultado=mysqli_query($link,$sql) or die(mysqli_error($link));
+      while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
+                $nombress[]=$row; 
+            }  
+    return ($nombress);
+}
+
+function obtenerNiveles(){
+
+    require("conect.php");
+    $sql="SELECT nivel FROM niveles";
+    $resultado=mysqli_query($link,$sql) or die(mysqli_error($link));
+      while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
+                $niveless[]=$row; 
+            }  
+    return ($niveless);
+}
+
+function insertar_Usuarios($user,$pass,$nivel,$persona){
+	require ("conect.php");
+	$SQL="call SP_usuarios_ins('".$user."','".$pass."','".$nivel."','".$persona."')";
+	mysqli_query($link,$SQL) or die(mysqli_error($link));
+}
 ?>
