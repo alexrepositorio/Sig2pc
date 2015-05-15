@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 08-05-2015 a las 17:47:39
+-- Tiempo de generación: 15-05-2015 a las 15:38:10
 -- Versión del servidor: 5.6.21
 -- Versión de PHP: 5.6.3
 
@@ -17,13 +17,35 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de datos: `sig2`
+-- Base de datos: `sig`
 --
 
 DELIMITER $$
 --
 -- Procedimientos
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_con_catas`()
+BEGIN
+SELECT `id`, `lote`, `fecha`, `catador`, 
+`tostado`, `fragancia`, `tipo_aroma1`, `nota_aroma`, 
+`sabor`, `tipo_sabor`, `nota_sabor`, `sabor_residual`, 
+`tipo_sabor_residual`, `nota_sabor_residual`, `acidez`, `cuerpo`, 
+`uniformidad`, `balance`, `puntaje_catador`, `taza_limpia`, 
+`dulzor`, `nota_catacion`, `puntuacion`, `d_fermento`, 
+`d_metalico`, `d_quimico`, `d_vinagre`, `d_stinker`, 
+`d_fenol`, `d_reposo`, `d_moho`, `d_terroso`, 
+`d_extrano`, `d_sucio`, `d_astringente`, `d_quaquers`, 
+`dl_cereal`, `dl_fermento`, `dl_reposo`, `dl_moho`, 
+`dl_astringencia`, `d_general`
+FROM `catas`;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_del_catas`(IN `p_id` INT(11))
+BEGIN
+DELETE FROM `catas`
+WHERE `id` = p_id;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_con`(
 in criterio varchar(20),
 in post varchar(20)
@@ -73,6 +95,32 @@ responsable=res
 id=envio;
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_ins_catas`(IN `p_id` INT(11), IN `p_lote` INT(11), IN `p_fecha` TIMESTAMP, IN `p_catador` TEXT, IN `p_tostado` INT(11), IN `p_fragancia` FLOAT(10,2), IN `p_tipo_aroma1` TEXT, IN `p_nota_aroma` TEXT, IN `p_sabor` FLOAT(10,2), IN `p_tipo_sabor` TEXT, IN `p_nota_sabor` TEXT, IN `p_sabor_residual` FLOAT(10,2), IN `p_tipo_sabor_residual` TEXT, IN `p_nota_sabor_residual` TEXT, IN `p_acidez` FLOAT(10,2), IN `p_cuerpo` FLOAT(10,2), IN `p_uniformidad` FLOAT(10,2), IN `p_balance` FLOAT(10,2), IN `p_puntaje_catador` FLOAT(10,2), IN `p_taza_limpia` FLOAT(10,2), IN `p_dulzor` FLOAT(10,2), IN `p_nota_catacion` TEXT, IN `p_puntuacion` FLOAT(10,2), IN `p_d_fermento` INT(11), IN `p_d_metalico` INT(11), IN `p_d_quimico` INT(11), IN `p_d_vinagre` INT(11), IN `p_d_stinker` INT(11), IN `p_d_fenol` INT(11), IN `p_d_reposo` INT(11), IN `p_d_moho` INT(11), IN `p_d_terroso` INT(11), IN `p_d_extrano` INT(11), IN `p_d_sucio` INT(11), IN `p_d_astringente` INT(11), IN `p_d_quaquers` INT(11), IN `p_dl_cereal` INT(11), IN `p_dl_fermento` INT(11), IN `p_dl_reposo` INT(11), IN `p_dl_moho` INT(11), IN `p_dl_astringencia` INT(11), IN `p_d_general` INT(11))
+BEGIN
+INSERT INTO `catas`(`id`, `lote`, `fecha`, `catador`, 
+`tostado`, `fragancia`, `tipo_aroma1`, `nota_aroma`, 
+`sabor`, `tipo_sabor`, `nota_sabor`, `sabor_residual`, 
+`tipo_sabor_residual`, `nota_sabor_residual`, `acidez`, `cuerpo`, 
+`uniformidad`, `balance`, `puntaje_catador`, `taza_limpia`, 
+`dulzor`, `nota_catacion`, `puntuacion`, `d_fermento`, 
+`d_metalico`, `d_quimico`, `d_vinagre`, `d_stinker`, 
+`d_fenol`, `d_reposo`, `d_moho`, `d_terroso`, 
+`d_extrano`, `d_sucio`, `d_astringente`, `d_quaquers`, 
+`dl_cereal`, `dl_fermento`, `dl_reposo`, `dl_moho`, 
+`dl_astringencia`, `d_general`) 
+VALUES (p_id, p_lote, p_fecha, p_catador, 
+p_tostado, p_fragancia, p_tipo_aroma1, p_nota_aroma, 
+p_sabor, p_tipo_sabor, p_nota_sabor, p_sabor_residual, 
+p_tipo_sabor_residual, p_nota_sabor_residual, p_acidez, p_cuerpo, 
+p_uniformidad, p_balance, p_puntaje_catador, p_taza_limpia, 
+p_dulzor, p_nota_catacion, p_puntuacion, p_d_fermento, 
+p_d_metalico, p_d_quimico, p_d_vinagre, p_d_stinker, 
+p_d_fenol, p_d_reposo, p_d_moho, p_d_terroso, 
+p_d_extrano, p_d_sucio, p_d_astringente, p_d_quaquers, 
+p_dl_cereal, p_dl_fermento, p_dl_reposo, p_dl_moho, 
+p_dl_astringencia, p_d_general);
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lista_usuarios_con`()
 BEGIN
   select u.user, nivel from usuarios as u,niveles where id_nivel=id_niveles;
@@ -101,6 +149,67 @@ BEGIN
     
  INSERT INTO lotes (`id_socio`, `codigo_lote`, `fecha`, `peso`, `humedad`, `rto_descarte`, `rto_exportable`, `defecto_negro`, `defecto_vinagre`, `defecto_decolorado`, `defecto_mordido`, `defecto_brocado`, `reposo`, `moho`, `fermento`, `contaminado`,`calidad`) 
  VALUES (in_socio,in_codigo , in_fecha, in_peso,in_humedad , in_rto_descarte, in_rto_exportable, in_defecto_negro, in_defecto_vinagre, in_defecto_decolorado, in_defecto_mordido, in_defecto_brocado, in_reposo, in_moho, in_fermento, in_contaminado,in_calidad);
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_parcelas_cons`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20)
+)
+BEGIN
+case  criterio
+when 'socio'
+then 
+SELECT parcelas.*, SUM(subparcelas.superficie) as sup_cafe FROM parcelas 
+LEFT JOIN subparcelas ON parcelas.id=subparcelas.id_parcela 
+WHERE parcelas.id_socio= valor GROUP BY parcelas.id;
+
+when 'localidad'
+then
+SELECT parcelas.*, SUM(subparcelas.superficie) as sup_cafe, grupos.grupo as poblacion FROM parcelas 
+INNER JOIN subparcelas ON parcelas.id=subparcelas.id_parcela 
+INNER JOIN socios on parcelas.id_socio=socios.id_socio
+left join grupos on grupos.id=socios.id_grupo
+where  grupo like CONCAT('%', valor, '%') 
+and socios.id_socio is not null
+GROUP BY parcelas.id;
+
+when 'organico'
+
+then                
+SELECT parcelas.*, SUM(subparcelas.superficie) as sup_cafe FROM parcelas 
+LEFT JOIN subparcelas ON parcelas.id=subparcelas.id_parcela 
+LEFT JOIN (SELECT id_socio, year, estatus FROM certificacion 
+WHERE year=(select max(year) from certificacion i 
+where i.id_socio = certificacion.id_socio)) t on parcelas.id_socio=t.id_socio 
+WHERE t.estatus like concat('%','O','%') GROUP BY parcelas.id;
+
+when 'no_organico'
+then               
+SELECT parcelas.*, SUM(subparcelas.superficie) as sup_cafe FROM parcelas 
+LEFT JOIN subparcelas ON parcelas.id=subparcelas.id_parcela
+ LEFT JOIN (SELECT id_socio, year, estatus FROM certificacion 
+ WHERE year=(select max(year) from certificacion i 
+ where i.id_socio = certificacion.id_socio)) t on parcelas.id_socio=t.id_socio 
+WHERE t.estatus<>'O' GROUP BY parcelas.id;
+				  
+when ''
+then
+	SELECT parcelas.*, SUM(subparcelas.superficie) as sup_cafe FROM parcelas 
+    LEFT JOIN subparcelas ON parcelas.id=subparcelas.id_parcela 
+    GROUP BY parcelas.id;
+END case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_parcela_ins`(
+in  in_socio int(11), in in_coorX int(11),in in_coorY int(11),
+in in_altitud int(11),
+in in_superficie float(10,2), in in_MOcontratada int(11),
+in in_Mofamiliar int(11), in in_miembros_familia int(11),
+in in_riego varchar(20)
+)
+BEGIN
+
+INSERT INTO parcelas VALUES ('',in_socio,in_coorX,in_coorY,in_altitud,in_superficie,
+in_Mocontratada,in_Mofamiliar,in_miembros_familia,in_riego);
+
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_altas`(
@@ -179,7 +288,7 @@ END case;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_estimacion`(
-in id int
+in id int(11)
 )
 BEGIN
 SELECT id,year,estimados,entregados FROM estimacion WHERE id_socio=id;
@@ -187,11 +296,15 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_find`(IN `id` INT)
 BEGIN
-SELECT `id_socio`,`nombres`, `apellidos`, socios.codigo as codigo, `cedula`,`celular`, `f_nacimiento`, `email`, `direccion`, `canton`, `provincia`, `genero`,`grupo` as poblacion FROM persona
+SELECT `id_socio`,`nombres`, `apellidos`, socios.codigo as codigo,canton.canton as canton,provincia.provincia as provincia, `cedula`,`celular`, `f_nacimiento`, `email`, `direccion`, `genero`,`grupo` as poblacion FROM persona
 	left join socios
 	on socios.id_persona=persona.id_persona
 	left join grupos
 	on grupos.id=socios.id_grupo
+    left join canton
+    on persona.id_canton=canton.id_canton
+    left join provincia
+    on provincia.id_provincia=canton.id_provincia
 	where socios.id_socio=id; 
 END$$
 
@@ -209,36 +322,37 @@ in in_genero char(1),
 in in_mail varchar(50)
 )
 BEGIN
-  insert into Persona(nombres,apellidos,codigo,cedula,celular,f_nacimiento,email,direccion,provincia,canton,genero) 
-  values (in_nombre,in_apellido,in_codigo,in_cedula,in_celular,f_nac,in_mail,in_direccion,in_canton,
-  in_provincia,in_genero);
+	select id_canton into @cantonId from canton where canton.canton=in_canton;
+  insert into Persona(nombres,apellidos,cedula,celular,f_nacimiento,email,direccion,genero,id_canton) 
+  values (in_nombre,in_apellido,in_cedula,in_celular,f_nac,in_mail,in_direccion,
+ in_genero,@cantonId);
   
-  SELECT id into @id from grupos where grupo like concat("%",in_poblacion,"%");
+  SELECT id into @ide from grupos where grupo=in_poblacion;
   
   select id_persona into @persona from persona where nombres=in_nombre and apellidos=in_apellido;
   
-  insert into socios(id_grupo,id_persona,codigo) values (@id,@persona,in_codigo);
+  insert into socios(id_grupo,id_persona,codigo) values (@ide,@persona,in_codigo);
   
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_update`(IN `in_id` INT, IN `in_nombre` VARCHAR(20), IN `in_apellido` VARCHAR(20), IN `in_codigo` VARCHAR(4), IN `in_cedula` VARCHAR(20), IN `in_celular` VARCHAR(20), IN `f_nac` DATE, IN `in_direccion` VARCHAR(50), IN `in_poblacion` VARCHAR(30), IN `in_canton` VARCHAR(20), IN `in_provincia` VARCHAR(20), IN `in_genero` CHAR(1), IN `in_mail` VARCHAR(50))
 BEGIN
+
+select id_canton into @cantonId from canton where canton.canton=in_canton;
 select id_persona into @persona from socios where socios.id_socio=in_id;
 UPDATE persona SET
 				nombres=in_nombre,
 				apellidos=in_apellido,
 				cedula=in_cedula,
-				codigo=in_codigo,
 				celular=in_celular,
 				f_nacimiento=f_nac,
 				direccion=in_direccion,
-				canton=in_canton,
-				provincia=in_provincia,
+				id_canton=@cantonId,
 				genero=in_genero,
                 email=in_mail
 			where id_persona=@persona;
 
-SELECT id into @id from grupos where grupo like concat("%",in_poblacion,"%");            
+SELECT id into @id from grupos where grupo=in_poblacion;            
 UPDATE socios
 set id_grupo=@id, codigo=in_codigo 
 			where id_socio=in_id; 
@@ -1094,7 +1208,7 @@ CREATE TABLE IF NOT EXISTS `asociaciones` (
   `tipo` text COLLATE latin1_spanish_ci NOT NULL,
   `elemento` text COLLATE latin1_spanish_ci NOT NULL,
   `subparcela_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=706 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=710 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `asociaciones`
@@ -1314,7 +1428,9 @@ INSERT INTO `asociaciones` (`id`, `concepto`, `valor`, `tipo`, `elemento`, `subp
 (590, 'platano', '', 'cultivo', 'parcela', 88),
 (591, 'platano', '', 'cultivo', 'parcela', 89),
 (592, 'platano', '', 'cultivo', 'parcela', 92),
-(705, 'platano', '', 'cultivo', 'parcela', 296);
+(705, 'platano', '', 'cultivo', 'parcela', 296),
+(708, 'guayaba', 'bajo', 'cultivo', 'parcela', 1),
+(709, 'gallinas', 'bajo', 'animales', 'parcela', 1);
 
 -- --------------------------------------------------------
 
@@ -1326,7 +1442,22 @@ CREATE TABLE IF NOT EXISTS `canton` (
 `id_canton` int(11) NOT NULL,
   `canton` varchar(45) DEFAULT NULL,
   `id_provincia` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `canton`
+--
+
+INSERT INTO `canton` (`id_canton`, `canton`, `id_provincia`) VALUES
+(1, 'Zamora', 1),
+(2, 'Centinela del Condor', 1),
+(3, 'Chinchipe', 1),
+(4, 'El Pangui', 1),
+(5, 'Nangaritza', 1),
+(6, 'Palanga', 1),
+(7, 'Paquisha', 1),
+(8, 'Yacuambi', 1),
+(9, 'Yantzaza', 1);
 
 -- --------------------------------------------------------
 
@@ -2081,7 +2212,7 @@ CREATE TABLE IF NOT EXISTS `parcelas` (
 --
 
 INSERT INTO `parcelas` (`id`, `id_socio`, `coorX`, `coorY`, `alti`, `sup_total`, `MOcontratada`, `MOfamiliar`, `Miembros_familia`, `riego`) VALUES
-(1, 1, 9482926, 707211, 1178, 2.00, 200, 3, 3, ''),
+(1, 58, 9482926, 707211, 1178, 2.00, 200, 3, 3, 'Goteo'),
 (2, 2, 0, 0, 0, 7.00, 60, 2, 2, ''),
 (3, 3, 9482298, 707191, 1160, 10.00, 20, 4, 6, ''),
 (4, 4, 948559, 705609, 1403, 30.00, 60, 2, 5, ''),
@@ -2193,14 +2324,14 @@ CREATE TABLE IF NOT EXISTS `persona` (
   `direccion` text,
   `foto` text,
   `genero` char(1) DEFAULT NULL,
-  `id_provincia` int(10) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=305 DEFAULT CHARSET=utf8;
+  `id_canton` int(10) DEFAULT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=311 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `persona`
 --
 
-INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`, `f_nacimiento`, `email`, `direccion`, `foto`, `genero`, `id_provincia`) VALUES
+INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`, `f_nacimiento`, `email`, `direccion`, `foto`, `genero`, `id_canton`) VALUES
 (2, ' Baltazar Francisco', 'Alvarez Michay', 1102029814, 0, '1960-01-08', '', '', '', '', 1),
 (3, ' Manuela Bernarda', 'Cevallos Michay', 1900055300, 0, '1944-12-04', '', '', '', '', 1),
 (4, ' Angel Benigno', 'Gaona Torres', 1101903662, 0, '1956-04-19', '', '', '', '', 1),
@@ -2268,7 +2399,7 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 (66, ' Segundo Ramon', 'Salinas Castillo', 1900159144, 0, '1962-10-17', '', '', '', '', 1),
 (67, ' Josefino De Jesus', 'Suarez Bravo', 1103208110, 0, '0000-00-00', '', '', '', '', 1),
 (68, ' Gaona Castillo', 'Vilma Francisca', 1105101149, 0, '1991-07-24', '', '', '', '', 1),
-(69, ' Indalecio', 'Abad Abad', 1104518863, 0, '1981-01-29', '', '', '', '', 1),
+(69, ' Indalecio', 'Abad Abad', 1104518863, 0, '1981-01-29', '', '', '', 'm', 1),
 (70, ' Segundo Aurelio', 'Calva Abad', 1900255355, 0, '1963-11-16', '', '', '', '', 1),
 (71, ' Jose Marcial', 'Abad Pintado', 1900324615, 0, '1973-04-15', '', '', '', '', 1),
 (72, ' Simon Bolivar', 'Gaona Calva', 1103147862, 0, '1971-10-08', '', '', '', '', 1),
@@ -2503,7 +2634,8 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 (301, 'Gilver', 'Rosillo', 0, 0, '0000-00-00', '', '', '', 'm', 1),
 (302, 'Harvey', 'Merino', 0, 0, '0000-00-00', '', '', '', 'm', 1),
 (303, 'Manuel', 'Tillaguango', 0, 0, '0000-00-00', '', '', '', 'm', 1),
-(304, 'Jose', 'Cueva', NULL, 0, NULL, NULL, NULL, NULL, NULL, 1);
+(304, 'Jose', 'Cueva', NULL, 0, NULL, NULL, NULL, NULL, NULL, 1),
+(310, 'Nuevo', 'Nuevo', 123123, 0, '0000-00-00', 'art_s@hotmail.es', '', NULL, 'm', 5);
 
 -- --------------------------------------------------------
 
@@ -2514,14 +2646,15 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 CREATE TABLE IF NOT EXISTS `provincia` (
 `id_provincia` int(11) NOT NULL,
   `provincia` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `provincia`
 --
 
 INSERT INTO `provincia` (`id_provincia`, `provincia`) VALUES
-(1, 'Zamora');
+(1, 'Zamora Chinchipe'),
+(2, 'Loja');
 
 -- --------------------------------------------------------
 
@@ -2534,7 +2667,7 @@ CREATE TABLE IF NOT EXISTS `socios` (
   `id_grupo` int(11) DEFAULT NULL,
   `id_persona` int(11) DEFAULT NULL,
   `codigo` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=303 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=306 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `socios`
@@ -2608,7 +2741,7 @@ INSERT INTO `socios` (`id_socio`, `id_grupo`, `id_persona`, `codigo`) VALUES
 (65, 5, 66, 'CU15'),
 (66, 5, 67, 'CU17'),
 (67, 5, 68, 'CU19'),
-(68, 5, 69, 'CU20'),
+(68, NULL, 69, '58'),
 (69, 5, 70, 'CU21'),
 (70, 5, 71, 'CU22'),
 (71, 5, 72, 'CU23'),
@@ -2842,7 +2975,8 @@ INSERT INTO `socios` (`id_socio`, `id_grupo`, `id_persona`, `codigo`) VALUES
 (299, 2, 301, 'AN53'),
 (300, 2, 302, 'AN57'),
 (301, 2, 303, 'AN54'),
-(302, 11, 120, 'IJ13');
+(302, 11, 120, 'IJ13'),
+(305, 9, 310, 'FA58');
 
 -- --------------------------------------------------------
 
@@ -2866,7 +3000,7 @@ CREATE TABLE IF NOT EXISTS `subparcelas` (
   `ojo_pollo` text COLLATE latin1_spanish_ci NOT NULL,
   `mes_inicio_cosecha` text COLLATE latin1_spanish_ci NOT NULL,
   `duracion_cosecha` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=302 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `subparcelas`
@@ -2966,7 +3100,8 @@ INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `varied
 (91, 91, 2.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (92, 92, 4.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (296, 296, 1.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
-(297, 297, 6.00, '', '', 2009, 0, '', '', '', '', '', '', '', 0);
+(297, 297, 6.00, '', '', 2009, 0, '', '', '', '', '', '', '', 0),
+(301, 1, 20.00, 'catucaï¿½', 'catucaï¿½', 0, 20, 'Medio', 'Medio', 'Medio', '50', '50', '50', 'Enero', 3);
 
 -- --------------------------------------------------------
 
@@ -3105,7 +3240,7 @@ ALTER TABLE `parcelas`
 -- Indices de la tabla `persona`
 --
 ALTER TABLE `persona`
- ADD PRIMARY KEY (`id_persona`), ADD KEY `FK_id_provincia_idx` (`id_provincia`);
+ ADD PRIMARY KEY (`id_persona`), ADD KEY `FK_id_provincia_idx` (`id_canton`);
 
 --
 -- Indices de la tabla `provincia`
@@ -3123,7 +3258,7 @@ ALTER TABLE `socios`
 -- Indices de la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
- ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_subparcela_parcela_idx` (`id_parcela`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -3154,12 +3289,12 @@ MODIFY `id_analisis` int(11) NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=706;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=710;
 --
 -- AUTO_INCREMENT de la tabla `canton`
 --
 ALTER TABLE `canton`
-MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT de la tabla `catas`
 --
@@ -3229,22 +3364,22 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=305;
+MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=311;
 --
 -- AUTO_INCREMENT de la tabla `provincia`
 --
 ALTER TABLE `provincia`
-MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `socios`
 --
 ALTER TABLE `socios`
-MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=303;
+MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=306;
 --
 -- AUTO_INCREMENT de la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=302;
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
@@ -3332,7 +3467,7 @@ ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (
 -- Filtros para la tabla `persona`
 --
 ALTER TABLE `persona`
-ADD CONSTRAINT `FK_id_provincia` FOREIGN KEY (`id_provincia`) REFERENCES `provincia` (`id_provincia`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_canton` FOREIGN KEY (`id_canton`) REFERENCES `canton` (`id_canton`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `socios`
@@ -3345,7 +3480,7 @@ ADD CONSTRAINT `FK_SOCIO_GRUPO` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`i
 -- Filtros para la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id`) REFERENCES `parcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id_parcela`) REFERENCES `parcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `usuarios`
