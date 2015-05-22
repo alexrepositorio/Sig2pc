@@ -1,57 +1,40 @@
 <?php
 include ("cabecera.php");
 include ("socio.php");
+include ("certificaciones_funciones.php");
+include ("lote_funciones.php");
+include ("parcelas_funciones.php");
+include ("altas_funciones.php");
+include ("estimaciones_funciones.php");
 
 
-
-$socio = obtenerSocio($_GET["user"]);
-
-
+$socio = consultarCriterio('id',$_GET["user"]);
 $estatus=certificacion($_GET["user"]);
-if(count($estatus)>0){
-	$estatus_actual=max(array_keys($estatus));
-}else{
-	$estatus_actual="00";
+if (is_array($estatus)) {
+	$enlace_estatus="<a href=historial_certificacion.php?socio=".$_GET["user"]."><h3>Ver historial Certificacion</h3></a>";}
+else{
+	$enlace_estatus="<a href=ficha_socio_certificar.php?socio=".$_GET["user"]."><h3>Añadir Certificacion</h3>/a>";
 }
 $estimado=estimacion($socio["id_socio"]);
-if(count($estimado)>0){
-	$estimado_actual=max(array_keys($estimado));
-	$enlace_estimado="<a href=historial_estimacion.php?socio=".$_GET["user"].">ver historial</a>";}
-else{
-	$estimado_actual="00";
-	$enlace_estimado="<a href=historial_estimacion_nuevo.php?socio=".$_GET["user"].">añadir</a>";
+if (is_array($estimado)) {
+	$enlace_estimado="<a href=historial_estimacion.php?socio=".$_GET["user"]."><h3>Ver historial Estimacion</h3></a>";
+}else{
+	$enlace_estimado="<a href=historial_estimacion_nuevo.php?socio=".$_GET["user"]."><h3>Añadir Estimacion</h3></a>";
 }
 $altas=altas_bajas($socio["id_socio"]);
-if(count($altas)>0){
-	$ultimafecha=max(array_keys($altas));
-	$enlace_altas="<a href=historial_altas.php?socio=".$_GET["user"].">ver historial</a>";}
-else{
-	$ultimafecha=0;
-	$enlace_altas="<a href=historial_altas_nuevo.php?socio=".$_GET["user"].">añadir</a>";}
-	if($altas[$ultimafecha]["year"]==0){
-		$altas[$ultimafecha]["year"]="<i>\"fecha desconocida\"</i>";
-		$altas[$ultimafecha]["estado"]="";}
-	else{
-		$altas[$ultimafecha]["year"]=date("d-m-Y",strtotime($altas[$ultimafecha]["year"]));}
-	
+if (is_array($altas)) {
+	$enlace_altas="<a href=historial_altas.php?socio=".$_GET["user"]."><h3>Ver historial Altas</h3></a>";
+}else{
+	$enlace_altas="<a href=historial_altas_nuevo.php?socio=".$_GET["user"]."><h3>Añadir Altas</h3></a>";
+}
 
-		if ($estatus_actual=="00"){
-		$estatus_t="Sin datos";
-		$estatus[$estatus_actual]["estatus"]="";
-		$estatus[$estatus_actual]["year"]="";
-		$enlace_estatus="<a href=historial_certificacion_nuevo.php?socio=".$_GET["user"].">añadir</a>";}
-		else{
-			$enlace_estatus="<a href=historial_certificacion.php?socio=".$_GET["user"].">ver historial</a>";
-			if($estatus[$estatus_actual]["estatus"]=="O"){$estatus_t="ORGANICO";$estatus[$estatus_actual]["estatus"]="(O)";}
-			else{$estatus_t="CONVENCIONAL";$estatus[$estatus_actual]["estatus"]="(".$estatus[$estatus_actual]["estatus"].")";}
-			}
-			$resultado_lotes=obtenerLotes($socio["id_socio"]);
-$cuenta_lotes=mysqli_num_rows($resultado_lotes);;
-
-if($cuenta_lotes>0)
+$resultado_lotes=obtenerLotes($socio["id_socio"]);
+$cuenta_lotes=count($resultado_lotes);
+if (is_array($resultado_lotes)) {
+	if($cuenta_lotes>1)
 {
-	while($lot = mysqli_fetch_array($resultado_lotes)){
-	$pesos_del_socio[]=$lot["peso"];	
+	foreach ($$resultado_lotes as $lot ) {
+		$pesos_del_socio[]=$lot["peso"];
 	}
 	$peso_entregado=array_sum($pesos_del_socio);
 	$estimado_actual_max=$estimado[$estimado_actual]["estimados"]*(1+(obtener_configuracion_parametro('margen_contrato')/100));
@@ -59,16 +42,23 @@ if($cuenta_lotes>0)
 	$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";
 }
 else{
-	$peso_entregado=0;
-	$estimado_actual_max="";
-	$peso_restante=$estimado_actual_max-$peso_entregado;	
-	$cuenta_lotes_t="";
+		$peso_entregado=$resultado_lotes["peso"];
+		$estimado_actual_max=$estimado[$estimado_actual]["estimados"]*(1+(obtener_configuracion_parametro('margen_contrato')/100));
+		$peso_restante=$estimado_actual_max-$peso_entregado;
+		$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";	
+	}
+}else{
+		$peso_entregado=0;
+		$estimado_actual_max="";
+		$peso_restante=$estimado_actual_max-$peso_entregado;	
+		$cuenta_lotes_t="";
 }
 
-$r_par=parcelas($socio["id_socio"]);
-$cuenta_parcelas=mysqli_num_rows($r_par);
-if($cuenta_parcelas>0)
-{
+
+$r_par=parcelas_consultarCriterio('id_socio',$socio["id_socio"]);
+$cuenta_parcelas=count($r_par);
+$cuenta_parcelas=$cuenta_parcelas/10;
+if (is_array($r_par)) {
 	$cuenta_parcelas_t="(<font color=red><b>$cuenta_parcelas</b></font>)";
 }
 else{
@@ -99,16 +89,21 @@ echo "<br><br>";
 
 echo "<div align=center>
 <table class=tablas><tr>";
+echo "<tr>";
+echo "<td>".$enlace_estatus."</td>";
+echo "<td>".$enlace_altas."</td>";
+echo "<td>".$enlace_estimado."</td>";
+echo "</tr>";
 
 if(in_array($_SESSION['acceso'],$permisos_administrativos))
 	{echo "<td><a href=ficha_socio_editar.php?user=".$_GET["user"]."><h3>EDITAR</h3></a></td>";
 }
 //if(in_array($_COOKIE['acceso'],$permisos_administrativos)){echo "<td><a href=ficha_socio_borrar.php?socio=".$_GET["socio"]."><h3>ELIMINAR</h3></a></td>";}
-if(in_array($_SESSION['acceso'],$permisos_lotes) && $estatus_t<>"Sin datos" || $ultimafecha>0){
+if(in_array($_SESSION['acceso'],$permisos_lotes) && is_array($estatus)){
 	echo "<td><a href=ficha_lote_nuevo.php?socio=".$socio["id_socio"]."><h3>AÑADIR LOTE</h3></a></td>";
 }
 else{echo "<td align=center><h3><font color=red>NO SE PUEDE AÑADIR LOTE</font></h3><br>*Primero añada certificación y estado actual</td>";}
-if(in_array($_SESSION['acceso'],$permisos_general) && $cuenta_lotes>0){
+if(in_array($_SESSION['acceso'],$permisos_general) && is_array($resultado_lotes)){
 	echo "<td><a href=lotes.php?criterio=socio&socio=".$socio["id_socio"]."><h3>VER LOTES $cuenta_lotes_t</h3></a></td>";
 }
 if(in_array($_SESSION['acceso'],$permisos_general) && $cuenta_parcelas>0){

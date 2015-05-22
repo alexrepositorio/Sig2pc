@@ -1,4 +1,3 @@
-
 <?php
 include ("cabecera.php");
 include("grupos_funciones.php");
@@ -9,18 +8,14 @@ if(!isset($_GET["criterio"]))
 {
 	$socios=consultarCriterio("","");
 
-
 }else{
 	if (!isset($_POST["busca"])) {
 		$socios=consultarCriterio($_GET["criterio"],"");
-
 	}
 	else{	
 		$socios=consultarCriterio($_GET["criterio"],$_POST["busca"]);
 	}	
 }
-
-
 echo "<div align=center><h1>Listado de socios</h1><br><br>";
 echo "<table border=0 cellpadding=15 cellspacing=0><tr>";
 
@@ -40,6 +35,7 @@ echo "<input type='text' name=busca><br>";
 echo "<input type='submit' value='buscar'>";
 echo "</form></td>";
 
+
 echo "<td align=center> <h4>Localidad<br>
 <form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
 echo "<select name=busca>";
@@ -48,22 +44,24 @@ $grupos=obtenerGrupos();
 	{
 		echo "<option value=".$grupo["grupo"].">".$grupo["grupo"]."</option>";
 	}
-
 echo "</select><br>";
 echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
+echo "</div>";
 
-
-echo "<table class='paginated' cellspacing=1 cellspadding=1 align=center border=2 >";
+echo "<div name='tabla' style='width:95%; height:48px; overflow:auto;''>";
+echo "</div>";
+echo "<table class='tablas' cellspacing=1 cellspadding=1 align=center border=2 >";
+echo "<thead>";
 		echo "<th >Nombre</th>";
 		echo "<th>Apellido</th>";
 		echo "<th>Poblacion</th>";
 		echo "<th>Certificacion</th>";
 		echo  "<th>opciones </th>";
-		echo "</tr>";
-
-foreach ($socios as $socio)
-	{
+		echo "</thead>";
+		echo "<tbody>";		
+if (sizeof($socios)>8) {
+	foreach ($socios as $socio){
 		echo "<tr>";
 		echo "<td>".$socio['nombres']."</td>";
 		echo "<td>".$socio['apellidos']."</td>";
@@ -75,12 +73,26 @@ foreach ($socios as $socio)
 				echo "<td><a href=ficha_socio_certificar.php?socio=".$socio['id']."><img src=images/add1.ico width=50><br></a></td>";
 			}	
 		echo "<td><a href=ficha_socio.php?user=".$socio['id']."><img src=images/user_edit.png width=50><br></a></td>";
-	echo "</tr>";
-	}		
-
+		echo "</tr>";
+	}	
+}else{
+		echo "<tr>";
+		echo "<td>".$socios['nombres']."</td>";
+		echo "<td>".$socios['apellidos']."</td>";
+		echo "<td>".$socios['grupo']."</td>";
+		if (isset($socios['certificacion'])) {
+				echo "<td>".$socios['certificacion']."</td>";
+			}
+			else{
+				echo "<td><a href=ficha_socio_certificar.php?socio=".$socios['id']."><img src=images/add1.ico width=50><br></a></td>";
+			}	
+		echo "<td><a href=ficha_socio.php?user=".$socios['id']."><img src=images/user_edit.png width=50><br></a></td>";
+		echo "</tr>";
+}
+echo "</tbody>";
 echo "</table>";
-
-echo "</table></div>";
+echo "</div>";
+echo "</table>";
 
 if(in_array($_SESSION['acceso'],$permisos_administrativos)){
 echo "<td align=center><a href=ficha_socio_nuevo.php>";
@@ -109,9 +121,13 @@ if(in_array($_SESSION['acceso'],$permisos_administrativos)){	echo "<th width=20p
 
 echo "</table>";
 
-
-
-
 include("pie.php");
-
 ?>
+</body>
+
+
+
+
+
+
+ 

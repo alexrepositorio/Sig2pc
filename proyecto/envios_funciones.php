@@ -70,12 +70,14 @@
 			$resultado=mysqli_query($link, $SQL);
 			$cuenta=mysqli_num_rows($resultado);
 			$envio = mysqli_fetch_array($resultado,MYSQLI_ASSOC);
+
 			return array($resultado,$cuenta,$envio);
 		}
 
 	//Implementada en linea 8 de ficha_envio_editar.php REVISAR NO FUNCIONA¡¡¡¡ss
 	function editar_envio_actualizar($fecha,$destino,$chofer,$responsable,$envio)
 		{	
+			echo "hola ".$envio;
 			require("conect.php"); 
 			$SQL_edit="call SP_envios_upd(
 				'".$fecha."',
@@ -84,7 +86,7 @@
 				'".$responsable."',
 				'".$envio."')";//Procedimientos Almacenado;
 
-			$resultado=mysqli_query($link, $SQL_edit);
+			$resultado=mysqli_query($link, $SQL_edit) or die(mysqli_error($link));
 			$nuevo_id=mysqli_insert_id($link);
 			$cadena=str_replace("'", "", $SQL_edit);
 			return array($resultado,$nuevo_id,$cadena);

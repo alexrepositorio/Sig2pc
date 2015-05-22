@@ -37,4 +37,19 @@ return ($nuevo_lote);
 	
 }
 
+function obtenerLotes($socio){
+	require ("conect.php");
+	$SQL="SELECT * FROM lotes where id_socio=".$socio;
+	$resultado=mysqli_query($link,$SQL);
+	return (transformar_a_lista($resultado));
+}
+function obtenerLotesfecha($socio,$fecha){
+	require ("conect.php");
+	//echo 	$socio."    ".$fecha;
+	$SQL="SELECT * FROM lotes where id_socio='".$socio."' and fecha='".$fecha."'";
+	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
+	echo "hola".mysqli_num_rows($resultado);
+	return (transformar_a_lista($resultado));
+}
+
 ?>

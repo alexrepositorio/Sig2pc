@@ -1,7 +1,28 @@
 <?php
-
-
-
+$marcos=Array("Regular","Medio","Aleatorio");
+$hierbas=Array("Limpio","Medio","Muchas");
+$sombreados=Array("Poco","Medio","Mucho");
+$meses=Array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+$valores=Array(0,25,50,75,100);
+$certificados=Array(Array("Organico","O"),array("Convencional T1","T1"),array("Convencional T2","T2"),array("Convencional T3","T3"),array("Nuevo","N"));
+$altas_estados=Array("Ingreso","Salida");
+$fecha=date('Y-m-d');
+function transformar_a_lista($resultado){
+	if (mysqli_num_rows($resultado)==1) {
+    	$row = mysqli_fetch_array($resultado,MYSQLI_ASSOC);
+    	return ($row);
+    }else{
+    	if (mysqli_num_rows($resultado)==0) {
+    		return 0;
+    	}else{
+    		while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
+				$lista[]=$row;	
+			}  		
+   			 return($lista);
+    	}
+    }
+}
+/*
 function nombre_socio($id)
 {
 	include ("conect.php");
@@ -24,6 +45,7 @@ function muestra_array($array)
 	print_r($array);
 	echo "</pre><br>";
 }
+*/
 function obtener_configuracion_parametro($parametro){
 require("conect.php");
     $SQL="SELECT valor FROM configuracion where parametro= '".$parametro."'";

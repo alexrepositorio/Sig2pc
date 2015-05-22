@@ -1,8 +1,12 @@
 <?php
 include ("cabecera.php");
+include ("conect.php");
 
-if(isset($_POST["fecha"])){$andwhere=" AND date_format(fecha,'%Y-%m-%d') = '".$_POST["fecha"]."'";}
-else{$andwhere="";}
+if(isset($_POST["fecha"])){
+	$andwhere=" AND date_format(fecha,'%Y-%m-%d') = '".$_POST["fecha"]."'";
+}
+else{$andwhere="";
+}
 
 $SQL="SELECT * FROM lotes WHERE calidad='A' $andwhere order by fecha desc";
 $resultado=mysqli_query($link, $SQL);

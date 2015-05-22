@@ -6,9 +6,9 @@ include ("envios_funciones.php");
 list($resultado,$cuenta,$envio)=editar_envio_presentar($_GET["envio"]);
 if(isset ($_POST["fecha"])){
 	//FUNCION
-	list($resultado,$nuevo_id,$cadena)=editar_envio_actualizar($_POST["fecha"],$_POST["destino"],$_POST["chofer"],$_POST["responsable"],$_GET["envio"]);
+	list($resultado,$nuevo_id,$cadena)=editar_envio_actualizar($_POST["fecha"],$_POST["destino"],$_POST["chofer"],$_POST["responsable"],$_POST["envio"]);
 	//FUNCION
-	guarda_historial($cadena);
+	//guarda_historial($cadena);
 	echo "<div align=center><h1>GUARDANDO, ESPERA...
 <meta http-equiv='Refresh' content='2;url=envios.php'></font></h1></div>";
 }
@@ -21,6 +21,7 @@ echo "<div align=center><h1>EDITAR ENVIO</h1><br>";
 
 echo "<form name=form action=".$_SERVER['PHP_SELF']."?envio=".$_GET["envio"]." method='post'>";
 echo "<table class=tablas>";
+echo "<tr><th><h4></th><td><input type='hidden' name=envio value='".$_GET["envio"]."'></td></tr>";
 echo "<tr><th><h4>Fecha</th><td><input type='text' name=fecha value='".$envio["fecha"]."'></td></tr>";
 echo "<tr><th><h4>Destino</th><td><input type='text' name=destino value='".$envio["destino"]."'></td></tr>";
 echo "<tr><th><h4>Chófer</th><td><input type='text' name=chofer value='".$envio["chofer"]."'></td></tr>";

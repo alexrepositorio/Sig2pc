@@ -3,6 +3,7 @@ include ("cabecera.php");
 include ("socio.php");
 include ("grupos_funciones.php");
 include ("canton_funciones.php");
+include ("provincias_funciones.php");
 
 
 
@@ -19,7 +20,7 @@ echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
 
 else{
 	
-$socio = obtenerSocio($_GET["user"]);
+$socio = consultarCriterio('id',$_GET["user"]);
 
 if(isset($_GET["foto"])){
 
@@ -58,7 +59,7 @@ echo "<tr><th align=right><h4>Dirección</td><td><input type='text' name=direcci
 echo "<tr><th align=right><h4>Canton</th><td>";
 echo "<input list='cantones' name='canton'>";	
 echo "<datalist  id='cantones'>";	
-//echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
+
  $cantones=listar_cantones();
  foreach ($cantones as $canton)
 	{
@@ -66,7 +67,17 @@ echo "<datalist  id='cantones'>";
 	}
 echo "</datalist></td></tr>";
 
-echo "<tr><th align=right><h4>Provincia</td><td><input type='text' name=provincia value='".$socio["provincia"]."'></td></tr>";
+echo "<tr><th align=right><h4>Provincias</th><td>";
+echo "<input list='provincias' name='provincia'>";	
+echo "<datalist  id='provincias'>";	
+ $provincias=listar_provincias();
+ foreach ($provincias as $provincia)
+	{
+		echo "<option>".$provincia["provincia"]."</option>";
+	}
+echo "</datalist></td></tr>";
+
+//echo "<tr><th align=right><h4>Provincia</td><td><input type='text' name=provincia value='".$socio["provincia"]."'></td></tr>";
 echo "<tr><th><h4>Género</th><td><select name=genero>
 		<option value='".$socio["genero"]."'>".$socio["genero"]."</option>
 		<option value='masculino'>M</option>
