@@ -14,7 +14,7 @@ if(!isset($_GET["criterio"]))
 		$_POST["busca"]=$_GET["socio"];
 	}
 	$encontrados="ENCONTRADOS";
-	$envio_val = $_GET["criterio"]
+	$envio_val = $_GET["criterio"];
 	
 	busqueda_lotes_criterio($envio_val);
 
