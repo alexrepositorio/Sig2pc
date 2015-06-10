@@ -1,24 +1,30 @@
 <?php
 include ("cabecera.php");
-
+include ("pagos_funciones.php");
+include ("conect.php");
+// include ("uno.php");
 
 if(!isset($_GET["criterio"]))
 {
-$_POST["busca"]="";
-$criterio="";
-$encontrados="";
-$SQL="SELECT * FROM lotes order by fecha desc";
+	$_POST["busca"]="";
+	$criterio="";
+	$encontrados="";
+	// $SQL="SELECT * FROM lotes order by fecha desc";
+	$lotes = busqueda_lotes("","");
 
 }else{
-	if(isset($_GET["socio"])){$_POST["busca"]=$_GET["socio"];}
+	if(isset($_GET["socio"]))
+	{
+		$_POST["busca"]=$_GET["socio"];
+	}
 	$encontrados="ENCONTRADOS";
 	switch ($_GET["criterio"])
 		{
 		case "socio":
-			$SQL="SELECT * FROM lotes WHERE id_socio = '".$_POST["busca"]."' order by fecha desc";
-			$datos_del_socio=nombre_socio($_POST["busca"]);
+			$lotes = busqueda_lotes($_GET["criterio"], $_POST["busca"]);
+			$datos_del_socio=consultar_nombre_socio($_POST["busca"]);
 			$_texto=$datos_del_socio["apellidos"].", ".$datos_del_socio["nombres"]." (".$datos_del_socio["codigo"].")";
-			break;
+			break; //revisado hasta aquí
 		case "localidad":
 			$SQL="SELECT lotes.* FROM lotes LEFT JOIN socios on lotes.id_socio=socios.codigo WHERE socios.poblacion = '".$_POST["busca"]."' order by fecha desc";
 			$_texto= "es <i>\"".$_POST["busca"]."\"</i>";
@@ -43,8 +49,8 @@ while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
 	$lotes[]=$row;
 	$pesos[]=$row["peso"];
 	
-}
-if(!isset($pesos)){$pesos[]=0;}
+} 
+if(!isset($pesos)){$pesos[]=0;} //53
 //if(!isset($costos)){$costos[]=0;}
 
 //muestra_array($socios); 
@@ -58,18 +64,27 @@ echo "<table width=700px border=0 cellpadding=0 cellspacing=10><tr>";
 
 echo "<td align=center><h4>Socio<br><form name=form1 action=".$_SERVER['PHP_SELF']."?criterio=socio method='post'>";
 echo "<select name=busca>";
-$sql_socios="SELECT socios.id_socio, socios.nombres, socios.apellidos, socios.codigo, count(lotes.id) FROM socios left join lotes on socios.codigo=lotes.id_socio group by socios.id_socio ORDER BY codigo ASC";
-$r_socio=mysqli_query($link, $sql_socios);
-while ($rowsocio = mysqli_fetch_array($r_socio,MYSQLI_ASSOC))
+//funcion
+$socios = cargar_socios();
+foreach ($socios as $rowsocio)
 {
-	if($rowsocio["count(lotes.id)"]>0){
-		if($rowsocio["count(lotes.id)"]>1){$lotes_t="lotes";}else{$lotes_t="lote";}
-		$lotess="(".$rowsocio["count(lotes.id)"]." $lotes_t)";
+	if($rowsocio["count(lotes.id_socio)"]>0){
+		if($rowsocio["count(lotes.id_socio)"]>1){
+			$lotes_t="lotes";
+		}
+		else{
+			$lotes_t="lote";
+		}
+		$lotess="(".$rowsocio["count(lotes.id_socio)"]." $lotes_t)";
 		$mark="style='background-color:skyblue; color:blue;'";
-	}else{$mark="";$lotess="";}
+	}else{
+		$mark="";
+		$lotess="";
+	}
 	$socio_n=$rowsocio["codigo"]."-".$rowsocio["apellidos"].", ".$rowsocio["nombres"]." $lotess";
-	echo "<option $mark value='".$rowsocio["codigo"]."'>$socio_n</option>";
+	echo "<option $mark value='".$rowsocio["id_socio"]."'>$socio_n</option>";
 }
+
 echo "</select>";
 echo "<input type='submit' value='buscar'>";
 echo "</form></td>";
@@ -77,18 +92,25 @@ echo "</form></td>";
 
 echo "<td align=center><h4>Grupo<br><form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
 echo "<select name=busca>";
-$sql_localidad="SELECT grupo as pob, codigo_grupo as cod FROM grupos ORDER BY codigo_grupo ASC";
-$r_loc=mysqli_query($link, $sql_localidad);
-while ($rowloc = mysqli_fetch_array($r_loc,MYSQLI_ASSOC)){echo "<option value='".$rowloc["pob"]."'>(".$rowloc["cod"].")  ".$rowloc["pob"]."</option>";}
+//funcion
+$grupos = cargar_grupos();
+foreach ($grupos as $grupo)
+{
+	echo "<option value=".$grupo["id"].">(".$grupo["cod"].")  ".$grupo["pob"]."</option>";
+}
+
 echo "</select>";
 echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
 
 echo "<td align=center><h4>Fecha<br><form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
 echo "<select name=busca>";
-$sql_fecha="SELECT DISTINCT date_format(fecha,'%Y-%m-%d') as fecha FROM lotes ORDER BY fecha ASC";
-$r_fec=mysqli_query($link, $sql_fecha);
-while ($rowfec = mysqli_fetch_array($r_fec,MYSQLI_ASSOC)){$fecha=$rowfec["fecha"];echo "<option value='$fecha'>$fecha</option>";}
+//funcion
+$fechas = cargar_fechas();
+foreach ($fechas as $fecha) {
+	echo "<option value='$fecha'>$fecha</option>";
+}
+
 echo "</select>";
 echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
