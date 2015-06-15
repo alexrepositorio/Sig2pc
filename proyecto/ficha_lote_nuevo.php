@@ -1,6 +1,7 @@
 <?php
 include ("cabecera.php");
 include ("lote_funciones.php");
+include ("configuracion_funciones.php");
 
 if(isset($_POST["peso"])){
 
@@ -50,8 +51,8 @@ echo "<tr><th align=right><h4>Código LOTE</th><td><input size=15 type='text' na
 echo "<tr><th align=right><h4>Peso entrada</th><td><input size=5 type='text' name=peso> qq pergamino</td></tr>";
 echo "<tr><th align=right><h4>Humedad</th><td><input size=2 type='text' name=humedad> %</td></tr>";
 //echo "<tr><th align=right><h4>Rendimiento Pilado</th><td><input size=2 type='text' name=rto_pilado> %</td></tr>";
-echo "<tr><th align=right><h4>Exportable</th><td><input size=2 type='text' name=rto_exportable> gr trillados sobre la muestra de ".obtener_configuracion_parametro('gr_muestra')."gr</td></tr>";
-echo "<tr><th align=right><h4>Descarte</th><td><input size=2 type='text' name=rto_descarte> gr trillados sobre la muestra de ".obtener_configuracion_parametro('gr_muestra')."gr</td></tr>";
+echo "<tr><th align=right><h4>Exportable</th><td><input size=2 type='text' name=rto_exportable> gr trillados sobre la muestra de ".('gr_muestra')."gr</td></tr>";
+echo "<tr><th align=right><h4>Descarte</th><td><input size=2 type='text' name=rto_descarte> gr trillados sobre la muestra de ".configuracion_cons('parametro','gr_muestra')[0]["valor"]."gr</td></tr>";
 echo "</table>&nbsp&nbsp";
 
 echo "<table class=tablas>";

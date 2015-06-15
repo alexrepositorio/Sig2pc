@@ -1,13 +1,15 @@
 <?php
 include ("cabecera.php");
-$estructuras=Array("angular","sub-angular","granular");
-$grados=Array("débil","moderado","fuerte");
-$texturas=Array("arenoso","franco arenoso","franco","franco limoso","limoso","franco arcilloso","franco arenoso arcilloso","franco limoso arcilloso","arcilloso arenoso","arcilloso limoso","arcilloso");
+
 //$valores=Array(0,25,50,75,100);
 if(isset ($_POST["id_parcela"])){
 	
-if(isset($_POST["lombrices"])){$_POST["lombrices"]=1;}else{$_POST["lombrices"]=0;}
-$SQL_edit="INSERT INTO analisis VALUES ('',
+	if(isset($_POST["lombrices"])){
+		$_POST["lombrices"]=1;
+	}else{
+		$_POST["lombrices"]=0;
+	}
+	$SQL_edit="INSERT INTO analisis VALUES ('',
 				'".$_POST["id_subparcela"]."',
 				'".$_POST["fecha"]."',
 				'".$_POST["muestra"]."',
@@ -33,20 +35,13 @@ $SQL_edit="INSERT INTO analisis VALUES ('',
 				'".$_POST["f_p"]."',
 				'".$_POST["f_k"]."')";
 
-$resultado=mysqli_query($link, $SQL_edit);
-//$nuevo_id=mysqli_insert_id($link);
-
-$cadena=str_replace("'", "", $SQL_edit);
-guarda_historial($cadena);
+	$resultado=mysqli_query($link, $SQL_edit);
 
 
-echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
-<meta http-equiv='Refresh' content='2;url=ficha_parcela.php?parcela=".$_POST["id_parcela"]."'></font></h1></div>";
+	echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
+	<meta http-equiv='Refresh' content='2;url=ficha_parcela.php?parcela=".$_POST["id_parcela"]."'></font></h1></div>";
 	
-}
-
-
-else{
+}else{
 echo "<div align=center><h2>NUEVO ANÁLISIS</h2><br><table class=tablas>";
 echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 echo "<tr><th colspan=2><h3>Datos generales</h3></th></tr>";

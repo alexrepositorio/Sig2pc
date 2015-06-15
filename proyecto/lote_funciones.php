@@ -48,7 +48,14 @@ function obtenerLotesfecha($socio,$fecha){
 	//echo 	$socio."    ".$fecha;
 	$SQL="SELECT * FROM lotes where id_socio='".$socio."' and fecha='".$fecha."'";
 	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
-	echo "hola".mysqli_num_rows($resultado);
+	return (transformar_a_lista($resultado));
+}
+function LotesConsultarCriterio($criterio,$valor){
+	require ("conect.php");
+	//echo 	$socio."    ".$fecha;
+	echo $valor;
+	$SQL="CALL SP_lote_cons('".$criterio."','".$valor."')";
+	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
 	return (transformar_a_lista($resultado));
 }
 

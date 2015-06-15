@@ -4,17 +4,15 @@ include ("socio.php");
 include ("altas_funciones.php");
 include ("estimaciones_funciones.php");
 if(isset ($_POST["estimados"])){	
-insertarestimacion($_POST["socio"],$_POST["fecha"],$_POST["estimados"],$_POST["entregados"]);
+	insertarestimacion($_POST["socio"],$_POST["fecha"],$_POST["estimados"],$_POST["entregados"]);
 echo "<div align=center><h1>GUARDANDO, ESPERA...
 <meta http-equiv='Refresh' content='2;url=historial_estimacion.php?socio=".$_POST["socio"]."'></font></h1></div>";
 }
 else{
 $socio=consultarCriterio('id',$_GET["socio"]);	
-
+$socio=$socio[0];
 echo "<div align=center><h1>NUEVA ESTIMACION PARA ".$socio["nombres"]." ".$socio["apellidos"]."</h1><br>";
-
 //muestra_array($socio);
-
 echo "<form name=form action=".$_SERVER['PHP_SELF']."?socio=".$_GET["socio"]." method='post'>";
 echo "<table class=tablas>";
 echo "<tr><th>Año de Estimacion:</th><td><input type='number' name='fecha' min='1900' max='9999' required></td></tr>";
@@ -25,7 +23,6 @@ echo "<input type='hidden' name=socio value='".$_GET["socio"]."'>";
 echo "<input type='submit' value='Guardar'>";
 echo "</form>";
 }
-
 
 include("pie.php");
 ?>

@@ -2,11 +2,8 @@
 
 function listar_cantones(){
     require("conect.php");
-    $SQL="SELECT * FROM canton";
+    $SQL="call SP_cantones_cons()";
     $resultado=mysqli_query($link,$SQL) or die(MYSQLI_ERROR($link)); 
-    while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-				$cantones[]=$row;	
-			}  		
-    return($cantones);
+    return(transformar_a_lista($resultado));
 }
 ?>

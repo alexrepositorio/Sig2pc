@@ -7,19 +7,17 @@ $valores=Array(0,25,50,75,100);
 $certificados=Array(Array("Organico","O"),array("Convencional T1","T1"),array("Convencional T2","T2"),array("Convencional T3","T3"),array("Nuevo","N"));
 $altas_estados=Array("Ingreso","Salida");
 $fecha=date('Y-m-d');
+$texturas=Array("arenoso","franco arenoso","franco","franco limoso","limoso","franco arcilloso","franco arenoso arcilloso","franco limoso arcilloso","arcilloso arenoso","arcilloso limoso","arcilloso");
+$estructuras=Array("angular","sub-angular","granular");
+$grados=Array("débil","moderado","fuerte");
+
 function transformar_a_lista($resultado){
-	if (mysqli_num_rows($resultado)==1) {
-    	$row = mysqli_fetch_array($resultado,MYSQLI_ASSOC);
-    	return ($row);
+
+	if (mysqli_num_rows($resultado)>0) {
+    	$lista=mysqli_fetch_all($resultado,MYSQLI_ASSOC);     			   		
+   		return($lista);
     }else{
-    	if (mysqli_num_rows($resultado)==0) {
-    		return 0;
-    	}else{
-    		while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-				$lista[]=$row;	
-			}  		
-   			 return($lista);
-    	}
+    	return 0;
     }
 }
 /*
@@ -46,13 +44,6 @@ function muestra_array($array)
 	echo "</pre><br>";
 }
 */
-function obtener_configuracion_parametro($parametro){
-require("conect.php");
-    $SQL="SELECT valor FROM configuracion where parametro= '".$parametro."'";
-    $resultado=mysqli_query($link,$SQL); 
-    $row = mysqli_fetch_array($resultado,MYSQLI_ASSOC);
-    return($row['valor']);
-}
 
 function guarda_historial($comentario)
 {

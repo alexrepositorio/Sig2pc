@@ -2,6 +2,7 @@
 include ("cabecera.php");
 include ("asociaciones_funciones.php");
 include ("subparcelas_funciones.php");
+include ("configuracion_funciones.php");
 
 if(isset($_GET["asociacion"])){
 	asociaciones_insertar($_POST["concepto"],$_POST["valor"],$_GET["asociacion"],'subparcela',$_GET["subparcela"]);
@@ -17,7 +18,7 @@ if(isset ($_POST["editar"])){
 }
 else{
 //**********TABLA AUTOMATICA*****************************************************************
-$resultado=consultarSubparcela($_GET["subparcela"]);
+$resultado=consultarSubparcelas('id',$_GET["subparcela"]);
 echo "<div align=center><h2>EDITAR LA SUBPARCELA</h2><br><table class=tablas>";
 echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 foreach ($resultado as $datos) {
@@ -26,13 +27,13 @@ foreach ($resultado as $datos) {
 	echo "<input type='hidden' name='id_parcela' value=".$datos["id_parcela"].">";
 	echo "<tr><th align=right><h4>Superficie</th><td><h4><input type=text name=superficie size=3 value=".$datos["superficie"]."></h4>ha</td></tr>";	
 	echo "<tr><th align=right><h4>Variedad</th><td><h4><select name=variedad>";
-		foreach(explode(",",obtener_configuracion_parametro('variedades')) as $variedad){
+		foreach(explode(",",configuracion_cons('parametro','variedades')[0]["valor"]) as $variedad){
 			if($variedad==$datos["variedad"]){$sel="selected";}else{$sel="";}
 			echo "<option $sel value=$variedad>$variedad</option>";
 		}
 	echo "</select></h4></td></tr>";
 	echo "<tr><th align=right><h4>Variedad secundaria</th><td><h4><select name=variedad2>";
-		foreach(explode(",",obtener_configuracion_parametro('variedades')) as $variedad){
+		foreach(explode(",",configuracion_cons('parametro','variedades')[0]["valor"]) as $variedad){
 			if($variedad==$datos["variedad2"]){$sel="selected";}else{$sel="";}
 			echo "<option $sel value=$variedad>$variedad</option>";
 		}
@@ -112,7 +113,7 @@ echo "</td>";
 echo "<td>";
 echo "<form name=form1 action=".$_SERVER['PHP_SELF']."?asociacion=cultivo&subparcela=".$_GET["subparcela"]." method='post'>";
 	echo "<select name=concepto>";
-		foreach(explode(",",obtener_configuracion_parametro('cultivos')) as $cultivo){
+		foreach(explode(",",configuracion_cons('parametro','cultivos')[0]["valor"]) as $cultivo){
 			if(!in_array($cultivo,$asoc_cultivos)){echo "<option value=$cultivo>$cultivo</option>";}
 		}
 	echo "</select></h4>";

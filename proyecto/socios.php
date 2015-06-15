@@ -39,7 +39,8 @@ echo "</form></td>";
 echo "<td align=center> <h4>Localidad<br>
 <form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
 echo "<select name=busca>";
-$grupos=obtenerGrupos();
+$grupos=consultarGrupo('lista','');
+echo count($grupos);
  foreach ($grupos as $grupo)
 	{
 		echo "<option value=".$grupo["grupo"].">".$grupo["grupo"]."</option>";
@@ -59,36 +60,28 @@ echo "<thead>";
 		echo "<th>Certificacion</th>";
 		echo  "<th>opciones </th>";
 		echo "</thead>";
-		echo "<tbody>";		
-if (sizeof($socios)>8) {
-	foreach ($socios as $socio){
+		echo "<tbody>";	
+if (is_array($socios)) {
+	foreach ($socios as $socio) {
 		echo "<tr>";
-		echo "<td>".$socio['nombres']."</td>";
-		echo "<td>".$socio['apellidos']."</td>";
-		echo "<td>".$socio['grupo']."</td>";
-		if (isset($socio['certificacion'])) {
-				echo "<td>".$socio['certificacion']."</td>";
-			}
-			else{
-				echo "<td><a href=ficha_socio_certificar.php?socio=".$socio['id']."><img src=images/add1.ico width=50><br></a></td>";
-			}	
-		echo "<td><a href=ficha_socio.php?user=".$socio['id']."><img src=images/user_edit.png width=50><br></a></td>";
-		echo "</tr>";
-	}	
+			echo "<td>".$socio['nombres']."</td>";
+			echo "<td>".$socio['apellidos']."</td>";
+			echo "<td>".$socio['grupo']."</td>";
+			if (isset($socio['certificacion'])) {
+					echo "<td>".$socio['certificacion']."</td>";
+				}
+				else{
+					echo "<td><a href=ficha_socio_certificar.php?socio=".$socio['id']."><img src=images/add1.ico width=50><br></a></td>";
+				}	
+			echo "<td><a href=ficha_socio.php?user=".$socio['id']."><img src=images/user_edit.png width=50><br></a></td>";
+			echo "</tr>";
+		}	
 }else{
-		echo "<tr>";
-		echo "<td>".$socios['nombres']."</td>";
-		echo "<td>".$socios['apellidos']."</td>";
-		echo "<td>".$socios['grupo']."</td>";
-		if (isset($socios['certificacion'])) {
-				echo "<td>".$socios['certificacion']."</td>";
-			}
-			else{
-				echo "<td><a href=ficha_socio_certificar.php?socio=".$socios['id']."><img src=images/add1.ico width=50><br></a></td>";
-			}	
-		echo "<td><a href=ficha_socio.php?user=".$socios['id']."><img src=images/user_edit.png width=50><br></a></td>";
-		echo "</tr>";
+	echo "<tr>";
+	echo "<td>sin datos</td>";
+	echo "</tr>";
 }
+
 echo "</tbody>";
 echo "</table>";
 echo "</div>";

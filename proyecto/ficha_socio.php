@@ -6,16 +6,15 @@ include ("lote_funciones.php");
 include ("parcelas_funciones.php");
 include ("altas_funciones.php");
 include ("estimaciones_funciones.php");
-
-
 $socio = consultarCriterio('id',$_GET["user"]);
-$estatus=certificacion($_GET["user"]);
+$socio=$socio[0];
+$estatus=certificacion('socio',$_GET["user"]);
 if (is_array($estatus)) {
 	$enlace_estatus="<a href=historial_certificacion.php?socio=".$_GET["user"]."><h3>Ver historial Certificacion</h3></a>";}
 else{
 	$enlace_estatus="<a href=ficha_socio_certificar.php?socio=".$_GET["user"]."><h3>Añadir Certificacion</h3>/a>";
 }
-$estimado=estimacion($socio["id_socio"]);
+$estimado=estimacion('',$socio["id_socio"]);
 if (is_array($estimado)) {
 	$enlace_estimado="<a href=historial_estimacion.php?socio=".$_GET["user"]."><h3>Ver historial Estimacion</h3></a>";
 }else{
@@ -27,21 +26,21 @@ if (is_array($altas)) {
 }else{
 	$enlace_altas="<a href=historial_altas_nuevo.php?socio=".$_GET["user"]."><h3>Añadir Altas</h3></a>";
 }
-
 $resultado_lotes=obtenerLotes($socio["id_socio"]);
 $cuenta_lotes=count($resultado_lotes);
 if (is_array($resultado_lotes)) {
-	if($cuenta_lotes>1)
-{
-	foreach ($$resultado_lotes as $lot ) {
-		$pesos_del_socio[]=$lot["peso"];
-	}
-	$peso_entregado=array_sum($pesos_del_socio);
-	$estimado_actual_max=$estimado[$estimado_actual]["estimados"]*(1+(obtener_configuracion_parametro('margen_contrato')/100));
-	$peso_restante=$estimado_actual_max-$peso_entregado;
-	$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";
-}
-else{
+	if($cuenta_lotes>1){
+		foreach ($resultado_lotes as $lot ) {
+			$pesos_del_socio[]=$lot["peso"];
+		}
+		$peso_entregado=array_sum($pesos_del_socio);
+		$estimado_actual= estimacion_actual($_GET["user"]);
+		$estimado_actual_max=$estimado_actual["estimados"]*(1+(obtener_configuracion_parametro('margen_contrato')/100));
+		//$estimado_actual_max=$estimado[$estimado_actual]["estimados"]
+		$peso_restante=$estimado_actual_max-$peso_entregado;
+		$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";
+	}else{
+
 		$peso_entregado=$resultado_lotes["peso"];
 		$estimado_actual_max=$estimado[$estimado_actual]["estimados"]*(1+(obtener_configuracion_parametro('margen_contrato')/100));
 		$peso_restante=$estimado_actual_max-$peso_entregado;
@@ -54,22 +53,17 @@ else{
 		$cuenta_lotes_t="";
 }
 
-
 $r_par=parcelas_consultarCriterio('id_socio',$socio["id_socio"]);
-$cuenta_parcelas=count($r_par);
-$cuenta_parcelas=$cuenta_parcelas/10;
 if (is_array($r_par)) {
+	$cuenta_parcelas=count($r_par);
 	$cuenta_parcelas_t="(<font color=red><b>$cuenta_parcelas</b></font>)";
 }
 else{
 	$cuenta_parcelas_t="";
 }
 
-
 echo "<div id=imprimir>";
 echo "<div align=center><h1>Ficha del socio</h1><br><h2>".$socio["nombres"]." ".$socio["apellidos"]."</h2><br>";
-		
-
 //muestra_array($socio);
 echo "<table class=tablas>";
 echo "<tr><th><h4>Nombres</th><td><h4>".$socio["nombres"]."</td></tr>";

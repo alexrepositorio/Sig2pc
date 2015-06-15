@@ -3,6 +3,7 @@ include ("cabecera.php");
 include ("parcelas_funciones.php");
 include ("asociaciones_funciones.php");
 include ("socio.php");
+include ("configuracion_funciones.php");
 
 $riegos=Array("Aspersión","Goteo","Gravedad","Ninguno");
 if(isset($_GET["asociacion"])){
@@ -18,7 +19,7 @@ if(isset ($_POST["update"])){
 	<meta http-equiv='Refresh' content='2;url=ficha_parcela.php?parcela=".$_POST["update"]."'></font></h1></div>";
 }
 else{
-	$parcela=parcela_buscar($_GET["parcela"]);
+	$parcela=parcelas_consultarCriterio('id',$_GET["parcela"]);
 	echo "<div align=center><h2>EDITAR LA PARCELA</h2><br><table class=tablas>";
 	echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 	foreach ($parcela as $datos) {
@@ -74,21 +75,21 @@ else{
 	echo "<tr><th><h4>Cultivos</td>";
 	echo "<td>";
 	if(isset($asociaciones)){
-		foreach($asociaciones as $key=>$asociacion){
+		foreach($asociaciones as $asociacion){
 			if($asociacion["tipo"]=="cultivo"){
 				echo $asociacion["concepto"]." (".$asociacion["valor"].")<a title=borrar href=?borrar_asoc=".$asociacion["id"]."&parcela=".$_GET["parcela"].">
 				<img valign=top src=images/cross.png></a><br>";
 			}
 		}
-	}
-	else{
+	}else{
 		echo"No existen";
 	}
+
 	echo "</td>";
 	echo "<td>";
 	echo "<form name=form1 action=".$_SERVER['PHP_SELF']."?asociacion=cultivo&parcela=".$_GET["parcela"]." method='post'>";
 	echo "<select name=concepto>";
-		foreach(explode(",",obtener_configuracion_parametro('cultivos')) as $cultivo){
+		foreach(explode(",",configuracion_cons('parametro','cultivos')[0]["valor"]) as $cultivo){
 			if(!in_array($cultivo,$asoc_cultivos)){echo "<option value=$cultivo>$cultivo</option>";}
 		}
 	echo "</select></h4>";
@@ -115,7 +116,7 @@ else{
 	echo "<td>";
 	echo "<form name=form2 action=".$_SERVER['PHP_SELF']."?asociacion=animales&parcela=".$_GET["parcela"]." method='post'>";
 	echo "<select name=concepto>";
-		foreach(explode(",",obtener_configuracion_parametro('animales')) as $animal){
+		foreach(explode(",",configuracion_cons('parametro','animales')[0]["valor"]) as $animal){
 			if(!in_array($animal,$asoc_cultivos)){echo "<option value=$animal>$animal</option>";}
 		}
 	echo "</select></h4>";

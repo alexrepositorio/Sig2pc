@@ -2,34 +2,17 @@
 
 function analisis_suelos($id){
     require("conect.php");
-    $SQL="SELECT * FROM analisis WHERE id_subparcela in (SELECT id FROM subparcelas WHERE id_parcela='".$id."')";
+    $SQL="CALL SP_analisis_cons('','".$id."')";
     $resultado=mysqli_query($link,$SQL) or die(mysql_error($link)); 
-    if (mysqli_num_rows($resultado)>0) {
-     	while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-				$analisis[]=$row;	
-			} 
-			return($analisis);	    	
-    }else{
-    	
-    	return 0;
-    }
+    return(transformar_a_lista($resultado));  
 }
 
 function analisis_subparcela($id){
     require("conect.php");
-    $SQL="SELECT * FROM analisis WHERE id_subparcela='".$id."'";
+    $SQL="CALL SP_analisis_cons('subparcelas','".$id."')";
     $resultado=mysqli_query($link,$SQL) or die(mysql_error($link)); 
-    if (mysqli_num_rows($resultado)>0) {
-        while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-                $analisis[]=$row;   
-            } 
-            return($analisis);          
-    }else{
-        
-        return 0;
-    }
+    return(transformar_a_lista($resultado));  
 }
-
 
 
 ?>

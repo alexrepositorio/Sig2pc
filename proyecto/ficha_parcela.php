@@ -30,12 +30,13 @@ echo "<div id=imprimir>";
 echo "<div align=center><h2>Ficha de la Parcela</h2><br>";
 echo "<table class=tablas>";
 echo count($resultado);
-if (count($resultado)/10>1) {
+if (count($resultado)>0) {
 	foreach ($resultado as $datos) {
 	$datos_socio=consultarCriterio('id',$datos["id_socio"]);
+	$datos_socio=$datos_socio[0];
 	echo "<tr><th align=right><h4>Socio</th><td><h4>".$datos_socio["nombres"]." ".$datos_socio["apellidos"]." (".$datos["id_socio"].")</td></tr>";		
 	echo "<tr><th align=right><h4>Superficie Finca</th><td><h4>".$datos["sup_total"]."</h4>ha</td></tr>";	
-	echo "<tr><th align=right><h4>Superficie café</th><td><h4>".parcelas_sup_total($_GET["parcela"])."</h4>ha</td></tr>";	
+	echo "<tr><th align=right><h4>Superficie café</th><td><h4>".parcelas_consultarCriterio('sup_total','$_GET["parcela"]')[0]["sup_cafe"]."</h4>ha</td></tr>";	
 	echo "<tr><th align=right><h4>Coordenada X</th><td><h4>".$datos["coorX"]."</h4></td></tr>";	
 	echo "<tr><th align=right><h4>Coordenada Y</th><td><h4>".$datos["coorY"]."</h4></td></tr>";	
 	echo "<tr><th align=right><h4>Altitud</th><td><h4>".$datos["alti"]."</h4>msnm</td></tr>";	
@@ -48,31 +49,24 @@ if (count($resultado)/10>1) {
 	echo "<tr><th colspan=2><a href=ficha_parcela_editar.php?parcela=".$datos["id"]."><img src=images/pencil.png></a></th></tr>";
 	}
 }else{
-	$datos_socio=consultarCriterio('id',$resultado["id_socio"]);
-	echo "<tr><th align=right><h4>Socio</th><td><h4>".$datos_socio["nombres"]." ".$datos_socio["apellidos"]." (".$resultado["id_socio"].")</td></tr>";		
-	echo "<tr><th align=right><h4>Superficie Finca</th><td><h4>".$resultado["sup_total"]."</h4>ha</td></tr>";	
-	echo "<tr><th align=right><h4>Superficie café</th><td><h4>".parcelas_consultarCriterio('sup_total',$_GET["parcela"])['sup_cafe']."</h4>ha</td></tr>";	
-	echo "<tr><th align=right><h4>Coordenada X</th><td><h4>".$resultado["coorX"]."</h4></td></tr>";	
-	echo "<tr><th align=right><h4>Coordenada Y</th><td><h4>".$resultado["coorY"]."</h4></td></tr>";	
-	echo "<tr><th align=right><h4>Altitud</th><td><h4>".$resultado["alti"]."</h4>msnm</td></tr>";	
-	echo "<tr><th align=right><h4>Riego</th><td><h4>".$resultado["riego"]."</h4></td></tr>";
-	echo "<tr><th align=right><h4>Mano de Obra Contratada</th><td><h4>".$resultado["MOcontratada"]."</h4></td></tr>";	
-	echo "<tr><th align=right><h4>Mano de Obra Familiar</th><td><h4>".$resultado["MOfamiliar"]."</h4></td></tr>";	
-	echo "<tr><th align=right><h4>Miembros de la Familia</th><td><h4>".$resultado["Miembros_familia"]."</h4></td></tr>";	
-	echo "<tr><th align=right><h4>Cultivos de la finca</th><td><h4>".$listado_cult."</h4></td></tr>";	
-	echo "<tr><th align=right><h4>Producción animal</th><td><h4>".$listado_ani."</h4></td></tr>";	
-	echo "<tr><th colspan=2><a href=ficha_parcela_editar.php?parcela=".$resultado["id"]."><img src=images/pencil.png></a></th></tr>";
+		echo "<tr><th align=right><h4>Sin datos<h4></th></h4></td></tr>";	
+
 }
 echo "</table><br>";
 echo "<a href=parcelas.php><button class=boton>volver</button></a></div>";
-$resultado2=consultarsubparcelas($_GET["parcela"]);
+$resultado2=consultarSubparcelas('parcela',$_GET["parcela"]);
 echo "<hr><div align=center><table><tr><td><h2>SUBPARCELAS</h2></td>";
 echo "<td align=center><a href=ficha_subparcela_nuevo.php?parcela=".$_GET["parcela"].">";
 echo "<img src=images/add.png width=30><br><h4>nuevo</a>";
 echo "</td></tr></table>";
 foreach ($resultado2 as $datos) {
 	$resultado_analisis=analisis_subparcela($datos["id"]);
-	$cuenta_analisis=count($resultado_analisis);
+	if (is_array($resultado_analisis)) {
+		$cuenta_analisis=count($resultado_analisis);	
+	}else{
+		$cuenta_analisis=0;
+	}
+	
 
 //analisis de suelos*******************************************************************		
 $resultado_asoc=asociaciones_consultar($datos["id"]);

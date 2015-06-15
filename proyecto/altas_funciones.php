@@ -2,10 +2,7 @@
 
 function insertaraltas($socio,$fecha,$estado){
     require("conect.php");
-    $SQL="INSERT INTO altas VALUES('',
-				'".$socio."',
-				'".$fecha."',
-				'".$estado."')";
+    $SQL="call sp_alta_ins('".$socio."','".$estado."','".$fecha."');";
 	mysqli_query($link,$SQL)or die(mysqli_error($link)); 
 }
 
@@ -20,7 +17,7 @@ function eliminaraltas($id)
 {
 	echo $id;
 	require ("conect.php");
-	$SQL="DELETE FROM altas WHERE id='".$id."'";
+	$SQL="call SP_altas_del('".$id."')";
 	mysqli_query($link,$SQL) or die(mysqli_error($link)) ;
 }
 ?>
