@@ -11,7 +11,7 @@ insertar_Usuarios($_POST["user"],$_POST["pass"],$_POST["nivel"],$_POST["nombre"]
 //recordar que la cadenda sql tiene  que ir a la taba acciones
 
 echo "<div align=center><h1>GUARDANDO, ESPERA...
-<meta http-equiv='Refresh' content='2;url=usuarios.php'></font></h1></div>";
+<meta http-equiv='Refresh' content='2;url=users.php'></font></h1></div>";
 
 
 }
@@ -29,16 +29,15 @@ echo "<table class=tablas>";
 echo "<tr><th><h4>Usuario</th><td><input type='text' name=user></td></tr>";
 echo "<tr><th><h4>Contraseña</th><td><input type='password' name=pass></td></tr>";
 
-echo "<tr><th><h4>Niveles</th><td>";
-echo "<select name=nivel required>";
-			echo "<option value=''>Elija un nivel</option>";
-			$result=obtenerNiveles();
-  	 $niveless=obtenerNiveles();
- foreach ($niveless as $nivel)
+echo "<tr><th><h4>Nivel</th><td>";
+echo "<input list='niveles' name='nivel'>";	
+echo "<datalist  id='niveles'>";	
+ $niveless=listar_niveles();
+ foreach ($niveless as $niveles)
 	{
-		echo "<option value='$localidad'>".$nivel["nivel"]."</option>";
+		echo "<option>".$niveles["niveles"]."</option>";
 	}
-echo "</select></td></tr>";
+echo "</datalist></td></tr>";
 
 echo "<tr><th><h4>Nombres</th><td>";
 echo "<select name=nombre required>";

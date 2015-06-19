@@ -10,6 +10,10 @@ echo "<table width=700px border=0 cellpadding=0 cellspacing=0><tr>";
 echo "<td align=center><a href=ficha_user_nuevo.php>";
 echo "<img src=images/add.png width=50><br><h4>nuevo</a>";
 echo "</td>";
+echo "<td align=center><a href=ficha_persona.php>";
+echo "<img src=images/add.png width=50><br><h4>Socio</a>";
+echo "</td>";
+
 echo "</tr></table>";
 echo "<table class=tablas>";
 	echo "<tr><th width=500px>";
@@ -21,13 +25,13 @@ echo "<table class=tablas>";
 foreach ($usuarios as $usuario) {
 	echo "<tr>";
 		echo "<td><h4>".$usuario["user"]."</td><h4>" ;
-		echo "<td><h4>".$usuario["nivel"]."</td><h4>" ;
-}
+		echo "<td><h4>".$usuario["niveles"]."</td><h4>" ;
+
 		echo "</td>";
 		echo "<td><a href=ficha_user_editar.php><img title=editar src=images/pencil.png width=25></a>
 				  <a href=ficha_user_borrar.php><img title=borrar src=images/cross.png width=25></a>
 				  </td></tr>";
-
+}
 echo "</table></div>";
 
 
