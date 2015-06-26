@@ -55,7 +55,7 @@ if (empty($_SESSION)) {
 echo "Bienvenido ".$_SESSION["user"];
 
 echo " <form name=form action=".$_SERVER['PHP_SELF']." method='post'>
-<input type='submit' class='button' name='logout' value='logout' onclick='logout()'/>";
+<input type='submit' class='button' name='logout' value='logout' onclick='logout()'/></form>";
 if (isset($_POST['logout'])) {
    logout();
 }

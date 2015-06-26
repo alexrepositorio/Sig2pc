@@ -1,14 +1,17 @@
 <?php
 include ("cabecera.php");
+include ("pagos_funciones.php");
 
 if(isset ($_GET["pago"]) AND isset($_GET["borra"])){
 	
-$SQL_edit="DELETE FROM pagos WHERE id='".$_GET["pago"]."'";
-$resultado=mysqli_query($link, $SQL_edit);
+	borrar_pago($_GET["pago"]);
+	
+// $SQL_edit="DELETE FROM pagos WHERE id='".$_GET["pago"]."'";
+// $resultado=mysqli_query($link, $SQL_edit);
 
-$cadena=str_replace("'", "", $SQL_edit);
-guarda_historial($cadena);
-//echo "$SQL_edit";
+// $cadena=str_replace("'", "", $SQL_edit);
+// guarda_historial($cadena);
+// //echo "$SQL_edit";
 
 echo "<div align=center><h1>BORRANDO, ESPERA...
 <meta http-equiv='Refresh' content='2;url=pagos.php'></font></h1></div>";

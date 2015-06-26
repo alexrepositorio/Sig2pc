@@ -53,7 +53,7 @@ function obtenerLotesfecha($socio,$fecha){
 function LotesConsultarCriterio($criterio,$valor){
 	require ("conect.php");
 	//echo 	$socio."    ".$fecha;
-	echo $valor;
+	// echo $valor;
 	$SQL="CALL SP_lote_cons('".$criterio."','".$valor."')";
 	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
 	return (transformar_a_lista($resultado));
