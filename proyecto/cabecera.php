@@ -6,7 +6,8 @@
 	<link rel="shortcut icon" href="images/cafetico.ico" />
 	<link rel="icon" type="image/vnd.microsoft.icon" href="images/cafetico.ico" />
 <meta http-equiv=" pragma" content=" no-cache" > 
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html;" />
+<meta charset="UTF-8">
 </head>
 
     <!-- Arquivos utilizados pelo jQuery lightBox plugin -->
@@ -17,6 +18,15 @@
     <!--<link rel="stylesheet" type="text/css" href="LB/css/jquery.lightbox-0.5.css" media="screen" />-->
     <link rel="stylesheet" type="text/css" href="LB/css/lightbox.css" media="screen" />
     <!-- / fim dos arquivos utilizados pelo jQuery lightBox plugin -->
+    <script src="jquery.min.js"></script>
+    <script src="pag.js"></script>
+<script>
+        $(document).ready(function() {
+            $('#table_id').oneSimpleTablePagination({ rowsPerPage:10, topNav:false, floatingHeader: false});
+        });
+    </script>
+
+
 
 <script type="text/javascript">
 function imprimir(id)
@@ -55,9 +65,9 @@ if (empty($_SESSION)) {
 echo "Bienvenido ".$_SESSION["user"];
 
 echo " <form name=form action=".$_SERVER['PHP_SELF']." method='post'>
-<input type='submit' class='button' name='logout' value='logout' onclick='logout()'/></form>";
+<input type='submit' class='button' name='logout' value='logout' onclick='logout()'/>";
 if (isset($_POST['logout'])) {
    logout();
 }
-
+echo "</form>";
 ?>

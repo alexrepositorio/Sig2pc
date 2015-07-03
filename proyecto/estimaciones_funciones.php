@@ -1,5 +1,4 @@
 <?php
-
 function insertarestimacion($socio,$fecha,$estimados,$entregados){
     require("conect.php");
     $SQL="call SP_estimaciones_ins('".$socio."','".$fecha."','".$estimados."','".$entregados."')";

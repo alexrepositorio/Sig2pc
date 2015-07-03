@@ -2,9 +2,9 @@
 include ("cabecera.php");
 include ("grupos_funciones.php");
 
-$resultado=consultarGrupos();
-while ($r=mysqli_fetch_array($resultado)){
-	$codigos[]=$r["codigo_grupo"];
+$resultado=consultarGrupo('','');
+foreach ($resultado as $res) {
+	$codigos[]=$res["codigo_grupo"];
 }
 
 if (isset($_POST["grupo"]) & isset($_POST["codigo_grupo"])){
@@ -12,8 +12,8 @@ if (isset($_POST["grupo"]) & isset($_POST["codigo_grupo"])){
 	echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
 	<meta http-equiv='Refresh' content='2;url=grupos.php'></font></h1></div>";	
 }else{
-	$grupo=mysqli_fetch_array(obtenerGrupo($_GET["id"]));
-
+	$grupo=consultarGrupo('id',$_GET["id"]);
+	$grupo=$grupo[0];
 
 echo "<div align=center>";
 	echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";

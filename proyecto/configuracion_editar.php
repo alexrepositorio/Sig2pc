@@ -1,60 +1,27 @@
 <?php
 include ("cabecera.php");
+include ("configuracion_funciones.php");
 
 
 //******************************************
-if(isset ($_GET["editar"])){
-$SQL_edit="UPDATE configuracion SET 
-				valor='".$_POST["valor"]."'
-				WHERE id=".$_GET["editar"];
+if(isset ($_POST["editar"])){
 
-$resultado=mysqli_query($link, $SQL_edit);
-
-$cadena=str_replace("'", "", $SQL_edit);
-guarda_historial($cadena);
-
-
+	configuracion_actualizar($_POST["descripcion"],$_POST["valor"],$_POST["editar"]);
 echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
 <meta http-equiv='Refresh' content='2;url=configuracion.php'></font></h1></div>";
 	
-}
-
-
-else{
+}else{
 //******************************************
-$sql="SELECT * FROM configuracion WHERE id=".$_GET["id"];
+$resultado=configuracion_cons('id',$_GET["id"]);
+$resultado=$resultado[0];
 
 //**********TABLA AUTOMATICA*****************************************************************
-$resultado=mysqli_query($link, $sql);
-while($object = mysqli_fetch_field($resultado)){
-	$campos[]=$object->name;
-}
-echo "<div align=center><h2>EDITAR EL CAMPO</h2><br>";
-echo "<table class=tablas><tr>";
-foreach ($campos as $columna){
-	if($columna!="id" && $columna!="parametro"){echo "<th align=center><h4>$columna</th>";}
-}
-//echo "<th align=center><h4>editar</td>";
-echo "</tr>";
-echo "<form name=form action=".$_SERVER['PHP_SELF']."?editar=".$_GET["id"]." method='post'>";
-
-while($datos = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-	echo "<tr>";
-	foreach ($campos as $columna){
-		switch ($columna){
-			case "id":
-				break;
-			case "parametro":
-				break;
-			case "descripcion":
-				echo "<td align=center><h4>".$datos[$columna]."</td>";
-				break;
-			case "valor":
-				echo "<td align=center><input type=text name=valor value='".$datos[$columna]."'></td>";
-				break;
-		}
-	}
-}
+echo "<div align=center><h1>Formulario de edicion para el parámetro</h1><br><br><br>";
+echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
+echo "<table class=tablas>";
+echo "<input type='hidden' name='editar' value=".$_GET["id"].">";
+echo "​<tr><th align=right><h4>Descripcion</td><td><textarea name='descripcion' rows='3' cols='70'>".$resultado['descripcion']."</textarea>";
+echo "​<tr><th align=right><h4>Descripcion</td><td><textarea name='valor'  rows='2' cols='70'>".$resultado['valor']."</textarea>";
 echo "</table><br>";
 echo "<input type='submit' value='Guardar'>";
 echo "</form></div>";
@@ -64,3 +31,4 @@ echo "</form></div>";
 include("pie.php");
 
 ?>
+

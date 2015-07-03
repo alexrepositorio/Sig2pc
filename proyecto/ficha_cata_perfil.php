@@ -1,14 +1,16 @@
 <?php
-$link = mysqli_connect("localhost", "root", "", "sig");
-mysqli_query($link, "SET NAMES 'utf8'");
+//$link = mysqli_connect("localhost", "root", "", "sig");
+//mysqli_query($link, "SET NAMES 'utf8'");
+include("catas_funciones.php");
+include("uno.php");
 require_once ('src/jpgraph.php');
 require_once ('src/jpgraph_radar.php');
 
 
-$SQL="SELECT * FROM catas where lote='".$_GET["lote"]."'";
-$resultado=mysqli_query($link, $SQL);
-$cata = mysqli_fetch_array($resultado,MYSQLI_ASSOC);
 
+//$SQL="SELECT * FROM catas where lote='".$_GET["lote"]."'";
+$resultado=catas_consultar('lote',$_GET["lote"]);
+$cata = $resultado[0];
 
 $sabor_r="Sabor\nResidual";
 $frag="Fragancia/\nAroma";
@@ -46,5 +48,13 @@ $plot->SetFillColor('red@0.7');
 $plot->mark->SetType(MARK_IMG_SBALL,'red');
  
 $graph->Add($plot);
-$graph->Stroke();
+$gdImgHandler = $graph->Stroke(_IMG_HANDLER);
+ 
+// Stroke image to a file and browser
+ 
+// Default is PNG so use ".png" as suffix
+ 
+// Send it back to browser
+$graph->img->Headers();
+$graph->img->Stream();
 ?>

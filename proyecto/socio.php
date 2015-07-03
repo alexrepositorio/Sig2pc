@@ -8,21 +8,20 @@ function consultarCriterio($criterio,$valor){
 
 function calcular_codigo($poblacion){
     require("conect.php");
-    $codigo_grupo=substr($poblacion,0,2);
-    $SQL="SELECT codigo from socios" ;
-    $result=mysqli_query($link,$SQL) or die(mysqli_error($link));
-    $cuenta_p=mysqli_num_rows($result);
-		if($cuenta_p==0){
-			$nuevo_codigo=$codigo_grupo."01";
-		}
-		else{
-			while ($rowcodigos = mysqli_fetch_array($result,MYSQLI_ASSOC)){
+    $codigo_grupo=substr($poblacion,0,2);  
+    $result=consultarCriterio('codigos','');
+    $cuenta_p=count($result);
+    if (is_array($result)) {
+    	foreach ($result as $rowcodigos) {
 				$nsocio=substr($rowcodigos["codigo"],2,2);
 				$numeraciones[]=$nsocio;
 			}
+			
 			$siguiente=max($numeraciones)+1;
 			$nuevo_codigo=$codigo_grupo.$siguiente;
-		}
+    }else{
+    	$nuevo_codigo=$codigo_grupo."01";
+    }		
     return ($nuevo_codigo);
 }
 
@@ -33,13 +32,15 @@ function actualizarsocio($id,$nombre,$apellido,$codigo,$cedula,$celular,$f_nac,$
 }
 function comprobar_mail($mail){
 	require ("conect.php");
-	$SQL="SELECT email FROM persona where email='".$mail."'";
-	$result=mysqli_query($link, $SQL)or die(mysqli_error($link));
-	if(mysqli_num_rows($result)==0 or $mail==''){
-		return false;
-	}else
-		return true;
+	$estado=false;	
+	$result=consultarCriterio('','');
+	foreach ($result as $row) {
+		if ($row['mail']==$mail) {
+			$estado=true;
+		}
 	}
+	return ($estado);
+}
 function insertar_socio($nombre,$apellido,$codigo,$cedula,$celular,$f_nac,$direccion,$poblacion,$canton,$provincia,$genero,$mail){
 	require ("conect.php");
 	$SQL="call SP_socio_ins('".$nombre."','".$apellido."','".$codigo."','".$cedula."','".$celular."','".$f_nac."','".$direccion."','".$poblacion."','".$canton."','".$provincia."','".$genero."','".$mail."')";

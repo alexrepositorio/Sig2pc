@@ -87,7 +87,7 @@ echo "</tr></table>";
 //*****************************************************************************************************
 $sumatotal=array_sum($pesos);
 echo "<div align=center>$criterio<br>";
-echo "<table class=tablas>";
+echo "<table id='table_id' style='width: 80%' class='tablas' posicion>";
 	echo "<tr><th>";
 	echo "<h4>LOTES $encontrados</h4><br>$sumatotal qq pergamino en $cuenta lotes";
 	echo "</th>";
@@ -121,7 +121,7 @@ if(isset($lotes)){
 		$trillado_qq=$lote["peso"]*(($trillado)/100);
 		$suma_trillado=$descarte_qq+$exportable_qq;
 
-		$res_cata=catasporlote($lote["id"]);
+		$res_cata=catas_consultar('lote',$lote["id"]);
 		if (is_array($res_cata)) {
 			$cata=$res_cata[0];
 			$unidades_cata=" pts";
@@ -131,7 +131,7 @@ if(isset($lotes)){
 		}
 		unset($cantidades); 
 		unset($despachos_del_lote); 
-		$res_des=despachosporlote($lote["id"]);
+		$res_des=despachos_consultar_criterio('lote',$lote["id"]);
 		if (is_array($res_des)) {
 			if (count($res_des,COUNT_RECURSIVE)/6>1) {
 				foreach ($res_des as $despacho) {

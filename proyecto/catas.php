@@ -1,40 +1,32 @@
 <?php
 include ("cabecera.php");
 include ("conect.php");
+include ("catas_funciones.php");
+include ("lote_funciones.php");
 
 if(isset($_POST["fecha"])){
-	$andwhere=" AND date_format(fecha,'%Y-%m-%d') = '".$_POST["fecha"]."'";
+	$resultado=LotesConsultarCriterio('fecha_catas',$_POST["fecha"]);
+}else{
+	$resultado=LotesConsultarCriterio('','');
 }
-else{$andwhere="";
+//$SQL="SELECT * FROM lotes WHERE calidad='A' $andwhere order by fecha desc";
+if (is_array($resultado)) {
+	foreach ($resultado as $row) {
+		$lotes[]=$row;
+		$pesos[]=$row["peso"];
+		$r_p=catas_consultar('lote',$row["id"]);
+		//print_r($r_p);
+		if (is_array($r_p)) {
+			$cata=$r_p[0];
+			$fragancia[$row["id"]]=$cata["fragancia"];
+			$sabor[$row["id"]]=$cata["sabor"];
+			$balance[$row["id"]]=$cata["balance"];
+			$puntuacion[$row["id"]]=$cata["puntuacion"];
+		}else{
+			$puntuacion[$row["id"]]="<a href=ficha_cata_nuevo.php?lote=".$row["codigo_lote"]."><font color=blue><b>PENDIENTE</b></font></a>";
+		}
+	}		
 }
-
-$SQL="SELECT * FROM lotes WHERE calidad='A' $andwhere order by fecha desc";
-$resultado=mysqli_query($link, $SQL);
-$cuenta=mysqli_num_rows($resultado);
-while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-	$lotes[]=$row;
-	$pesos[]=$row["peso"];
-	
-	
-$SQL_cata="SELECT * FROM catas where lote='".$row["codigo_lote"]."' order by fecha desc";
-$r_p=mysqli_query($link, $SQL_cata);
-$cuenta_p=mysqli_num_rows($r_p);
-if($cuenta_p==0){$puntuacion[$row["codigo_lote"]]="<a href=ficha_cata_nuevo.php?lote=".$row["codigo_lote"]."><font color=blue><b>PENDIENTE</b></font></a>";}
-else{
-$cata[$row["codigo_lote"]]= mysqli_fetch_array($r_p,MYSQLI_ASSOC);
-$puntuacion[$row["codigo_lote"]]=$cata[$row["codigo_lote"]]["puntuacion"];
-$fragancia[$row["codigo_lote"]]=$cata[$row["codigo_lote"]]["fragancia"];
-$sabor[$row["codigo_lote"]]=$cata[$row["codigo_lote"]]["sabor"];
-$balance[$row["codigo_lote"]]=$cata[$row["codigo_lote"]]["balance"];
-
-
-
-}
-	
-}
-
-
-
 /*
 if(isset($_GET["separa"])){
 	foreach ($socios as $persona){
@@ -81,11 +73,15 @@ echo "</select><br>";
 echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
 */
-echo "<td align=center><h4>Fecha<br><form name=form3 action=".$_SERVER['PHP_SELF']." method='post'>";
+echo "<td align=center><h4>Fecha<br><form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
 echo "<select name=fecha>";
-$sql_fecha="SELECT DISTINCT date_format(fecha,'%Y-%m-%d') as fecha FROM lotes WHERE calidad='A' ORDER BY fecha ASC";
-$r_fec=mysqli_query($link, $sql_fecha);
-while ($rowfec = mysqli_fetch_array($r_fec,MYSQLI_ASSOC)){$fecha=$rowfec["fecha"];echo "<option value='$fecha'>$fecha</option>";}
+//$sql_fecha="SELECT DISTINCT date_format(fecha,'%Y-%m-%d') as fecha FROM lotes WHERE calidad='A' ORDER BY fecha ASC";
+$r_fec=LotesConsultarCriterio('fechas','');
+if (is_array($r_fec)) {
+	foreach ($r_fec as $rowfec) {
+		echo "<option value='$fecha'>".$rowfec["fecha"]."</option>";
+	}
+}
 echo "</select><br>";
 echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
@@ -107,7 +103,7 @@ echo "</td>";
 echo "</tr></table>";
 */
 //echo "<br><br><div align=center>$criterio<br>";
-echo "<table class=tablas>";
+echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
 	echo "<tr><th width=500px>";
 	echo "<h4>LOTES</h4>";
 	echo "</th>";
@@ -119,24 +115,21 @@ if(isset($lotes))
 	foreach ($lotes as $lote)
 	{
 		//$datos_socio=nombre_socio($lote["id_socio"]);
-		
 		echo "<tr>";
-		echo "<td><h3>".$lote["codigo_lote"]."<br><h4>".date("d-m-Y H:i",strtotime($lote["fecha"]))."</td><td align=center><h4>".$puntuacion[$lote["codigo_lote"]]."<br>";
+		echo "<td><h3>".$lote["codigo_lote"]."<br><h4>".date("d-m-Y H:i",strtotime($lote["fecha"]))."</td><td align=center><h4>".$puntuacion[$lote["id"]]."<br>";
 		echo "</td>";
 		echo "<td>";
-if($puntuacion[$lote["codigo_lote"]]>0)
-				{
-			echo "<a href=ficha_cata_editar.php?lote=".$lote["codigo_lote"]."><img title=editar src=images/pencil.png width=25></a>
-				  <a href=ficha_cata_borrar.php?cata=".$lote["codigo_lote"]."><img title=borrar src=images/cross.png width=25></a>
-				  <a href=ficha_cata.php?lote=".$lote["codigo_lote"]."><img title=ver src=images/ver.png width=25></a>";
-			if($fragancia[$lote["codigo_lote"]]>0 && $sabor[$lote["codigo_lote"]]>0 && $balance[$lote["codigo_lote"]]>0){
-			echo "<a href=perfil_cata.php?lote=".$lote["codigo_lote"]."><img width=25 src=images/radar.png></a><br><br>";}
-			else {echo "<img width=25 title='perfil icompleto' src=images/uncompleted.png>";}
-				  
-				}
-		else{
-			echo "<a href=ficha_cata_nuevo.php?lote=".$lote["codigo_lote"]."><img title=editar src=images/add.png width=25></a>";
-	
+	if($puntuacion[$lote["id"]]>0){
+			echo "<a href=ficha_cata_editar.php?lote=".$lote["id"]."><img title=editar src=images/pencil.png width=25></a>
+				  <a href=ficha_cata_borrar.php?cata=".$lote["id"]."><img title=borrar src=images/cross.png width=25></a>
+				  <a href=ficha_cata.php?lote=".$lote["id"]."><img title=ver src=images/ver.png width=25></a>";
+			if($fragancia[$lote["id"]]>0 && $sabor[$lote["id"]]>0 && $balance[$lote["id"]]>0){
+				echo "<a href=perfil_cata.php?lote=".$lote["id"]."><img width=25 src=images/radar.png></a><br><br>";
+		}else{
+				echo "<img width=25 title='perfil incompleto' src=images/uncompleted.png>";
+			}
+	}else{
+			echo "<a href=ficha_cata_nuevo.php?lote=".$lote["id"]."><img title=editar src=images/add.png width=25></a>";
 			}
 		echo "</td></tr>";
 	}

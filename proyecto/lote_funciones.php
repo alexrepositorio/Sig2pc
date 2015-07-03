@@ -8,6 +8,16 @@ function lote_insertar($socio,$codigo,$fecha,$peso,$humedad,$rto_descarte,$rto_e
 		$SQL="CALL SP_lote_ins(".$socio.",'".$codigo."','".$fecha."','".$peso."','".$humedad."','".$rto_descarte."','".$rto_exportable."','".$defecto_negro."','".$defecto_vinagre."','".$defecto_decolorado."','".$defecto_mordido."','".$defecto_brocado."','".$reposo."','".$moho."','".$fermento."','".$contaminado."','".$calidad."')";
 		 $result=mysqli_query($link,$SQL) or die(mysqli_error($link));    	
 	}
+function lote_actualizar($socio,$codigo,$fecha,$peso,$humedad,$rto_descarte,$rto_exportable,$defecto_negro,
+		$defecto_vinagre,$defecto_decolorado,$defecto_mordido,$defecto_brocado,$reposo,$moho,$fermento,$contaminado,
+		$calidad)
+	{
+		 require("conect.php");
+		$SQL="CALL SP_lote_ins(".$socio.",'".$codigo."','".$fecha."','".$peso."','".$humedad."','".$rto_descarte."','".$rto_exportable."','".$defecto_negro."','".$defecto_vinagre."','".$defecto_decolorado."','".$defecto_mordido."','".$defecto_brocado."','".$reposo."','".$moho."','".$fermento."','".$contaminado."','".$calidad."')";
+		 $result=mysqli_query($link,$SQL) or die(mysqli_error($link));    	
+	}
+
+
 
 function lote_codigo(){
 
@@ -53,8 +63,13 @@ function obtenerLotesfecha($socio,$fecha){
 function LotesConsultarCriterio($criterio,$valor){
 	require ("conect.php");
 	//echo 	$socio."    ".$fecha;
-	// echo $valor;
-	$SQL="CALL SP_lote_cons('".$criterio."','".$valor."')";
+	$SQL="CALL SP_lote_cons('".$criterio."','".$valor."','')";
+	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
+	return (transformar_a_lista($resultado));
+}
+function LotesConsultarpagos($criterio,$valor,$valor2){
+	require ("conect.php");
+	$SQL="CALL SP_lote_cons('".$criterio."','".$valor."','".$valor2."')";
 	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
 	return (transformar_a_lista($resultado));
 }

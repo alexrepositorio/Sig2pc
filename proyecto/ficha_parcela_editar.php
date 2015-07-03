@@ -5,7 +5,9 @@ include ("asociaciones_funciones.php");
 include ("socio.php");
 include ("configuracion_funciones.php");
 
-$riegos=Array("Aspersión","Goteo","Gravedad","Ninguno");
+
+
+
 if(isset($_GET["asociacion"])){
 	asociaciones_insertar($_POST["concepto"],$_POST["valor"],$_GET["asociacion"],"parcela",$_GET["parcela"]);	
 }
@@ -47,19 +49,19 @@ else{
 		}
 		echo "</select><br>";
 		echo "<input type='hidden' name='update' value=".$_GET["parcela"].">";
-		echo "<tr><th align=right><h4>Superficie Finca</th><td><h4><input type=text name=sup_total size=3 value=".$datos["sup_total"]."></h4>ha</td></tr>";	
-		echo "<tr><th align=right><h4>Coordenada X</th><td><h4><input type=text name=coorX size=10 value=".$datos["coorX"]."></h4></td></tr>";	
-		echo "<tr><th align=right><h4>Coordenada Y</th><td><h4><input type=text name=coorY size=10 value=".$datos["coorY"]."></h4></td></tr>";	
-		echo "<tr><th align=right><h4>Altitud</th><td><h4><input type=text name=alti size=3 value=".$datos["alti"]."></h4>msnm</td></tr>";	
+		echo "<tr><th align=right><h4>Superficie Finca</th><td><h4><input type=number step='any' name=sup_total size=3 value=".$datos["sup_total"]."></h4>ha</td></tr>";	
+		echo "<tr><th align=right><h4>Coordenada X</th><td><h4><input type=number step='any' name=coorX size=10 value=".$datos["coorX"]."></h4></td></tr>";	
+		echo "<tr><th align=right><h4>Coordenada Y</th><td><h4><input type=number step='any' name=coorY size=10 value=".$datos["coorY"]."></h4></td></tr>";	
+		echo "<tr><th align=right><h4>Altitud</th><td><h4><input type=number step='any' name=alti size=3 value=".$datos["alti"]."></h4>msnm</td></tr>";	
 		echo "<tr><th align=right><h4>Riego</th><td><h4><select name=riego>";
 			foreach($riegos as $riego){
 				if($riego==$datos["riego"]){$sel="selected";}else{$sel="";}
 				echo "<option $sel value=$riego>$riego</option>";
 			}
 		echo "</select></h4></td></tr>";
-		echo "<tr><th align=right><h4>Mano de Obra Contratada</th><td><h4><input type=text name=MOcontratada size=3 value=".$datos["MOcontratada"]."></h4></td></tr>";	
-		echo "<tr><th align=right><h4>Mano de Obra Familiar</th><td><h4><input type=text name=MOfamiliar size=3 value=".$datos["MOfamiliar"]."></h4></td></tr>";	
-		echo "<tr><th align=right><h4>Miembros de la Familia</th><td><h4><input type=text name=Miembros_familia size=3 value=".$datos["Miembros_familia"]."></h4></td></tr>";	
+		echo "<tr><th align=right><h4>Mano de Obra Contratada</th><td><h4><input type=number name=MOcontratada size=3 value=".$datos["MOcontratada"]."></h4></td></tr>";	
+		echo "<tr><th align=right><h4>Mano de Obra Familiar</th><td><h4><input type=number name=MOfamiliar size=3 value=".$datos["MOfamiliar"]."></h4></td></tr>";	
+		echo "<tr><th align=right><h4>Miembros de la Familia</th><td><h4><input type=number name=Miembros_familia size=3 value=".$datos["Miembros_familia"]."></h4></td></tr>";	
 	}
 	echo "</table><br>";
 	//**********TABLA AUTOMATICA*****************************************************************
@@ -84,7 +86,6 @@ else{
 	}else{
 		echo"No existen";
 	}
-
 	echo "</td>";
 	echo "<td>";
 	echo "<form name=form1 action=".$_SERVER['PHP_SELF']."?asociacion=cultivo&parcela=".$_GET["parcela"]." method='post'>";

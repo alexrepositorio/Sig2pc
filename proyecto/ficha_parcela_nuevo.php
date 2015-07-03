@@ -1,6 +1,7 @@
 <?php
 include ("cabecera.php");
 include ("parcelas_funciones.php");
+include ("socio.php");
 $riegos=Array("Aspersión","Goteo","Gravedad","Ninguno");
 
 if(isset ($_POST["id_socio"])){
@@ -13,10 +14,9 @@ if(isset ($_POST["id_socio"])){
 
 echo "<div align=center><h2>NUEVA PARCELA</h2><br><table class=tablas>";
 echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
-
 echo "<tr><th align=right><h4>Socio</th><td><h4>";
 echo "<select name=id_socio>";
-$lista=listar_parcelas_socio();
+$lista=consultarCriterio('parcelas','');
 		foreach ($lista as $elemento) {
 			if($elemento["parcelas"]>0){
 				if($elemento["parcelas"]>1){

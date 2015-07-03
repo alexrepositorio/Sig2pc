@@ -4,6 +4,7 @@ include("grupos_funciones.php");
 include ("socio.php") ;
 
 
+
 if(!isset($_GET["criterio"]))
 {
 	$socios=consultarCriterio("","");
@@ -38,21 +39,21 @@ echo "</form></td>";
 
 echo "<td align=center> <h4>Localidad<br>
 <form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-echo "<select name=busca>";
+echo "<input list='grupos' name='busca' required>";	
+echo "<datalist  id='grupos'>";	
 $grupos=consultarGrupo('lista','');
-echo count($grupos);
  foreach ($grupos as $grupo)
 	{
-		echo "<option value=".$grupo["grupo"].">".$grupo["grupo"]."</option>";
+		echo "<option>".$grupo["grupo"]."</option>";
 	}
-echo "</select><br>";
+echo "</datalist></br>";
 echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
 echo "</div>";
 
 echo "<div name='tabla' style='width:95%; height:48px; overflow:auto;''>";
 echo "</div>";
-echo "<table class='tablas' cellspacing=1 cellspadding=1 align=center border=2 >";
+echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
 echo "<thead>";
 		echo "<th >Nombre</th>";
 		echo "<th>Apellido</th>";

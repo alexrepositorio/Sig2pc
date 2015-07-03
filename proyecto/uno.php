@@ -10,15 +10,120 @@ $fecha=date('Y-m-d');
 $texturas=Array("arenoso","franco arenoso","franco","franco limoso","limoso","franco arcilloso","franco arenoso arcilloso","franco limoso arcilloso","arcilloso arenoso","arcilloso limoso","arcilloso");
 $estructuras=Array("angular","sub-angular","granular");
 $grados=Array("débil","moderado","fuerte");
+$riegos=Array("Aspersión","Goteo","Gravedad","Ninguno");
+$defectos=array('d_fermento','d_metalico','d_quimico','d_vinagre','d_stinker',
+				'd_fenol','d_reposo','d_moho','d_terroso','d_extrano','d_sucio',
+				'd_astringente','dl_cereal','dl_fermento','dl_reposo','dl_moho',
+				'dl_astringencia');
+$tipos_sabor_res=array('Refrescante',
+					'Limpio',
+					'Dulce',
+					'Picante',
+					'Delicado',
+					'Suave',
+					'Duro',
+					'Astringente',
+					'Amargo',
+					'Seco',
+					'Agrio',
+					'Vinoso',
+					'Áspero',
+					'Salado');
+$tipos_sabor=array('Floral',
+					'Frutal',
+					'Herbal',
+					'Anuesado',
+					'Picante',
+					'Caramelo',
+					'Chocolate dulce',
+					'Chocolate amargo',
+					'Articulado',
+					'Vainilla',
+					'Cítrico',
+					'Melón',
+					'Mora',
+					'Vinoso',
+					'Carbonoso',									
+					'Madera',
+					'Resinoso',
+					'Neutral');
+$tipos_aroma=array('Floral',
+				  'Frutal',
+				  'Herbal',
+				  'Anuesado',
+				  'Picante',
+				  'Caramelo',
+				  'Chocolate dulce',
+				  'Chocolate amargo',
+				  'Vainilla',
+				  'Cítrico',
+				  'Neutral',
+				  'Resinoso',
+				  'Carbonoso');
+
+$tipos_aroma=array('Floral',
+				  'Frutal',
+				  'Herbal',
+				  'Anuesado',
+				  'Picante',
+				  'Caramelo',
+				  'Chocolate dulce',
+				  'Chocolate amargo',
+				  'Vainilla',
+				  'Cítrico',
+				  'Neutral',
+				  'Resinoso',
+				  'Carbonoso');
+$tipos_sabor=array('Floral',
+					'Frutal',
+					'Herbal',
+					'Anuesado',
+					'Picante',
+					'Caramelo',
+					'Chocolate dulce',
+					'Chocolate amargo',
+					'Articulado',
+					'Vainilla',
+					'Cítrico',
+					'Melón',
+					'Mora',
+					'Vinoso',
+					'Carbonoso',									
+					'Madera',
+					'Resinoso',
+					'Neutral');
+$tipos_sabor_res=array('Refrescante',
+					'Limpio',
+					'Dulce',
+					'Picante',
+					'Delicado',
+					'Suave',
+					'Duro',
+					'Astringente',
+					'Amargo',
+					'Seco',
+					'Agrio',
+					'Vinoso',
+					'Áspero',
+					'Salado');
 
 function transformar_a_lista($resultado){
 
 	if (mysqli_num_rows($resultado)>0) {
     	$lista=mysqli_fetch_all($resultado,MYSQLI_ASSOC);     			   		
-   		return($lista);
+   		return(utf8_convertidor($lista));
     }else{
     	return 0;
     }
+}
+function utf8_convertidor($array)
+{
+    array_walk_recursive($array, function(&$item, $key){
+        if(!mb_detect_encoding($item, 'utf-8', true)){
+                $item = utf8_encode($item);
+        }
+    });
+    return $array;
 }
 /*
 function nombre_socio($id)

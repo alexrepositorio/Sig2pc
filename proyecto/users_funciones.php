@@ -4,11 +4,7 @@ function consultarCriterio(){
     require("conect.php");
     $SQL="call SP_lista_usuarios_con( )";
     $resultado=mysqli_query($link,$SQL) or die(mysqli_error($link)); 
-    while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-				$usuarios[]=$row;
-
-			}  
-    return($usuarios);
+    return(transformar_a_lista($resultado));
 }
 
 function obtenerNombres(){

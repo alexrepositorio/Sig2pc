@@ -29,8 +29,8 @@ if(!isset($_GET["criterio"]))
 $criterio="<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b></h4>";		
 
 }
-$cuenta=intval(count($parcelas,COUNT_RECURSIVE)/8);
-if (is_array($parcelas)) {
+$cuenta=count($parcelas);
+if (is_array($parcelas)) {  
 	foreach ($parcelas as $parcela) {
 		$superficie_cafe[]=$parcela["sup_cafe"];
 			if($parcela["coorX"]!=0 && $parcela["coorY"]!=0 && $parcela["alti"]!=0){
@@ -118,13 +118,15 @@ if (is_array($parcelas)) {
 	echo "</form></td>";
 	echo "<td align=center><h4>Grupo<br>
 	<form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-	echo "<select name=busca>";
+	echo "<input list='grupos' name='busca' required>";	
+	echo "<datalist  id='grupos'>";	
+	//echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
 	$grupos=consultarGrupo('lista','');
-	 foreach ($grupos as $grupo)
-		{
-			echo "<option value=".$grupo["grupo"].">".$grupo["grupo"]."</option>";
-		}
-	echo "</select><br>";
+ 	foreach ($grupos as $grupo)
+	{
+		echo "<option>".$grupo["grupo"]."</option>";
+	}
+	echo "</datalist></br>";
 	echo "<input type='submit' value='filtrar'>";
 	echo "</form></td>";
 	echo "<td align=center><a href=ficha_parcela_nuevo.php>";
@@ -134,7 +136,7 @@ if (is_array($parcelas)) {
 	if(isset($superficie_cafe)){$total_cafe=array_sum($superficie_cafe);}else{$total_cafe="no se encuentran";}
 	echo "</tr></table>";
 	echo "<div align=center>$criterio<br>";
-	echo "<table class=tablas>";
+	echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
 		echo "<tr><th width=500px>";
 		echo "<h4>PARCELAS $encontrados</h4> ($cuenta parcelas, $total_cafe ha de café)";
 		echo "</th>";
@@ -162,9 +164,7 @@ if (is_array($parcelas)) {
 					$analisis_t="<img title='$cuenta_analisis análisis realizados' width=25 src=images/lab.png><font color=green>($cuenta_analisis)</font>";
 				}else{
 					$analisis_t="";
-			}
-			
-			
+			}				
 			echo "<tr>";
 			echo "<td><h4>".$datos_socio[0]["codigo"]."-".$datos_socio[0]["nombres"]." ".$datos_socio[0]["apellidos"]."$estatus_t<br>
 			".$datos_socio[0]["poblacion"]."<br>
@@ -182,8 +182,11 @@ if (is_array($parcelas)) {
 					  
 		}
 	}else{
-	echo "no data";
+		echo "no data";
 	}
+}else{
+	echo "<div align=center><h1>Sin datos redireccionando.................
+	<meta http-equiv='Refresh' content='2;url=parcelas.php'></font></h1></div>";	
 }
 echo "</table></div>";
 include("pie.php");

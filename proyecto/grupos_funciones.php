@@ -27,7 +27,6 @@ function consultarGrupos(){
 */
 function consultarGrupo($criterio,$valor){
      require("conect.php");
-     echo "llego";
     $sql="call SP_grupos_cons('".$criterio."','".$valor."')";
     $resultado=mysqli_query($link,$sql) or die(mysqli_error($link));
     return (transformar_a_lista($resultado));

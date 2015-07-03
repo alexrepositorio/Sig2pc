@@ -1,33 +1,9 @@
 <?php
-
-function consultarSubparcela($id){
+function consultarSubparcelas($criterio,$id){
     require("conect.php");
-    $SQL="SELECT * FROM subparcelas WHERE id='".$id."'";
+    $SQL="call SP_subparcelas_cons('".$criterio."','".$id."')";
     $resultado=mysqli_query($link,$SQL) or die(mysqli_error($link)); 
-    if (mysqli_num_rows($resultado)>0) {
-        while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-                $subparcelas[]=$row;    
-            } 
-            return($subparcelas);           
-    }else{
-        
-        return 0;
-    }
-}
-
-function consultarSubparcelas($id){
-    require("conect.php");
-    $SQL="SELECT * FROM subparcelas WHERE id_parcela='".$id."'";
-    $resultado=mysqli_query($link,$SQL) or die(mysqli_error($link)); 
-    if (mysqli_num_rows($resultado)>0) {
-     	while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-				$subparcelas[]=$row;	
-			} 
-			return($subparcelas);	    	
-    }else{
-    	
-    	return 0;
-    }
+    return (transformar_a_lista($resultado)); 
 }
 
 function subparcelas_insertar($id_parcela,$superficie,$variedad,$variedad2,$siembra,$densidad,$marco,$hierbas,$sombreado,$roya
@@ -70,8 +46,6 @@ function subparcela_editar($id_parcela,$superficie,$variedad,$variedad2,$siembra
                 duracion_cosecha='".$duracion_cosecha."'
                 WHERE id='".$id."'";
     $resultado=mysqli_query($link,$SQL) or die(mysqli_error($link)); 
-
-
 }
 
 ?>

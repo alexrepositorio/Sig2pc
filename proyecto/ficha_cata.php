@@ -1,18 +1,12 @@
 <?php
 include ("cabecera.php");
-$SQL="SELECT * FROM catas where lote='".$_GET["lote"]."'";
-$resultado=mysqli_query($link, $SQL);
-$cata = mysqli_fetch_array($resultado,MYSQLI_ASSOC);
-$defectos=array('d_fermento','d_metalico','d_quimico','d_vinagre','d_stinker',
-				'd_fenol','d_reposo','d_moho','d_terroso','d_extrano','d_sucio',
-				'd_astringente','dl_cereal','dl_fermento','dl_reposo','dl_moho',
-				'dl_astringencia');
+include ("catas_funciones.php");
+$resultado=catas_consultar('lote',$_GET["lote"]);
+$cata = $resultado[0];
 
 echo "<div id=imprimir>";		 
 echo "<div align=center><h1>CATA DEL LOTE ".$_GET["lote"]."</h1><br>";
-
 //muestra_array($socio);
-
 echo "<table class=tablas>";
 //echo "<tr><th align=center colspan=2><h3>Datos del lote</th></tr>";
 echo "<tr><th align=right><h4>Fecha</th><td>".$cata["fecha"]."</td>";
@@ -37,22 +31,7 @@ echo "</table>&nbsp&nbsp";
 echo "<table class=tablas>";
 echo "<tr><th align=center colspan=2><h4>Aroma</th></tr>";
 echo "<tr><th align=right><h4>Fragancia/Aroma</th><td><h4>";
-							echo "".$cata["fragancia"]."</h4><br>[0.00 - 10.00]</td></tr>";
-
-$tipos_aroma=array('Floral',
-				  'Frutal',
-				  'Herbal',
-				  'Anuesado',
-				  'Picante',
-				  'Caramelo',
-				  'Chocolate dulce',
-				  'Chocolate amargo',
-				  'Vainilla',
-				  'Cítrico',
-				  'Neutral',
-				  'Resinoso',
-				  'Carbonoso');
-				  						
+							echo "".$cata["fragancia"]."</h4><br>[0.00 - 10.00]</td></tr>";				  						
 echo "<tr><th align=right valign=top><h4>Tipo</th><td>";
 foreach($tipos_aroma as $tipo_aroma){
 	if(in_array($tipo_aroma, explode(",",$cata["tipo_aroma1"]))){$chi="<b><u>"; $chf="</u></b>";echo "$chi$tipo_aroma$chf <br>";}	
@@ -65,26 +44,6 @@ echo "<table class=tablas>";
 echo "<tr><th align=center colspan=2><h4>Sabor</th></tr>";
 echo "<tr><th align=right><h4>Sabor</th><td><h4>";
 							echo $cata["sabor"]. " </h4><br>[0.00 - 10.00]</td></tr>";
-
-$tipos_sabor=array('Floral',
-					'Frutal',
-					'Herbal',
-					'Anuesado',
-					'Picante',
-					'Caramelo',
-					'Chocolate dulce',
-					'Chocolate amargo',
-					'Articulado',
-					'Vainilla',
-					'Cítrico',
-					'Melón',
-					'Mora',
-					'Vinoso',
-					'Carbonoso',									
-					'Madera',
-					'Resinoso',
-					'Neutral');
-
 echo "<tr><th align=right valign=top><h4>Tipo</th><td>";
 foreach($tipos_sabor as $tipo_sabor){
 	if(in_array($tipo_sabor, explode(",",$cata["tipo_sabor"]))){$chi="<b><u>"; $chf="</u></b>";echo "$chi$tipo_sabor$chf <br>";}	
@@ -99,21 +58,6 @@ echo "<table class=tablas>";
 echo "<tr><th align=center colspan=2><h4>Sabor residual</th></tr>";
 echo "<tr><th align=right><h4>Sabor residual</th><td><h4>";
 							echo  $cata["sabor_residual"]." </h4><br>[0.00 - 10.00]</td></tr>";
-$tipos_sabor_res=array('Refrescante',
-					'Limpio',
-					'Dulce',
-					'Picante',
-					'Delicado',
-					'Suave',
-					'Duro',
-					'Astringente',
-					'Amargo',
-					'Seco',
-					'Agrio',
-					'Vinoso',
-					'Áspero',
-					'Salado');
-
 echo "<tr><th align=right valign=top><h4>Tipo</th><td>";
 foreach($tipos_sabor_res as $tipo_sabor_res){
 	if(in_array($tipo_sabor_res, explode(",",$cata["tipo_sabor_residual"]))){$chi="<b><u>"; $chf="</u></b>";echo "$chi$tipo_sabor_res$chf <br>";}
@@ -194,8 +138,8 @@ echo "<a href=perfil_cata.php?lote=".$_GET["lote"]."><img width=35 src=images/ra
 }else {echo "<br><br>";}
 
 echo "<table class=tablas><tr>";
-if(in_array($_COOKIE['acceso'],$permisos_administrativos)){echo "<td><a href=ficha_cata_editar.php?lote=".$_GET["lote"]."><h3>EDITAR</h3></a></td>";}
-if(in_array($_COOKIE['acceso'],$permisos_administrativos)){echo "<td><a href=ficha_cata_borrar.php?lote=".$_GET["lote"]."><h3>ELIMINAR</h3></a></td>";}
+if(in_array($_SESSION['acceso'],$permisos_administrativos)){echo "<td><a href=ficha_cata_editar.php?lote=".$_GET["lote"]."><h3>EDITAR</h3></a></td>";}
+if(in_array($_SESSION['acceso'],$permisos_administrativos)){echo "<td><a href=ficha_cata_borrar.php?lote=".$_GET["lote"]."><h3>ELIMINAR</h3></a></td>";}
 echo "</tr></table></div>";
 
 

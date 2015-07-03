@@ -1,25 +1,24 @@
 <?php
 include ("cabecera.php");
 include ("grupos_funciones.php");
-$resultado=consultarGrupos();
-while ($r=mysqli_fetch_array($resultado)){
-	$codigos[]=$r["codigo_grupo"];
+$resultado=consultarGrupo('','');
+
+foreach ($resultado as $res) {
+	$codigos[]=$res["codigo_grupo"];
 }
 
 if (isset($_GET["borra"])){
 	eliminarGrupo($_GET["borra"]);
 	//echo "$SQL_edit";
-	
 	echo "<div align=center><h1>BORRANDO, ESPERA...
 	<meta http-equiv='Refresh' content='2;url=grupos.php'></font></h1></div>";		
 }
 
 elseif (isset($_POST["grupo"]) & isset($_POST["codigo_grupo"])){
-
 	if(!in_array(strtoupper($_POST["codigo_grupo"]),$codigos)){	
 		insertarGrupo(strtoupper($_POST["grupo"]),strtoupper($_POST["codigo_grupo"]));
-	echo "<div align=center><h1>GUARDANDO, ESPERA...
-	<meta http-equiv='Refresh' content='2;url=grupos.php'></font></h1></div>";
+		echo "<div align=center><h1>GUARDANDO, ESPERA...
+		<meta http-equiv='Refresh' content='2;url=grupos.php'></font></h1></div>";
 	}
 	else{
 	echo "<div align=center><h1>EL CODIGO YA EXISTE, PRUEBA OTRA VEZ...
@@ -42,14 +41,15 @@ else{
 			<th>Codigo</th>
 			<th>opciones</th>
 	</tr>";
-	$res=consultarGrupos();
-	while($row = mysqli_fetch_array($res)){
+	$res=consultarGrupo('','');
+	foreach ($res as $row) {
 		echo "<tr> ";
 		echo "<td>".$row['grupo']."</td>";
 		echo "<td>".$row['codigo_grupo']."</td>";
 		echo "<td><a href=?borra=".$row["id"]."><img src=images/cross.png></a>  <a href=actualizar_grupo.php?id=".$row["id"]."><img src=images/pencil.png></a></td>";
-		echo "</tr>";		
-		}
+		echo "</tr>";	
+	}
+	
 	
 	echo "</table></div>";
 }

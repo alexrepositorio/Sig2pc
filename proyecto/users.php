@@ -25,7 +25,7 @@ echo "<table class=tablas>";
 foreach ($usuarios as $usuario) {
 	echo "<tr>";
 		echo "<td><h4>".$usuario["user"]."</td><h4>" ;
-		echo "<td><h4>".$usuario["niveles"]."</td><h4>" ;
+		echo "<td><h4>".$usuario["nivel"]."</td><h4>" ;
 
 		echo "</td>";
 		echo "<td><a href=ficha_user_editar.php><img title=editar src=images/pencil.png width=25></a>

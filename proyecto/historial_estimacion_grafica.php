@@ -1,23 +1,32 @@
 <?php
-$link = mysqli_connect("localhost", "root", "", "sig");
-mysqli_query($link, "SET NAMES 'utf8'");
-require_once ('src/jpgraph.php');
-require_once ('src/jpgraph_bar.php');
 
-	$SQL1="SELECT * FROM socios WHERE codigo='".$_GET["socio"]."'";
-	$resultado1=mysqli_query($link, $SQL1);
-	$socio = mysqli_fetch_array($resultado1,MYSQLI_ASSOC);
+
+	include ("socio.php");
+	include ("estimaciones_funciones.php");
+	require_once ('src/jpgraph.php');
+	require_once ('src/jpgraph_bar.php');
+
+	$socio = consultarCriterio('id',$_GET["socio"]);
 	$datos_socio["nombres"]=$socio["nombres"];
 	$datos_socio["apellidos"]=$socio["apellidos"];
-
-	$SQL="SELECT * FROM estimacion WHERE id_socio='".$_GET["socio"]."'";
-	$resultado=mysqli_query($link, $SQL);
-	while($socio = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-	$estimados["year"][]=$socio["year"];		
-	$estimados["estimados"][]=$socio["estimados"];		
-	$estimados["entregados"][]=$socio["entregados"];	
-	}	
-
+	$resultado= estimacion($_GET["socio"]);
+	echo count($resultado);
+	if (is_array($resultado)) {
+		if (count($resultado)>1) {
+			foreach ($resultado as $socio) {
+				$estimados["year"][]=$socio["year"];		
+				$estimados["estimados"][]=$socio["estimados"];		
+				$estimados["entregados"][]=$socio["entregados"];
+			}
+			
+		}else{
+				$estimados["year"][]=$socio["year"];		
+				$estimados["estimados"][]=$socio["estimados"];		
+				$estimados["entregados"][]=$socio["entregados"];
+		}
+	}else{
+		echo "NO DATA";
+	}
 
 $graph = new Graph(600,450,'auto');
 $graph->SetScale("textlin");

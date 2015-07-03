@@ -1,6 +1,7 @@
 <?php
 include ("cabecera.php");
 include ("lote_funciones.php");
+include ("socio.php");
 include ("configuracion_funciones.php");
 
 if(isset($_POST["peso"])){
@@ -45,7 +46,14 @@ echo "<div align=center><h1>NUEVO LOTE</h1><br>";
 echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 echo "<table class=tablas>";
 echo "<tr><th align=center colspan=2><h3>Datos del lote</th></tr>";
-echo "<tr><th align=right><h4></th><td><input type='hidden' name=id_socio value='".$_GET["socio"]."'></td></tr>";
+
+echo "<tr><th align=right><h4>Socio</th><td><select name=id_socio>";
+$lista=consultarCriterio('','');
+foreach ($lista as $elemento) {
+	echo "<option value=".$elemento["id_socio"].">".$elemento["apellidos"]." ".$elemento["nombres"]."</option>";
+}
+echo "</select><br>";
+//echo "<tr><th align=right><h4></th><td><input type='hidden' name=id_socio value='".$_GET["socio"]."'></td></tr>";
 echo "<tr><th align=right><h4></th><td><input type='hidden' name=fecha value='".date("Y-m-d H:i:s",time())."'></td></tr>";
 echo "<tr><th align=right><h4>Código LOTE</th><td><input size=15 type='text' name=codigo_lote value='".lote_codigo()."'></td></tr>";
 echo "<tr><th align=right><h4>Peso entrada</th><td><input size=5 type='text' name=peso> qq pergamino</td></tr>";
