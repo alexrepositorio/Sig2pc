@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 26-06-2015 a las 19:13:53
+-- Tiempo de generación: 03-07-2015 a las 16:44:44
 -- Versión del servidor: 5.6.24
 -- Versión de PHP: 5.5.24
 
@@ -466,6 +466,10 @@ case  criterio
 	when ''
 	then
 	SELECT * FROM lotes order by fecha desc;
+    
+    when 'lote'
+	then
+	SELECT * FROM lotes WHERE id=valor;
 	            
 	when 'socio'
 	then
@@ -475,7 +479,7 @@ case  criterio
 	when 'localidad'
 	then
     
-    SELECT lotes.* FROM lotes 
+    SELECT * FROM lotes 
     LEFT JOIN socios on lotes.id_socio=socios.id_socio
     LEFT JOIN grupos on socios.id_grupo=grupos.id 
     WHERE grupos.grupo = valor order by fecha desc;
@@ -1554,12 +1558,12 @@ CREATE TABLE IF NOT EXISTS `altas` (
 --
 
 INSERT INTO `altas` (`id`, `id_socio`, `fecha`, `estado`) VALUES
+(0, 36, '0000-00-00 00:00:00', '2014-05-05'),
 (2, 31, '2014-06-05 20:15:38', 'ingreso'),
 (3, 32, '2014-06-05 20:15:38', 'ingreso'),
 (4, 33, '2014-06-05 20:15:38', 'ingreso'),
 (5, 34, '2014-06-05 20:15:38', 'ingreso'),
 (6, 35, '2014-06-05 20:15:38', 'ingreso'),
-(7, 36, '2014-06-05 20:15:38', 'ingreso'),
 (8, 37, '2014-06-05 20:15:38', 'ingreso'),
 (9, 38, '2014-06-05 20:15:38', 'ingreso'),
 (10, 39, '2014-06-05 20:15:38', 'ingreso'),

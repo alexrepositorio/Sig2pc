@@ -29,12 +29,13 @@ if(!isset($_GET["criterio"]))
 		// $lotes = busqueda_lotes($_GET["criterio"], "");
 	}else{
 		$lotes = LotesConsultarCriterio($_GET["criterio"], $_POST["busca"]);
-		// $lotes = busqueda_lotes($_GET["criterio"], $_POST["busca"]);
+		// $lotes = busqueda_lotes($_GET["criterio"], $_POST["busca"]); 
 	}
 	$encontrados = "ENCONTRADOS";
 
 	if ($_GET["criterio"] == "socio") {
 		$datos_del_socio = consultar_nombre_socio($_POST["busca"]);
+		// $datos_del_socio=consultarCriterio('id',$_POST["busca"]); //implementar 
 		$_texto = $datos_del_socio["apellidos"].", ".$datos_del_socio["nombres"]." (".$datos_del_socio["codigo"].")";		
 	} elseif ($_GET["criterio"] == "pendientes") {
 		$_texto= "";
@@ -161,7 +162,7 @@ if(isset($_GET["criterio"]) && $_GET["criterio"]=="socio"){
 					//$todos_lotes_del_socio[]=$lot;	
 				}
 				$peso_entregado=array_sum($pesos_del_socio);
-				$estimado_actual_max=$estimado[$estimado_actual]["estimados"]*(1+(configuracion_cons('parametro',"margen_contrato")[0]["valor"]/100));
+				$estimado_actual_max=$estimado[0]["estimados"]*(1+(configuracion_cons('parametro',"margen_contrato")[0]["valor"]/100));
 				$peso_restante=$estimado_actual_max-$peso_entregado;
 				$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";
 			}else{
@@ -172,12 +173,12 @@ if(isset($_GET["criterio"]) && $_GET["criterio"]=="socio"){
 			}
 					echo "
 					<table class=tablas><tr>
-					<td valign=top><div align=center><h3>Estimacion ".$estimado[$estimado_actual]["year"]."</h3><br>$enlace_estimado</div><hr>";
+					<td valign=top><div align=center><h3>Estimacion ".$estimado[0]["year"]."</h3><br>$enlace_estimado</div><hr>";
 					if($estimado_actual=="00"){
 						echo "<div align=center><h4>Sin datos</h4></div>";
 					}else{
 					echo "		
-							<table><tr><th><h4>Estimado</h4><br><h6>".$estimado[$estimado_actual]["estimados"]."qq<br>(max $estimado_actual_max qq)</th>
+							<table><tr><th><h4>Estimado</h4><br><h6>".$estimado[0]["estimados"]."qq<br>(max $estimado_actual_max qq)</th>
 									   <th><h4>Entregado</h4><br><h6>$peso_entregado qq</th>
 									   <th><h4>Restante</h4><br><h6>$peso_restante qq</th>
 							</tr></table>";
@@ -263,16 +264,16 @@ $suma_trillado=$descarte_qq+$exportable_qq;
 			{
 					if ($diferencia>=$lote["peso"])//lote completamente fuera 
 					{
-					$dentro_de_contrato=0;
-					$descarte_qq=0;
-					$exportable_qq=0;
-					$diferencia=$lote["peso"];
+						$dentro_de_contrato=0;
+						$descarte_qq=0;
+						$exportable_qq=0;
+						$diferencia=$lote["peso"];
 					}
 					else // lote parcialmente dentro
 					{
-					$dentro_de_contrato=$lote["peso"]-$diferencia;
-					$descarte_qq=round(($dentro_de_contrato*(1-($trillado)/100))*$descarte_prc/100,2);
-					$exportable_qq=round(($dentro_de_contrato*(1-($trillado)/100))*$exportable_prc/100,2);
+						$dentro_de_contrato=$lote["peso"]-$diferencia;
+						$descarte_qq=round(($dentro_de_contrato*(1-($trillado)/100))*$descarte_prc/100,2);
+						$exportable_qq=round(($dentro_de_contrato*(1-($trillado)/100))*$exportable_prc/100,2);
 					}					
 			}
 		else{// estamos dentro
@@ -286,92 +287,67 @@ $exportablesT[]=$exportable_qq;
 $descartesT[]=$descarte_qq;		
 		
 		//buscamos las catas para cada lote
-		$cata = busqueda_catas($lote["id"]);
+		$cata1 = busqueda_catas($lote["id"]);
 
-		if(empty($cata)){
+		if(empty($cata1)){
 			//Si es que el lote no tiene cata
-			$cata_puntuacion = "<font color=red>Pendiente</font>";
+			$cata[0]["puntuacion"] = "<font color=red>Pendiente</font>";
 			$unidades_cata = "";
 			$unidades_dolar_cata = "";
 			$calidades[] = 0;
 		}
 		else{
+			$cata = busqueda_catas($lote["id"]);
 			$unidades_cata = "pt.";
 			$unidades_dolar_cata = "$";
-			$calidades[] = $cata["0"]["puntuacion"];
+			$calidades[] = $cata[0]["puntuacion"];
 		}
+		
 
-		//buscamos los pagos para cada lote
-		$SQL="SELECT * FROM pagos where lote='".$lote["codigo_lote"]."'";
-		$res_pago=mysqli_query($link, $SQL);
-		$cuenta_pago=mysqli_num_rows($res_pago);
-		if($cuenta_pago==0){
-			$pago["exportable"]="<h4><font color=red>Pendiente</font></h4>";
-			$pago["descarte"]="<h4><font color=red>Pendiente</font></h4>";
-			$pago["fuera"]="<h4><font color=red>Pendiente</font></h4>";
-			$pago["calidad"]="<h4><font color=red>Pendiente</font></h4>";
-			$pago["cliente"]="<h4><font color=red>Pendiente</font></h4>";
-			$pago["microlote"]="<h4><font color=red>Pendiente</font></h4>";
-			$pago["tazadorada"]="<h4><font color=red>Pendiente</font></h4>";
+		$pago1 = busqueda_pagos($lote["id"]);
+
+		if (empty($pago1)) {
+			// $pago = array();
+			$pago[0]["exportable"]="<h4><font color=red>Pendiente</font></h4>";
+			$pago[0]["descarte"]="<h4><font color=red>Pendiente</font></h4>";
+			$pago[0]["fuera"]="<h4><font color=red>Pendiente</font></h4>";
+			$pago[0]["calidad"]="<h4><font color=red>Pendiente</font></h4>";
+			$pago[0]["cliente"]="<h4><font color=red>Pendiente</font></h4>";
+			$pago[0]["microlote"]="<h4><font color=red>Pendiente</font></h4>";
+			$pago[0]["tazadorada"]="<h4><font color=red>Pendiente</font></h4>";
 			$total="<h4><font color=red>Pendiente</font></h4>";
-			$unidades_dolar="";$unidades_dolar_cata="";
-		}
-		else{
+			$unidades_dolar="";
+			$unidades_dolar_cata="";
+		}else{
+			$pago = busqueda_pagos($lote["id"]);
 			$unidades_dolar="$";
-			$pago = mysqli_fetch_array($res_pago,MYSQLI_ASSOC);
-			if($pago["calidad"]==0){$pago["calidad"]="<h4><font color=red>Pendiente</font></h4>";
-			$unidades_dolar_cata="";}
-			
-			$total=$pago["exportable"]+$pago["descarte"]+$pago["fuera"]+$pago["calidad"]+$pago["cliente"]+$pago["microlote"]+$pago["tazadorada"];
+			if($pago[0]["calidad"]==0){
+				$pago[0]["calidad"]="<h4><font color=red>Pendiente</font></h4>";
+				$unidades_dolar_cata="";
+			}else{
+				$total=$pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["fuera"]+$pago["calidad"]+$pago[0]["cliente"]+$pago[0]["microlote"]+$pago[0]["tazadorada"];
+			}
 		}
 
-		// $pago = busqueda_pagos($lote["id"]);
-
-		// if (empty($pago)) {
-		// 	// $pago = array();
-		// 	$pago["exportable"]="<h4><font color=red>Pendiente</font></h4>";
-		// 	$pago["descarte"]="<h4><font color=red>Pendiente</font></h4>";
-		// 	$pago["fuera"]="<h4><font color=red>Pendiente</font></h4>";
-		// 	$pago["calidad"]="<h4><font color=red>Pendiente</font></h4>";
-		// 	$pago["cliente"]="<h4><font color=red>Pendiente</font></h4>";
-		// 	$pago["microlote"]="<h4><font color=red>Pendiente</font></h4>";
-		// 	$pago["tazadorada"]="<h4><font color=red>Pendiente</font></h4>";
-		// 	$total="<h4><font color=red>Pendiente</font></h4>";
-		// 	$unidades_dolar="";
-		// 	$unidades_dolar_cata="";
-		// }else{
-		// 	$unidades_dolar="$";
-		// 	if($pago["calidad"]==0){
-		// 		$pago["calidad"]="<h4><font color=red>Pendiente</font></h4>";
-		// 		$unidades_dolar_cata="";
-		// 	}
-		// 	$total=$pago["exportable"]+$pago["descarte"]+$pago["fuera"]+$pago["calidad"]+$pago["cliente"]+$pago["microlote"]+$pago["tazadorada"];
-		// }
+		$totales[]=$total;
+		$pagos["exportable"][]=$pago[0]["exportable"];
+		$pagos["descarte"][]=$pago[0]["descarte"];
+		$pagos["fuera"][]=$pago[0]["fuera"];
+		$pagos["calidad"][]=$pago[0]["calidad"];
+		$pagos["cliente"][]=$pago[0]["cliente"];
+		$pagos["microlote"][]=$pago[0]["microlote"];
+		$pagos["tazadorada"][]=$pago[0]["tazadorada"];
 	
-			$totales[]=$total;
-			$pagos["exportable"][]=$pago["exportable"];
-			$pagos["descarte"][]=$pago["descarte"];
-			$pagos["fuera"][]=$pago["fuera"];
-			$pagos["calidad"][]=$pago["calidad"];
-			$pagos["cliente"][]=$pago["cliente"];
-			$pagos["microlote"][]=$pago["microlote"];
-			$pagos["tazadorada"][]=$pago["tazadorada"];
-						
-		if($cata["0"]["puntuacion"]<configuracion_cons('parametro',"extra_cata")[0]["valor"] && $cata["0"]["puntuacion"]>0 || $lote["calidad"]<>"A"){
-			$pago["calidad"]="<font color=blue>No Apto</font>";
-			$unidades_dolar_cata="";
+		if($cata[0]["puntuacion"]<configuracion_cons('parametro',"extra_cata")[0]["valor"] && $cata[0]["puntuacion"]>0 || $lote["calidad"]<>"A"){
+			$pago[0]["calidad"] = "<font color=blue>No Apto</font>";
+			$unidades_dolar_cata = "";
 		}
+
 		if($lote["calidad"]<>"A"){
-			$cata_puntuacion="<font color=blue>No Apto</font>";
-			$unidades_dolar_cata="";
-			$unidades_cata="";
+			$cata[0]["puntuacion"] = "<font color=blue>No Apto</font>";
+			$unidades_dolar_cata = "";
+			$unidades_cata = "";
 		}
-
-		if (empty($cata_puntuacion)) {
-			// $cata["0"]["puntuacion"] = $cata_puntuacion;
-			$cata_puntuacion = $cata["0"]["puntuacion"];
-		}
-
 
 		echo "<tr>";
 		echo "<td><h3>".$lote["codigo_lote"]."<br><h4>".date("d-m-Y H:i",strtotime($lote["fecha"]))."<br>$estatus_t".$datos_socio["codigo"]."-".$datos_socio["apellidos"].", ".$datos_socio["nombres"];
@@ -381,20 +357,19 @@ $descartesT[]=$descarte_qq;
 		}
 		echo "<br>".$lote["peso"]." qq </h4>(".$lote["humedad"]."% HR, EXP.".round($exportable_qq,1)."qq DES.".round($descarte_qq,1)."qq)";
 		echo "</td>";
-		echo "<td><h4>".round($exportable_qq,1)." qq<hr>$unidades_dolar".$pago["exportable"]."</td>";
-		echo "<td><h4>".round($descarte_qq,1)." qq<hr>$unidades_dolar".$pago["descarte"]."</td>";
-		
-		echo "<td><h4>$diferencia qq<hr>$unidades_dolar".$pago["fuera"]."</td>";
-		echo "<td><h4>".$cata["0"]["puntuacion"]." $unidades_cata<hr><h4>$unidades_dolar_cata".$pago["calidad"]."</td>";
-		echo "<td><h4>$unidades_dolar_cata".$pago["cliente"]."</td>";
-		echo "<td><h4>$unidades_dolar_cata".$pago["microlote"]."</td>";
-		echo "<td><h4>$unidades_dolar_cata".$pago["tazadorada"]."</td>";
+		echo "<td><h4>".round($exportable_qq,1)." qq<hr>$unidades_dolar".$pago[0]["exportable"]."</td>";
+		echo "<td><h4>".round($descarte_qq,1)." qq<hr>$unidades_dolar".$pago[0]["descarte"]."</td>";
+		echo "<td><h4>".$diferencia ."qq<hr>$unidades_dolar".$pago[0]["fuera"]."</td>";
+		echo "<td><h4>".$cata[0]["puntuacion"]." $unidades_cata<hr><h4>$unidades_dolar_cata".$pago[0]["calidad"]."</td>";
+		echo "<td><h4>$unidades_dolar_cata".$pago[0]["cliente"]."</td>";
+		echo "<td><h4>$unidades_dolar_cata".$pago[0]["microlote"]."</td>";
+		echo "<td><h4>$unidades_dolar_cata".$pago[0]["tazadorada"]."</td>";
 		echo "<td><h4>".round($suma_trillado,2)." qq<hr>$unidades_dolar".$total."</td>";
 		echo "<td align=center>";
-if(in_array($_SESSION['acceso'],$permisos_admin) && $total>0){echo "<a href=ficha_pago_editar.php?pago=".$pago["id"]."><img title=editar src=images/pencil.png width=25></a>";}
-if(in_array($_SESSION['acceso'],$permisos_admin) && $total>0){echo "<a href=ficha_pago_borrar.php?pago=".$pago["id"]."&codigo=".$lote["codigo_lote"]."><img title=borrar src=images/cross.png width=25></a>";}
-if(in_array($_SESSION['acceso'],$permisos_administrativos) && $total==0){echo "<a href=ficha_pago_nuevo.php?lote=".$lote["codigo_lote"]."><img title=añadir src=images/add.png width=25></a>";}
-//if(in_array($_COOKIE['acceso'],$permisos_administrativos) && $total>0 && $pago["calidad"]==0 && $lote["calidad"]=="A" && $cata["puntuacion"]>=84){echo "<a href=ficha_pago_calidad.php?lote=".$lote["codigo_lote"]."><img title='añadir pago por calidad' src=images/add.png width=25></a>";}
+if(in_array($_SESSION['acceso'],$permisos_admin) && $total>0){echo "<a href=ficha_pago_editar.php?pago=".$pago[0]["id"]."><img title=editar src=images/pencil.png width=25></a>";}
+if(in_array($_SESSION['acceso'],$permisos_admin) && $total>0){echo "<a href=ficha_pago_borrar.php?pago=".$pago[0]["id"]."&codigo=".$lote["codigo_lote"]."><img title=borrar src=images/cross.png width=25></a>";}
+if(in_array($_SESSION['acceso'],$permisos_administrativos) && $total==0){echo "<a href=ficha_pago_nuevo.php?lote=".$lote["id"]."><img title=añadir src=images/add.png width=25></a>";}
+if(in_array($_SESSION['acceso'], $permisos_administrativos) && $total>0 && $pago[0]["calidad"]==0 && $lote["calidad"]=="A" && $cata[0]["puntuacion"]>=84){echo "<a href=ficha_pago_calidad.php?lote=".$lote["codigo_lote"]."><img title='añadir pago por calidad' src=images/add.png width=25></a>";}
 		echo "	  </td></tr>";	
 	}
 }
