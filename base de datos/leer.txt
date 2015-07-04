@@ -1,0 +1,5 @@
+Trabajar con la base sig, ir añadiendo sus procedimientos en esa base.
+NO SUBIR MAS ARCHIVOS SQL, SOLO EDITEN EL EXISTENTE.
+
+sig.slq, tiene la mayoria de procedimientos y bastantes datos.
+
