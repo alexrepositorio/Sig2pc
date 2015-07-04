@@ -22,7 +22,7 @@ else{
 
 echo "<div align=center><h1>NUEVO USUARIO</h1><br>";
 
-//muestra_array($socio);
+
 
 echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 echo "<table class=tablas>";
@@ -38,7 +38,7 @@ echo "<datalist  id='niveles'>";
 		echo "<option>".$niveles["niveles"]."</option>";
 	}
 echo "</datalist></td></tr>";
-
+////////////////////////////////////////CORREGIR echo "<input list='niveles' name='nivel'>";	
 echo "<tr><th><h4>Nombres</th><td>";
 echo "<select name=nombre required>";
 			echo "<option value=''>Verifique que sus nombres esten en la base</option>";
