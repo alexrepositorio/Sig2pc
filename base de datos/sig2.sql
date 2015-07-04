@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 03-07-2015 a las 16:44:44
+-- Tiempo de generación: 04-07-2015 a las 09:03:18
 -- Versión del servidor: 5.6.24
 -- Versión de PHP: 5.5.24
 
@@ -493,8 +493,11 @@ case  criterio
 	when 'pendientes'
 	then               
 	SELECT * FROM lotes WHERE codigo_lote NOT IN(SELECT lote FROM pagos) order by fecha desc;				
-					                         
-	END case;
+    
+    when 'pago'
+    then
+    SELECT lotes.*, pagos.exportable FROM lotes LEFT JOIN pagos on lotes.id=pagos.lote WHERE lotes.id_socio = valor;
+END case;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_nombre_socio`(IN `id` VARCHAR(20))
@@ -507,15 +510,55 @@ WHERE socios.id_socio=id;
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_pagos`(IN `in_lote` VARCHAR(20))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_pagos`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20))
     NO SQL
 BEGIN
-	SELECT * FROM pagos where lote=in_lote;
+case  criterio
+	when 'lote'
+	then
+	SELECT * FROM pagos where lote=valor;
+    
+    when 'pago'
+	then
+    SELECT * FROM pagos where id=valor;
+END case;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_pagos_del`(IN `in_pago` VARCHAR(20))
     NO SQL
 DELETE FROM pagos WHERE id=in_pago$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_ins`(IN `in_codigo_lote` VARCHAR(20), IN `in_fecha` DATE, IN `in_exportable` FLOAT(10,2), IN `in_descarte` FLOAT(10,2), IN `in_fuera` FLOAT(10,2), IN `in_calidad` FLOAT(10,2), IN `in_cliente` FLOAT(10,2), IN `in_microlote` FLOAT(10,2), IN `in_tazadorada` FLOAT(10,2))
+    NO SQL
+BEGIN
+
+INSERT INTO pagos (`lote`,`fecha`,`exportable`,`descarte`,`fuera`,`calidad`,`cliente`,`microlote`,`tazadorada`)
+VALUES (in_codigo_lote, in_fecha, in_exportable, in_descarte, in_fuera, in_calidad, in_cliente, in_microlote, in_tazadorada);
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_upd`(IN `in_fecha` DATE, IN `in_exportable` FLOAT(10,2), IN `in_descarte` FLOAT(10,2), IN `in_fuera` FLOAT(10,2), IN `in_calidad` FLOAT(10,2), IN `in_cliente` FLOAT(10,2), IN `in_microlote` FLOAT(10,2), IN `in_tazadorada` FLOAT(10,2), IN `in_id` INT)
+    NO SQL
+BEGIN
+
+UPDATE pagos SET
+    fecha = in_fecha,
+    exportable = in_exportable,
+    descarte = in_descarte,
+    fuera = in_fuera,
+    calidad = in_calidad,
+    cliente = in_cliente,
+    microlote = in_microlote,
+    tazadorada = in_tazadorada
+    WHERE id = in_id;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_upd_calidad`(IN `in_calidad` FLOAT(10,2), IN `in_lote` INT)
+    NO SQL
+BEGIN
+	UPDATE pagos SET calidad = in_calidad WHERE lote = in_lote;
+END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_parcelas_cons`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20)
 )
@@ -2646,7 +2689,7 @@ CREATE TABLE IF NOT EXISTS `pagos` (
 --
 
 INSERT INTO `pagos` (`id`, `lote`, `fecha`, `exportable`, `descarte`, `fuera`, `calidad`, `cliente`, `microlote`, `tazadorada`) VALUES
-(1, 93, '2014-09-18 21:38:38', 800.00, 70.00, 0.00, 0.00, 0.00, 0.00, 0.00),
+(1, 93, '2015-07-04 05:00:00', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00),
 (2, 37, '2014-09-23 02:41:21', 0.00, 0.00, 100.00, 0.00, 0.00, 0.00, 0.00),
 (3, 36, '2014-09-25 14:53:29', 1499.00, 190.00, 0.00, 0.00, 45.00, 250.00, 300.00);
 

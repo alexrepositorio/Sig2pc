@@ -8,7 +8,6 @@ include ("configuracion_funciones.php");
 include ("lote_funciones.php");
 include ("grupos_funciones.php");
 include ("estimaciones_funciones.php");
-// include ("uno.php");
 
 if(!isset($_GET["criterio"]))
 {
@@ -303,8 +302,7 @@ $descartesT[]=$descarte_qq;
 			$calidades[] = $cata[0]["puntuacion"];
 		}
 		
-
-		$pago1 = busqueda_pagos($lote["id"]);
+		$pago1 = busqueda_pagos("lote",$lote["id"]);
 
 		if (empty($pago1)) {
 			// $pago = array();
@@ -319,14 +317,17 @@ $descartesT[]=$descarte_qq;
 			$unidades_dolar="";
 			$unidades_dolar_cata="";
 		}else{
-			$pago = busqueda_pagos($lote["id"]);
+			$pago = busqueda_pagos("lote",$lote["id"]);
 			$unidades_dolar="$";
+
 			if($pago[0]["calidad"]==0){
 				$pago[0]["calidad"]="<h4><font color=red>Pendiente</font></h4>";
 				$unidades_dolar_cata="";
+				$total=$pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["fuera"]+$pago[0]["microlote"]+$pago[0]["tazadorada"];
 			}else{
-				$total=$pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["fuera"]+$pago["calidad"]+$pago[0]["cliente"]+$pago[0]["microlote"]+$pago[0]["tazadorada"];
+				$total=$pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["fuera"]+$pago[0]["calidad"]+$pago[0]["cliente"]+$pago[0]["microlote"]+$pago[0]["tazadorada"];
 			}
+						
 		}
 
 		$totales[]=$total;
@@ -369,7 +370,7 @@ $descartesT[]=$descarte_qq;
 if(in_array($_SESSION['acceso'],$permisos_admin) && $total>0){echo "<a href=ficha_pago_editar.php?pago=".$pago[0]["id"]."><img title=editar src=images/pencil.png width=25></a>";}
 if(in_array($_SESSION['acceso'],$permisos_admin) && $total>0){echo "<a href=ficha_pago_borrar.php?pago=".$pago[0]["id"]."&codigo=".$lote["codigo_lote"]."><img title=borrar src=images/cross.png width=25></a>";}
 if(in_array($_SESSION['acceso'],$permisos_administrativos) && $total==0){echo "<a href=ficha_pago_nuevo.php?lote=".$lote["id"]."><img title=añadir src=images/add.png width=25></a>";}
-if(in_array($_SESSION['acceso'], $permisos_administrativos) && $total>0 && $pago[0]["calidad"]==0 && $lote["calidad"]=="A" && $cata[0]["puntuacion"]>=84){echo "<a href=ficha_pago_calidad.php?lote=".$lote["codigo_lote"]."><img title='añadir pago por calidad' src=images/add.png width=25></a>";}
+if(in_array($_SESSION['acceso'], $permisos_administrativos) && $total>0 && $pago[0]["calidad"]==0 && $lote["calidad"]=="A" && $cata[0]["puntuacion"]>=84){echo "<a href=ficha_pago_calidad.php?lote=".$lote["id"]."><img title='añadir pago por calidad' src=images/add.png width=25></a>";}
 		echo "	  </td></tr>";	
 	}
 }
@@ -389,7 +390,5 @@ if(isset($totales)){
 
 echo "</table></div>";
 
-
 include("pie.php");
-
 ?>

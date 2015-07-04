@@ -54,11 +54,29 @@ function busqueda_catas($lote){
 	return (transformar_a_lista($resultado));
 }
 
-function busqueda_pagos($lote){
+function busqueda_pagos($criterio, $valor){
 	require("conect.php");
-	$SQL = "call SP_pagos_cons_pagos('".$lote."')";
+	$SQL = "call SP_pagos_cons_pagos('".$criterio."','".$valor."')";
 	$resultado = mysqli_query($link, $SQL);
 	return (transformar_a_lista($resultado));
+}
+
+function insertar_pagos($codigo_lote, $fecha, $exportable, $descarte, $fuera, $calidad, $cliente = "0", $microlote = "0", $tazadorada = "0"){
+	require("conect.php");
+	$SQL = "call SP_pagos_ins('".$codigo_lote."','".$fecha."','".$exportable."','".$descarte."','".$fuera."','".$calidad."','".$cliente."','".$microlote."','".$tazadorada."')";
+	$resultado = mysqli_query($link, $SQL);
+}
+
+function actualizar_pagos($fecha, $exportable, $descarte, $fuera, $calidad, $cliente = "0", $microlote = "0", $tazadorada = "0", $id){
+	require("conect.php");
+	$SQL = "call SP_pagos_upd('".$fecha."','".$exportable."','".$descarte."','".$fuera."','".$calidad."','".$cliente."','".$microlote."','".$tazadorada."','".$id."')";
+	$resultado = mysqli_query($link, $SQL);
+}
+
+function actualizar_calidad($calidad, $lote){
+	require("conect.php");
+	$SQL = "call SP_pagos_upd_calidad('".$calidad."','".$lote."')";
+	$resultado = mysqli_query($link, $SQL);
 }
 
 //Cambiar o buscar la función para esta acción
@@ -75,7 +93,7 @@ function altas_bajas($socio)
 	}
 	if(isset($altas)){return ($altas);}
 }
-//Sin probar aún, probar guardado de sentencia
+//Sin probar aún, probar guardado de sentencia (historial)
 function borrar_pago($pago){
 	include ("conect.php");
 	$SQL = "call SP_pagos_del('".$pago."')";
