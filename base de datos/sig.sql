@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-07-2015 a las 17:18:12
+-- Tiempo de generación: 04-07-2015 a las 18:56:31
 -- Versión del servidor: 5.6.24
 -- Versión de PHP: 5.6.8
 
@@ -463,9 +463,17 @@ p_dl_cereal, p_dl_fermento, p_dl_reposo, p_dl_moho,
 p_dl_astringencia, p_d_general);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lista_usuarios_con`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lista_usuarios_con`(IN `criterio` VARCHAR(20))
 BEGIN
+case  criterio
+when 'altas'
+then
   select u.id, u.user, niveles from usuarios as u,niveles where id_nivel=id_niveles and estado='A';
+  
+when 'bajas'
+then
+  select u.id, u.user, niveles from usuarios as u,niveles where id_nivel=id_niveles and estado='B';
+END case;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_cons`(
@@ -934,9 +942,17 @@ BEGIN
     end case;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_users_del`(in criterio int)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_users_del`(in criterio int, IN `operacion` VARCHAR(20))
 BEGIN
-UPDATE usuarios SET estado='B' WHERE  id=criterio;
+case  operacion
+when 'altas'
+then
+	UPDATE usuarios SET estado='B' WHERE  id=criterio;
+
+when 'bajas'
+then
+	UPDATE usuarios SET estado='A' WHERE  id=criterio;
+END case;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_user_update`(
@@ -3987,8 +4003,8 @@ INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`, `estado`
 (1, 'admin', 'admin', 1, 304, 'A'),
 (2, 'prueba', '123', 3, 310, 'A'),
 (5, 'Jafv', '123', 1, NULL, 'A'),
-(6, 'Javier', '12345', 3, NULL, 'B'),
-(7, 'Nuevo', '123445', 1, NULL, 'B');
+(6, 'Javier', '12345', 3, NULL, 'A'),
+(7, 'Nuevo2', '123', 2, NULL, 'B');
 
 --
 -- Índices para tablas volcadas

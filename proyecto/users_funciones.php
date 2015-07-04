@@ -2,11 +2,21 @@
 
 function consultarCriterio(){
     require("conect.php");
-    $SQL="call SP_lista_usuarios_con( )";
+    $SQL="call SP_lista_usuarios_con('".$criterio='altas'."')";
     $resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
     while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
 				$usuarios[]=$row;
 			}  
+    return($usuarios);
+}
+
+function consultarCriterio2(){
+    require("conect.php");
+    $SQL="call SP_lista_usuarios_con('".$criterio='bajas'."')";
+    $resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
+    while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
+                $usuarios[]=$row;
+            }  
     return($usuarios);
 }
 
@@ -53,10 +63,15 @@ function listar_niveles(){
 function borrarUsuarios($criterio){
     require("conect.php");
             
-        $SQL="call SP_users_del('".$criterio."')";//Procedimiento Almacenado
+        $SQL="call SP_users_del('".$criterio."','".$operacion='altas'."')";
         $resultado=mysqli_query($link, $SQL);
 }
-
+function borrarUsuarios2($criterio){
+    require("conect.php");
+            
+        $SQL="call SP_users_del('".$criterio."','".$operacion='bajas'."')";
+        $resultado=mysqli_query($link, $SQL);
+}
 function actualizaruser($id,$cuenta,$contra,$nivel){
     require ("conect.php");
     $SQL="call SP_user_update(".$id.",'".$cuenta."','".$contra."','".$nivel."')";

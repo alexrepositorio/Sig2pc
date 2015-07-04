@@ -2,16 +2,16 @@
 include ("cabecera.php");
 include ("users_funciones.php") ;
 
-$usuarios=consultarCriterio();
+$usuarios=consultarCriterio2();
 
-echo "<div align=center><h1>Listado de usuarios</h1><br><br>";
+echo "<div align=center><h1>Cuentas Eliminadas</h1><br><br>";
 
 echo "<table width=700px border=0 cellpadding=0 cellspacing=0><tr>";
 	echo "<td align=center><a href=ficha_user_nuevo.php>";
 		echo "<img src=images/add.png width=50><br><h4>nuevo</a>";
 	echo "</td>";
-	echo "<td align=center><a href=ficha_persona.php>";
-		echo "<img src=images/add.png width=50><br><h4>Socio</a>";
+	echo "<td align=center><a href=users.php>";
+		echo "<img src=images/add.png width=50><br><h4>Cuentas</a>";
 	echo "</td>";
 	echo "<td align=center><a href=users_bajas.php>";
 		echo "<img src=images/add.png width=50><br><h4>Reactivaciones</a>";
@@ -31,7 +31,7 @@ echo "<table class=tablas>";
 			echo "<td><h4>".$usuario["niveles"]."</td><h4>" ;
 			echo "</td>";
 			echo "<td><a href=ficha_user_editar.php?user=".$usuario["id"]."><img title=editar src=images/pencil.png width=25></a>
-					  <a href=ficha_user_borrar.php?id=".$usuario["id"]."><img title=borrar src=images/cross.png width=25></a>
+					  <a href=ficha_user_reactivar.php?id=".$usuario["id"]."><img title=reactivar src=images/history.png width=25></a>
 		    </td></tr>";
 	}
 echo "</table></div>";
