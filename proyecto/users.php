@@ -2,7 +2,7 @@
 include ("cabecera.php");
 include ("users_funciones.php") ;
 
-$usuarios=consultarCriterio();
+$usuarios=consultarCriterio('altas');
 
 echo "<div align=center><h1>Listado de usuarios</h1><br><br>";
 
@@ -28,7 +28,7 @@ echo "<table class=tablas>";
 	foreach ($usuarios as $usuario) {
 		echo "<tr>";
 			echo "<td><h4>".$usuario["user"]."</td><h4>" ;
-			echo "<td><h4>".$usuario["niveles"]."</td><h4>" ;
+			echo "<td><h4>".$usuario["nivel"]."</td><h4>" ;
 			echo "</td>";
 			echo "<td><a href=ficha_user_editar.php?user=".$usuario["id"]."><img title=editar src=images/pencil.png width=25></a>
 					  <a href=ficha_user_borrar.php?id=".$usuario["id"]."><img title=borrar src=images/cross.png width=25></a>

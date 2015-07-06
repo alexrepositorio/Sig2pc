@@ -1,37 +1,18 @@
 <?php
 
-function consultarCriterio(){
+function consultarCriterio($criterio){
     require("conect.php");
-    $SQL="call SP_lista_usuarios_con('".$criterio='altas'."')";
+    $SQL="call SP_lista_usuarios_con('".$criterio."')";
     $resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
-    while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-				$usuarios[]=$row;
-			}  
-    return($usuarios);
+    return(transformar_a_lista($resultado));
 }
-
-function consultarCriterio2(){
-    require("conect.php");
-    $SQL="call SP_lista_usuarios_con('".$criterio='bajas'."')";
-    $resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
-    while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-                $usuarios[]=$row;
-            }  
-    return($usuarios);
-}
-
 function obtenerNombres(){
 
     require("conect.php");
-    $sql="SELECT nombres, apellidos FROM persona ORDER BY nombres ASC";
+    $sql="call SP_personas_cons('','')";
     $resultado=mysqli_query($link,$sql) or die(mysqli_error($link));
-      while ($row = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-                $nombress[]=$row; 
-            }  
-    return ($nombress);
+    return(transformar_a_lista($resultado));
 }
-
-
 function insertar_Usuarios($user,$pass,$nivel,$persona){
 	require ("conect.php");
 	$SQL="call SP_usuarios_ins('".$user."','".$pass."','".$nivel."','".$persona."')";
@@ -40,16 +21,17 @@ function insertar_Usuarios($user,$pass,$nivel,$persona){
 
 function comprobar_mail($mail){
     require ("conect.php");
-    $SQL="SELECT email FROM persona where email='".$mail."'";
-    $result=mysqli_query($link, $SQL)or die(mysqli_error($link));
+    $SQL="call SP_personas_cons('','".$mail."')";
+    $resultado=mysqli_query($link, $SQL)or die(mysqli_error($link));
     if(mysqli_num_rows($result)==0 or $mail==''){
         return false;
     }else
         return true;
     }
-function insertar_socio($nombre,$apellido,$cedula,$celular,$f_nac,$mail,$direccion,$foto,$genero,$canton){
+
+function insertar_persona($nombre,$apellido,$cedula,$celular,$f_nac,$mail,$direccion,$foto,$genero,$canton){
     require ("conect.php");
-    $SQL="call SP_socio_nuevo('".$nombre."','".$apellido."','".$cedula."','".$celular."','".$f_nac."','".$mail."','".$direccion."','".$foto."','".$genero."','".$canton."')";
+    $SQL="call SP_persona _ins('".$nombre."','".$apellido."','".$cedula."','".$celular."','".$f_nac."','".$mail."','".$direccion."','".$foto."','".$genero."','".$canton."')";
     mysqli_query($link,$SQL) or die(mysqli_error($link));
 }
 
@@ -59,18 +41,10 @@ function listar_niveles(){
     $resultado=mysqli_query($link,$SQL) or die(MYSQLI_ERROR($link)); 
     return(transformar_a_lista($resultado));
 }
-
-function borrarUsuarios($criterio){
+function borrarUsuarios($criterio,$operacion){
     require("conect.php");
-            
-        $SQL="call SP_users_del('".$criterio."','".$operacion='altas'."')";
-        $resultado=mysqli_query($link, $SQL);
-}
-function borrarUsuarios2($criterio){
-    require("conect.php");
-            
-        $SQL="call SP_users_del('".$criterio."','".$operacion='bajas'."')";
-        $resultado=mysqli_query($link, $SQL);
+        $SQL="call SP_users_del('".$criterio."','".$operacion."')";
+        mysqli_query($link, $SQL) or die(MYSQLI_ERROR($link));;
 }
 function actualizaruser($id,$cuenta,$contra,$nivel){
     require ("conect.php");

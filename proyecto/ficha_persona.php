@@ -12,7 +12,7 @@ if(isset ($_POST["nombres"])){
 		}
 		else{
 		
-		insertar_socio($_POST["nombres"],$_POST["apellidos"],$_POST["cedula"],$_POST["celular"],$_POST["f_nacimiento"],$_POST["email"]
+		insertar_persona($_POST["nombres"],$_POST["apellidos"],$_POST["cedula"],$_POST["celular"],$_POST["f_nacimiento"],$_POST["email"]
 			,$_POST["direccion"],$_POST["foto"],$_POST["genero"],$_POST["canton"]);
 		
 		//echo "$SQL_edit";

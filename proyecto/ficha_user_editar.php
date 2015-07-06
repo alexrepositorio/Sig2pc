@@ -20,9 +20,10 @@ echo "<table class=tablas>";
 		echo "<input list='niveles' name='nivel'>";	
 		echo "<datalist  id='niveles'>";	
  			$niveless=listar_niveles();
+
  			foreach ($niveless as $niveles)
 			{
-				echo "<option>".$niveles["niveles"]."</option>";
+				echo "<option>".$niveles["nivel"]."</option>";
 			}
 		echo "</datalist></td></tr>";
 echo "</table><br>";
