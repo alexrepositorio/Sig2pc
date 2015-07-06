@@ -17,6 +17,4 @@ function eliminar_despacho($id){
 	$SQL="call SP_despachos_del('".$id."')";
 	mysqli_query($link,$SQL) or die(mysqli_error($link));
 }
-
-
 ?>

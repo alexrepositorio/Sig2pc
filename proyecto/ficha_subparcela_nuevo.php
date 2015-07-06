@@ -1,6 +1,8 @@
 <?php
 include ("cabecera.php");
 include ("subparcelas_funciones.php");
+include ("configuracion_funciones.php");
+
 
 if(isset ($_POST["id_parcela"])){
 	subparcelas_insertar($_POST["id_parcela"],$_POST["superficie"],$_POST["variedad"],$_POST["variedad2"],$_POST["siembra"]
@@ -16,12 +18,12 @@ echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 echo "<input type=hidden name=id_parcela value=".$_GET["parcela"]." size=3></td></tr>";	
 echo "<tr><th align=right><h4>Superficie</th><td><h4><input type=text name=superficie size=3></h4>ha</td></tr>";	
 echo "<tr><th align=right><h4>Variedad</th><td><h4><select name=variedad>";
-	foreach(explode(",",obtener_configuracion_parametro('variedades')) as $variedad){
+	foreach(explode(",",configuracion_cons('parametro','variedades')[0]["valor"]) as $variedad){
 		echo "<option value=$variedad>$variedad</option>";
 	}
 echo "</select></h4></td></tr>";
 echo "<tr><th align=right><h4>Variedad secundaria</th><td><h4><select name=variedad2>";
-	foreach(explode(",",obtener_configuracion_parametro('variedades')) as $variedad){
+	foreach(explode(",",configuracion_cons('parametro','variedades')[0]["valor"]) as $variedad){
 		echo "<option value=$variedad>$variedad</option>";
 	}
 echo "</select></h4></td></tr>";

@@ -6,6 +6,7 @@ include ("lote_funciones.php");
 include ("parcelas_funciones.php");
 include ("altas_funciones.php");
 include ("estimaciones_funciones.php");
+include ("configuracion_funciones.php");
 $socio = consultarCriterio('id',$_GET["user"]);
 $socio=$socio[0];
 $estatus=certificacion('socio',$_GET["user"]);
@@ -20,32 +21,23 @@ if (is_array($estimado)) {
 }else{
 	$enlace_estimado="<a href=historial_estimacion_nuevo.php?socio=".$_GET["user"]."><h3>Añadir Estimacion</h3></a>";
 }
-$altas=altas_bajas($socio["id_socio"]);
+$altas=altas_consultar('socio',$socio["id_socio"]);
 if (is_array($altas)) {
 	$enlace_altas="<a href=historial_altas.php?socio=".$_GET["user"]."><h3>Ver historial Altas</h3></a>";
 }else{
 	$enlace_altas="<a href=historial_altas_nuevo.php?socio=".$_GET["user"]."><h3>Añadir Altas</h3></a>";
 }
-$resultado_lotes=obtenerLotes($socio["id_socio"]);
-$cuenta_lotes=count($resultado_lotes);
+$resultado_lotes=LotesConsultarCriterio('socio',$socio["id_socio"]);
+$estimado_actual= estimacion('actual',$_GET["user"]);
+$estimado_actual=$estimado_actual[0];
 if (is_array($resultado_lotes)) {
-	if($cuenta_lotes>1){
-		foreach ($resultado_lotes as $lot ) {
-			$pesos_del_socio[]=$lot["peso"];
-		}
-		$peso_entregado=array_sum($pesos_del_socio);
-		$estimado_actual= estimacion_actual($_GET["user"]);
-		$estimado_actual_max=$estimado_actual["estimados"]*(1+(obtener_configuracion_parametro('margen_contrato')/100));
-		//$estimado_actual_max=$estimado[$estimado_actual]["estimados"]
-		$peso_restante=$estimado_actual_max-$peso_entregado;
-		$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";
-	}else{
-
-		$peso_entregado=$resultado_lotes["peso"];
-		$estimado_actual_max=$estimado[$estimado_actual]["estimados"]*(1+(obtener_configuracion_parametro('margen_contrato')/100));
-		$peso_restante=$estimado_actual_max-$peso_entregado;
-		$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";	
+	$cuenta_lotes=count($resultado_lotes);
+	foreach ($resultado_lotes as $lot) {
+		$pesos_del_socio[]=$lot["peso"];
 	}
+	$peso_entregado=array_sum($pesos_del_socio);
+	$estimado_actual_max=$estimado_actual["estimados"]*(1+(configuracion_cons('parametro','margen_contrato')[0]["valor"]/100));
+	$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";
 }else{
 		$peso_entregado=0;
 		$estimado_actual_max="";
@@ -59,6 +51,7 @@ if (is_array($r_par)) {
 	$cuenta_parcelas_t="(<font color=red><b>$cuenta_parcelas</b></font>)";
 }
 else{
+	$cuenta_parcelas=0;
 	$cuenta_parcelas_t="";
 }
 

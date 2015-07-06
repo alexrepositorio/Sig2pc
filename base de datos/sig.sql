@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.3.11
+-- version 4.2.11
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-07-2015 a las 18:56:31
--- Versión del servidor: 5.6.24
--- Versión de PHP: 5.6.8
+-- Tiempo de generación: 06-07-2015 a las 20:55:14
+-- Versión del servidor: 5.6.21
+-- Versión de PHP: 5.6.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -24,6 +24,22 @@ DELIMITER $$
 --
 -- Procedimientos
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_altas_cons`(
+in criterio varchar(20),
+in valor varchar(20)
+)
+BEGIN
+
+case criterio
+	when 'socio'
+	then
+		SELECT id,fecha,estado FROM altas WHERE id_socio=valor;
+	when 'actual'
+    then
+		SELECT id,fecha,estado FROM altas WHERE id_socio= valor order by fecha desc limit 1;
+end case;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_altas_del`(
 in in_id int
 )
@@ -58,6 +74,41 @@ when ''
 then
 	SELECT * FROM analisis WHERE id_subparcela in (SELECT id FROM subparcelas WHERE id_parcela=in_id);
 END case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_analisis_ins`(
+in in_id_subparcela int(11),
+in in_fecha date,
+in in_muestra int(11),
+in in_submuestra int(11),
+in in_estructura varchar(20),
+in in_grado varchar(20),
+in in_rocas int(11),
+in in_rocas_size  int(11),
+in in_profundidad int(11),
+in in_pendiente int(11),
+in in_lombrices int(11),
+in in_densidad_aparente float(10,2),
+in in_observaciones varchar(30),
+in in_s_ph float(10,2),
+in in_s_n float(10,2),
+in in_s_p float(10,2),
+in in_s_k float(10,2),
+in in_s_ca float(10,2),
+in in_s_mg float(10,2),
+in in_s_mo float(10,2),
+in in_s_textura varchar(20),
+in in_f_n float(10,2),
+in in_f_p float(10,2),
+in in_f_k float(10,2)
+)
+BEGIN
+	INSERT INTO analisis VALUES(
+		in_id_subparcela, in_fecha, in_muestra ,in_submuestra , in_estructura ,
+		in_grado,in_rocas,in_rocas_size,in_profundidad,in_pendiente,
+		in_lombrices,in_densidad_aparente,in_observaciones,in_s_ph,in_s_n,
+		in_s_p,in_s_k,in_s_ca,in_s_mg,in_s_mo,in_s_textura,in_f_n,
+        in_f_p,in_f_k );
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_asociaciones_cons`(
@@ -278,9 +329,13 @@ WHERE `id` = p_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_despachos_cons`(
-in in_id INT(11)
+in criterio varchar(20),
+in valor varchar(20)
 )
 BEGIN
+case criterio
+when 'lote'
+then
 	SELECT despachos.id as id, 
 				despachos.lote as lote, 
 				despachos.fecha as fecha, 
@@ -288,7 +343,32 @@ BEGIN
 				despachos.envio as envio,
 				envios.destino as destino 
 				FROM despachos 
-				INNER JOIN envios ON despachos.envio=envios.id WHERE lote=in_id;
+				INNER JOIN envios ON despachos.envio=envios.id WHERE lote=valor;
+when 'id'
+then 
+	SELECT * FROM despachos where id=valor;
+when 'salidas_almacen'
+then
+	SELECT SUM(cantidad) as salidas FROM despachos;
+end case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_despachos_del`(
+in in_id int(11)
+ )
+BEGIN
+DELETE FROM despachos WHERE id=in_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_despacho_ins`(
+in in_lote int(11),
+in in_fecha timestamp,
+in in_cantidad float(10,2),
+in in_envio int(11)
+
+ )
+BEGIN
+INSERT INTO despachos VALUES('',in_lote,in_fecha,in_cantidad,in_envio);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_con`(
@@ -349,7 +429,12 @@ case  criterio
 when 'actual'
 then
 	SELECT * FROM estimacion where id_socio=in_id order by year desc limit 1;	
-    
+when 'listado'
+then 
+	SELECT estimacion.*, l.pesosum FROM estimacion
+	LEFT JOIN (SELECT id_socio, date_format(fecha,'%Y') as ano, SUM(peso) as pesosum FROM lotes GROUP BY id_socio, ano) l 
+	on (estimacion.id_socio=l.id_socio AND estimacion.year=l.ano) ORDER BY year desc;
+		
 when ''
 then
 	SELECT * FROM estimacion WHERE id_socio=in_id;
@@ -463,22 +548,15 @@ p_dl_cereal, p_dl_fermento, p_dl_reposo, p_dl_moho,
 p_dl_astringencia, p_d_general);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lista_usuarios_con`(IN `criterio` VARCHAR(20))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lista_usuarios_con`()
 BEGIN
-case  criterio
-when 'altas'
-then
-  select u.id, u.user, niveles from usuarios as u,niveles where id_nivel=id_niveles and estado='A';
-  
-when 'bajas'
-then
-  select u.id, u.user, niveles from usuarios as u,niveles where id_nivel=id_niveles and estado='B';
-END case;
+  select u.user, nivel from usuarios as u,niveles where id_nivel=id_niveles;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_cons`(
 in criterio varchar(20),
-in valor varchar(20)
+in valor varchar(20),
+in valor2 varchar(20)
 )
 BEGIN
 	case  criterio
@@ -494,6 +572,24 @@ then
 	INNER JOIN socios on lotes.id_socio=socios.id_socio 
 	LEFT JOIN grupos ON grupos.id=socios.id_grupo
 	WHERE grupos.id=valor  
+	order by fecha desc;
+    
+when 'organico'
+then
+	SELECT * FROM lotes 
+	INNER JOIN socios on lotes.id_socio=socios.id_socio 
+	LEFT JOIN grupos ON grupos.id=socios.id_grupo
+    left join certificacion on certificacion.id_socio=socios.id_socio
+	WHERE certificacion.estatus is not null
+	order by fecha desc;
+    
+when 'no_organico'
+then
+	SELECT * FROM lotes 
+	INNER JOIN socios on lotes.id_socio=socios.id_socio 
+	LEFT JOIN grupos ON grupos.id=socios.id_grupo
+    left join certificacion on certificacion.id_socio=socios.id_socio
+	WHERE certificacion.estatus is null
 	order by fecha desc;
 
 when 'fecha'
@@ -526,11 +622,47 @@ then
 when 'id'
 then
 	SELECT * FROM lotes where id=valor 
-    order by fecha desc;    
+    order by fecha desc;  
+when 'pagos'
+then 
+	SELECT * FROM lotes 
+	LEFT JOIN pagos on lotes.id=pagos.lote 
+	WHERE lotes.id_socio=valor 
+	order by lotes.fecha asc;    
+when 'pago'
+then 
+	SELECT * FROM lotes 
+	LEFT JOIN pagos on lotes.id=pagos.lote 
+	WHERE lotes.id_socio=valor 
+	AND date_format(lotes.fecha,'%Y') = valor2 
+	order by lotes.fecha asc;
+when 'id_fecha'
+then
+		SELECT * FROM lotes where id_socio = valor and date_format(fecha,'%Y') = valor2;
+when 'v_actuales'
+then
+	SELECT * FROM lotes 
+	WHERE calidad='A' AND id 
+	NOT IN (SELECT lote FROM catas);
+when 'entradas_almacen'
+then
+	SELECT SUM(peso) as entradas FROM lotes;
+when 'codigos'
+then 
+	SELECT codigo_lote FROM lotes 
+    WHERE date_format(fecha,'%Y') = valor
+    ORDER BY codigo_lote ASC;
 when ''
 then
 	SELECT * FROM lotes order by fecha desc;
 END case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_del`(
+IN in_id int(11)
+)
+BEGIN
+	DELETE FROM lotes WHERE id=in_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_ins`(
@@ -558,9 +690,87 @@ BEGIN
  VALUES (in_socio,in_codigo , in_fecha, in_peso,in_humedad , in_rto_descarte, in_rto_exportable, in_defecto_negro, in_defecto_vinagre, in_defecto_decolorado, in_defecto_mordido, in_defecto_brocado, in_reposo, in_moho, in_fermento, in_contaminado,in_calidad);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_niveles_cons`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_upd`(
+ IN in_id int(11), 
+ IN in_socio int(11) ,
+ IN in_codigo varchar(20),
+ IN in_fecha date,
+ IN in_peso double(10,2),
+ IN in_humedad double(10,2),
+ IN in_rto_descarte int,
+ IN in_rto_exportable int,
+ IN in_defecto_negro int,
+ IN in_defecto_vinagre int,
+ IN in_defecto_decolorado int,
+ In in_defecto_mordido int,
+ IN in_defecto_brocado int,
+ IN in_reposo tinyint(1),
+ IN in_moho tinyint(1),
+ IN in_fermento tinyint(1),
+ IN in_contaminado tinyint(1),
+ IN in_calidad varchar(2)
+)
 BEGIN
-	SELECT * FROM niveles;
+	update lote set
+	id_socio=in_socio,
+	codigo_lote=in_codigo,
+	fecha=in_fecha,
+	peso=in_peso,
+    humedad=in_humedad,
+    rto_descarte=in_rto_descarte,
+    rto_exportable=in_rto_exportable,
+    defecto_negro=in_defecto_negro,
+    defecto_vinagre=in_defecto_vinagre,
+    defecto_decolorado=in_defecto_decolorado,
+    defecto_mordido=in_defecto_mordido,
+    defecto_brocado=in_defecto_brocado,
+    reposo=in_reposo,
+    moho=in_moho,
+    fermento=in_fermento,
+    contaminado=in_contaminado,
+    calidad=in_calidad
+    where id=in_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_pagos_cons`(
+in criterio varchar(20),
+in valor varchar(20)
+)
+BEGIN
+case criterio
+when 'lote'
+then
+		select * from pagos where lote=valor;
+when 'v_actuales'
+then
+	SELECT * FROM lotes WHERE id NOT IN (SELECT lote FROM pagos);
+    
+end case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_pagos_cons_datos`(IN `criterio` VARCHAR(20))
+    NO SQL
+BEGIN
+
+case  criterio
+	when 'socio'
+	then
+    
+	SELECT socios.id_socio, persona.nombres, persona.apellidos, socios.codigo, count(lotes.id_socio) FROM socios 
+left join lotes on socios.id_socio=lotes.id_socio 
+left join persona on socios.id_persona=persona.id_persona group by socios.id_socio ORDER BY codigo ASC;
+	            
+	when 'grupo'
+	then
+    
+    SELECT grupo, codigo_grupo FROM grupos ORDER BY codigo_grupo ASC;
+
+	when 'fecha'
+	then
+	
+    SELECT DISTINCT date_format(fecha,'%Y-%m-%d') as fecha FROM lotes ORDER BY fecha ASC;	
+					                         
+	END case;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_fechas`()
@@ -883,26 +1093,6 @@ BEGIN
   
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_nuevo`(
-in in_nombre varchar(20),
-in in_apellido varchar(20),
-in in_cedula varchar(20),
-in in_celular varchar(20),
-in f_nac date,
-in in_mail varchar(50),
-in in_direccion varchar(50),
-in in_foto varchar(50),
-in in_genero char(1),
-in in_canton varchar(20)
-)
-BEGIN
-	select id_canton into @cantonId from canton where canton.canton=in_canton;
- 
-	insert into Persona(nombres,apellidos,cedula,celular,f_nacimiento,email,direccion,foto,genero,id_canton) 
-	values (in_nombre,in_apellido,in_cedula,in_celular,f_nac,in_mail,in_direccion,in_foto,
-	in_genero,@cantonId);
-END$$
-
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_update`(IN `in_id` INT, IN `in_nombre` VARCHAR(20), IN `in_apellido` VARCHAR(20), IN `in_codigo` VARCHAR(4), IN `in_cedula` VARCHAR(20), IN `in_celular` VARCHAR(20), IN `f_nac` DATE, IN `in_direccion` VARCHAR(50), IN `in_poblacion` VARCHAR(30), IN `in_canton` VARCHAR(20), IN `in_provincia` VARCHAR(20), IN `in_genero` CHAR(1), IN `in_mail` VARCHAR(50))
 BEGIN
 
@@ -942,48 +1132,6 @@ BEGIN
     end case;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_users_del`(in criterio int, IN `operacion` VARCHAR(20))
-BEGIN
-case  operacion
-when 'altas'
-then
-	UPDATE usuarios SET estado='B' WHERE  id=criterio;
-
-when 'bajas'
-then
-	UPDATE usuarios SET estado='A' WHERE  id=criterio;
-END case;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_user_update`(
-IN `in_id` INT, 
-IN `in_cuenta` VARCHAR(20), 
-IN `in_contra` VARCHAR(20),
-IN `in_nivel` VARCHAR(10)
-)
-BEGIN
-	select id_niveles into @nivelId from niveles where niveles.niveles=in_nivel;
-    UPDATE usuarios SET
-				user=in_cuenta,
-				pass=in_contra,
-				id_nivel=@nivelId
-	where id=in_id;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_usuarios_ins`(
-in in_usuario varchar(20),
-in in_contra varchar (10),
-in in_nivel varchar(20),
-in in_persona varchar(20)
-)
-BEGIN
-	select id_niveles into @nivelId from niveles where niveles.niveles=in_nivel;
-	
-    insert into usuarios(user,pass,id_nivel,estado) 
-	values (in_usuario,in_contra,@nivelId,'A');
- 
-END$$
-
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_usuario_find`(
 in userr varchar(20),
 in passw varchar(20)
@@ -1002,11 +1150,11 @@ DELIMITER ;
 --
 
 CREATE TABLE IF NOT EXISTS `acciones` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `accion` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=706 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=712 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `acciones`
@@ -1719,7 +1867,13 @@ INSERT INTO `acciones` (`id`, `user`, `fecha`, `accion`) VALUES
 (702, 'admin', '2015-01-12 02:38:24', 'INSERT INTO analisis VALUES (,\r\n				1,\r\n				2015-01-11,\r\n				2,\r\n				2,\r\n				angular,\r\n				débil,\r\n				25,\r\n				10,\r\n				25,\r\n				30,\r\n				1,\r\n				25,\r\n				,\r\n				5.5,\r\n				12.2,\r\n				15.2,\r\n				15.6,\r\n				45.2,\r\n				25,\r\n				25,\r\n				arcilloso,\r\n				25,\r\n				50,\r\n				124)'),
 (703, 'admin', '2015-01-12 02:47:02', 'INSERT INTO analisis VALUES (,\r\n				12,\r\n				2015-01-11,\r\n				3,\r\n				4,\r\n				granular,\r\n				débil,\r\n				44,\r\n				44,\r\n				44,\r\n				44,\r\n				0,\r\n				44,\r\n				,\r\n				44,\r\n				44,\r\n				44,\r\n				44,\r\n				4,\r\n				44,\r\n				44,\r\n				arenoso,\r\n				44,\r\n				44,\r\n				44)'),
 (704, 'admin', '2015-01-29 02:55:01', 'INSERT INTO despachos VALUES(,\r\n				APC-164,\r\n				2015-01-28 16:54:43,\r\n				1,\r\n				4)'),
-(705, 'admin', '2015-03-19 02:14:37', 'INSERT INTO usuarios VALUES(,\r\n				jose,\r\n				jose,\r\n				9115,\r\n				1)');
+(705, 'admin', '2015-03-19 02:14:37', 'INSERT INTO usuarios VALUES(,\r\n				jose,\r\n				jose,\r\n				9115,\r\n				1)'),
+(706, '', '2015-06-29 01:35:27', 'insercion'),
+(707, '', '2015-06-29 01:35:32', 'insercion'),
+(708, '', '2015-06-29 01:35:53', 'insercion'),
+(709, '', '2015-06-29 01:35:54', 'insercion'),
+(710, '', '2015-06-29 01:36:06', 'insercion'),
+(711, '', '2015-06-29 01:36:08', 'insercion');
 
 -- --------------------------------------------------------
 
@@ -1728,11 +1882,11 @@ INSERT INTO `acciones` (`id`, `user`, `fecha`, `accion`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `altas` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `estado` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `altas`
@@ -1784,7 +1938,9 @@ INSERT INTO `altas` (`id`, `id_socio`, `fecha`, `estado`) VALUES
 (44, 27, '2014-06-05 20:15:38', 'ingreso'),
 (45, 28, '2014-06-05 20:15:38', 'ingreso'),
 (46, 29, '2014-06-05 20:15:38', 'ingreso'),
-(47, 30, '2014-06-05 20:15:38', 'ingreso');
+(47, 30, '2014-06-05 20:15:38', 'ingreso'),
+(50, 68, '0000-00-00 00:00:00', '2000'),
+(51, 68, '0000-00-00 00:00:00', '2000');
 
 -- --------------------------------------------------------
 
@@ -1793,7 +1949,7 @@ INSERT INTO `altas` (`id`, `id_socio`, `fecha`, `estado`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `analisis` (
-  `id_analisis` int(11) NOT NULL,
+`id_analisis` int(11) NOT NULL,
   `id_subparcela` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `muestra` int(11) NOT NULL,
@@ -1827,13 +1983,13 @@ CREATE TABLE IF NOT EXISTS `analisis` (
 --
 
 CREATE TABLE IF NOT EXISTS `asociaciones` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `concepto` text COLLATE latin1_spanish_ci NOT NULL,
   `valor` text COLLATE latin1_spanish_ci NOT NULL,
   `tipo` text COLLATE latin1_spanish_ci NOT NULL,
   `elemento` text COLLATE latin1_spanish_ci NOT NULL,
   `subparcela_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=731 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=732 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `asociaciones`
@@ -2054,7 +2210,6 @@ INSERT INTO `asociaciones` (`id`, `concepto`, `valor`, `tipo`, `elemento`, `subp
 (591, 'platano', '', 'cultivo', 'parcela', 89),
 (592, 'platano', '', 'cultivo', 'parcela', 92),
 (705, 'platano', '', 'cultivo', 'parcela', 296),
-(708, 'guayaba', 'bajo', 'cultivo', 'parcela', 1),
 (709, 'gallinas', 'bajo', 'animales', 'parcela', 1),
 (710, 'yuca', 'medio', 'cultivo', 'subparcela', 1),
 (711, 'yuca', 'medio', 'cultivo', 'subparcela', 1),
@@ -2063,15 +2218,14 @@ INSERT INTO `asociaciones` (`id`, `concepto`, `valor`, `tipo`, `elemento`, `subp
 (717, 'yuca', 'medio', 'cultivo', 'subparcela', 1),
 (718, 'caï¿½a', 'medio', 'cultivo', 'subparcela', 1),
 (719, 'yuca', 'bajo', 'cultivo', 'subparcela', 1),
-(722, '', '', '', 'subparcela', 1),
 (723, 'guaba', 'medio', '', 'subparcela', 1),
 (724, 'guaba', 'medio', 'cultivo', 'subparcela', 1),
 (725, 'guaba', 'medio', 'cultivo', 'subparcela', 1),
 (726, 'yuca', 'medio', 'cultivo', 'subparcela', 1),
 (727, 'guaba', 'bajo', 'cultivo', 'subparcela', 1),
-(728, '', '', 'cultivo', 'subparcela', 1),
 (729, 'faike', 'medio', 'cultivo', 'subparcela', 1),
-(730, 'faike', 'medio', 'cultivo', 'subparcela', 1);
+(730, 'faike', 'medio', 'cultivo', 'subparcela', 1),
+(731, 'guayaba', 'medio', 'cultivo', 'subparcela', 1);
 
 -- --------------------------------------------------------
 
@@ -2080,10 +2234,10 @@ INSERT INTO `asociaciones` (`id`, `concepto`, `valor`, `tipo`, `elemento`, `subp
 --
 
 CREATE TABLE IF NOT EXISTS `canton` (
-  `id_canton` int(11) NOT NULL,
+`id_canton` int(11) NOT NULL,
   `canton` varchar(45) DEFAULT NULL,
   `id_provincia` int(11) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=222 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `canton`
@@ -2098,219 +2252,7 @@ INSERT INTO `canton` (`id_canton`, `canton`, `id_provincia`) VALUES
 (6, 'Palanga', 1),
 (7, 'Paquisha', 1),
 (8, 'Yacuambi', 1),
-(9, 'Yantzaza', 1),
-(10, 'Alamor', 2),
-(11, 'Catamayo', 2),
-(12, 'Celica', 2),
-(13, 'Chaguarpamba', 2),
-(14, 'Espíndola', 2),
-(15, 'Gonzanamá', 2),
-(16, 'Loja', 2),
-(17, 'Macará', 2),
-(18, 'Olmedo', 2),
-(19, 'Paltas', 2),
-(20, 'Pindal', 2),
-(21, 'Puyango', 2),
-(22, 'Quilanga', 2),
-(23, 'Saraguro', 2),
-(24, 'Sozoranga', 2),
-(25, 'Zapotillo', 2),
-(26, 'Chordeleg', 3),
-(27, 'Cuenca', 3),
-(28, 'El Pan', 3),
-(29, 'Girón', 3),
-(30, 'Guachapala', 3),
-(31, 'Gualaceo', 3),
-(32, 'Nabón', 3),
-(33, 'Oña', 3),
-(34, 'Paute', 3),
-(35, 'Ponce Enriquez', 3),
-(36, 'Pucará', 3),
-(37, 'San Fernando', 3),
-(38, 'Santa Isabel', 3),
-(39, 'Sevilla de Oro', 3),
-(40, 'Sígsig', 3),
-(41, 'Caluma', 4),
-(42, 'Chillanes', 4),
-(43, 'Chimbo', 4),
-(44, 'Echeandía', 4),
-(45, 'Guaranda', 4),
-(46, 'Las Naves', 4),
-(47, 'San Miguel', 4),
-(48, 'Azoguez', 5),
-(49, 'Biblián', 5),
-(50, 'Cañar', 5),
-(51, 'Déleg', 5),
-(52, 'El Tambo', 5),
-(53, 'La Troncal', 5),
-(54, 'Suscal', 5),
-(55, 'Bolívar', 6),
-(56, 'Espejo', 6),
-(57, 'Mira', 6),
-(58, 'Montúfar', 6),
-(59, 'San Pedro de Huaca', 6),
-(60, 'Tulcán', 6),
-(61, 'Alausí', 7),
-(62, 'Chambo', 7),
-(63, 'Chunchi', 7),
-(64, 'Colta', 7),
-(65, 'Cumandá', 7),
-(66, 'Guamote', 7),
-(67, 'Guano', 7),
-(68, 'Pallatanga', 7),
-(69, 'Peine', 7),
-(70, 'Riobamba', 7),
-(71, 'La Maná', 8),
-(72, 'Latacunga', 8),
-(73, 'Pangua', 8),
-(74, 'Pujilí', 8),
-(75, 'Salcedo', 8),
-(76, 'Saquisilí', 8),
-(77, 'Sigchos', 8),
-(78, 'Arenilla', 9),
-(79, 'Atahualpa', 9),
-(80, 'Balsas', 9),
-(81, 'Chilla', 9),
-(82, 'El Guabo', 9),
-(83, 'Huaquillas', 9),
-(84, 'Las Lajas', 9),
-(85, 'Machala', 9),
-(86, 'Marcabelí', 9),
-(87, 'Pasaje', 9),
-(88, 'Piñas', 9),
-(89, 'Portovelo', 9),
-(90, 'Santa Rosa', 9),
-(91, 'Zaruma', 9),
-(92, 'Esmeraldas', 10),
-(93, 'Eloy Alfaro', 10),
-(94, 'Muisne', 10),
-(95, 'Quinindé', 10),
-(96, 'San Lorenzo', 10),
-(97, 'Atacames', 10),
-(98, 'Río Verde', 10),
-(99, 'Isabela', 11),
-(100, 'San Cristóbal', 11),
-(101, 'Santa Cruz', 11),
-(102, 'Guayaquil', 12),
-(103, 'Alfredo Baquerizo Moreno', 12),
-(104, 'Balao', 12),
-(105, 'Balzar', 12),
-(106, 'Colimes', 12),
-(107, 'Daule', 12),
-(108, 'El Empalme', 12),
-(109, 'El Triunfo', 12),
-(110, 'Durán', 12),
-(111, 'General Antonio Elizalde', 12),
-(112, 'Playas', 12),
-(113, 'Isidro Ayora', 12),
-(114, 'Lomas de Sargentillo', 12),
-(115, 'Marcelino Maridueña', 12),
-(116, 'Milagro', 12),
-(117, 'Naranjal', 12),
-(118, 'Naranjito', 12),
-(119, 'Nobol', 12),
-(120, 'Palestina', 12),
-(121, 'Pedro Carbo', 12),
-(122, 'Salitre', 12),
-(123, 'Samborondón', 12),
-(124, 'Santa Lucía', 12),
-(125, 'Simón Bolívar', 12),
-(126, 'Yaguachi', 12),
-(127, 'Antonio Ante', 13),
-(128, 'Cotacachi', 13),
-(129, 'Ibarra', 13),
-(130, 'Otavalo', 13),
-(131, 'Pimampiro', 13),
-(132, 'San Miguel de Urcuquí', 13),
-(133, 'Baba', 14),
-(134, 'Babahoyo', 14),
-(135, 'Buena Fe', 14),
-(136, 'Mocache', 14),
-(137, 'Montalvo', 14),
-(138, 'Palenque', 14),
-(139, 'Publoviejo', 14),
-(140, 'Quevedo', 14),
-(141, 'Quinsaloma', 14),
-(142, 'Urdaneta', 14),
-(143, 'Valencia', 14),
-(144, 'Ventanas', 14),
-(145, 'Vinces', 14),
-(146, 'Bolívar', 15),
-(147, 'Chone', 15),
-(148, 'El Carmen', 15),
-(149, 'Flavio Alfaro', 15),
-(150, 'Jama', 15),
-(151, 'Jaramijó', 15),
-(152, 'Jipijapa', 15),
-(153, 'Junín', 15),
-(154, 'Manta', 15),
-(155, 'Montecristi', 15),
-(156, 'Olmedo', 15),
-(157, 'Paján', 15),
-(158, 'Pedernales', 15),
-(159, 'Pichincha', 15),
-(160, 'Portoviejo', 15),
-(161, 'Puerto López', 15),
-(162, 'Rocafuerte', 15),
-(163, 'San Vicente', 15),
-(164, 'Santa Ana', 15),
-(165, 'Sucre', 15),
-(166, 'Tosagua', 15),
-(167, 'Veinticuatro de mayo', 15),
-(168, 'Gualaquiza', 16),
-(169, 'Huamboya', 16),
-(170, 'Limón Indanza', 16),
-(171, 'Logroño', 16),
-(172, 'Morona', 16),
-(173, 'Pablo Sexto', 16),
-(174, 'Palora', 16),
-(175, 'San Juan Bosco', 16),
-(176, 'Santiago', 16),
-(177, 'Sucúa', 16),
-(178, 'Taisha', 16),
-(179, 'Tiwintza', 16),
-(180, 'Archidona', 17),
-(181, 'Carlos Julio Arosemena Tola', 17),
-(182, 'El Chaco', 17),
-(183, 'Quijos', 17),
-(184, 'Tena', 17),
-(185, 'Aguarico', 18),
-(186, 'Orellana', 18),
-(187, 'La Joya de los Sachas', 18),
-(188, 'Loreto', 18),
-(189, 'Arajuno', 19),
-(190, 'Mera', 19),
-(191, 'Pastaza', 19),
-(192, 'Santa Clara', 19),
-(193, 'Cayambe', 20),
-(194, 'Mejía', 20),
-(195, 'Pedro Moncayo', 20),
-(196, 'Pedro Vicente Maldonado', 20),
-(197, 'Puerto Quito', 20),
-(198, 'Quito', 20),
-(199, 'Rumiñahui', 20),
-(200, 'San Miguel de los Bancos', 20),
-(201, 'La Libertad', 21),
-(202, 'Salina', 21),
-(203, 'Santa Elena', 21),
-(204, 'Santo Domingo', 22),
-(205, 'La Concordia', 22),
-(206, 'Cascales', 23),
-(207, 'Cuyabeno', 23),
-(208, 'Gonzalo Pizarro', 23),
-(209, 'Lago Agrio', 23),
-(210, 'Putumayo', 23),
-(211, 'Shushufindi', 23),
-(212, 'Sucumbíos', 23),
-(213, 'Ambato', 24),
-(214, 'Baños', 24),
-(215, 'Cevallos', 24),
-(216, 'Mocha', 24),
-(217, 'Patate', 24),
-(218, 'Pelileo', 24),
-(219, 'Píllaro', 24),
-(220, 'Quero', 24),
-(221, 'Tisaleo', 24);
+(9, 'Yantzaza', 1);
 
 -- --------------------------------------------------------
 
@@ -2319,7 +2261,7 @@ INSERT INTO `canton` (`id_canton`, `canton`, `id_provincia`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `catas` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `catador` text COLLATE latin1_spanish_ci NOT NULL,
@@ -2402,7 +2344,7 @@ INSERT INTO `catas` (`id`, `lote`, `fecha`, `catador`, `tostado`, `fragancia`, `
 (32, 142, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (33, 161, '2014-08-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (34, 165, '2014-08-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(35, 170, '2014-08-18 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(35, 170, '2014-08-18 05:00:00', '', 0, 5.00, '', '', 5.00, '', '', 5.00, '', '', 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 0.00, '5', 50.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (36, 67, '2014-07-14 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (37, 74, '2014-07-16 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (38, 13, '2014-02-06 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -2521,11 +2463,11 @@ INSERT INTO `catas` (`id`, `lote`, `fecha`, `catador`, `tostado`, `fragancia`, `
 --
 
 CREATE TABLE IF NOT EXISTS `certificacion` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `year` int(11) NOT NULL,
   `estatus` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=332 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=341 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `certificacion`
@@ -2593,7 +2535,8 @@ INSERT INTO `certificacion` (`id`, `id_socio`, `year`, `estatus`) VALUES
 (328, 28, 2010, ''),
 (329, 29, 2010, ''),
 (330, 30, 2010, ''),
-(331, 299, 2010, '');
+(331, 299, 2010, ''),
+(340, 68, 2010, 'O');
 
 -- --------------------------------------------------------
 
@@ -2602,7 +2545,7 @@ INSERT INTO `certificacion` (`id`, `id_socio`, `year`, `estatus`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `comentario` (
-  `id_COMENTARIO` int(11) NOT NULL,
+`id_COMENTARIO` int(11) NOT NULL,
   `Comentario` varchar(45) DEFAULT NULL,
   `id_usuario` int(11) NOT NULL,
   `Id_foto` int(11) DEFAULT NULL
@@ -2615,7 +2558,7 @@ CREATE TABLE IF NOT EXISTS `comentario` (
 --
 
 CREATE TABLE IF NOT EXISTS `configuracion` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `parametro` text COLLATE latin1_spanish_ci NOT NULL,
   `descripcion` text COLLATE latin1_spanish_ci NOT NULL,
   `valor` text COLLATE latin1_spanish_ci NOT NULL
@@ -2626,7 +2569,7 @@ CREATE TABLE IF NOT EXISTS `configuracion` (
 --
 
 INSERT INTO `configuracion` (`id`, `parametro`, `descripcion`, `valor`) VALUES
-(1, 'extra_cata', 'puntaje mínimo de cata para poder recibir pago extra', '84.00'),
+(1, 'extra_cata', 'puntaje mï¿½nimo de ', '84.00'),
 (2, 'variedades', 'lista de variedades más comunes que maneja la asociación', 'catucaí,catimoro,tipica,criollo,colombia6'),
 (3, 'cultivos', 'lista de cultivos para los seleccionables', 'caña,yuca,naranja,guayaba,guaba,faike,maíz,platano,cacao,huerto,papaya,pasto'),
 (4, 'animales', 'lista de producciones animales que se pueden asociar al café', 'chanchos,gallinas,cuyes,vacas,colmenas,estanque,ganado'),
@@ -2641,7 +2584,7 @@ INSERT INTO `configuracion` (`id`, `parametro`, `descripcion`, `valor`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `despachos` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `cantidad` float(10,2) NOT NULL,
@@ -2668,7 +2611,7 @@ INSERT INTO `despachos` (`id`, `lote`, `fecha`, `cantidad`, `envio`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `envios` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `destino` text COLLATE latin1_spanish_ci NOT NULL,
   `chofer` text COLLATE latin1_spanish_ci NOT NULL,
@@ -2692,12 +2635,12 @@ INSERT INTO `envios` (`id`, `fecha`, `destino`, `chofer`, `responsable`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `estimacion` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `year` int(11) NOT NULL,
   `estimados` double(10,2) NOT NULL,
   `entregados` double(10,2) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `estimacion`
@@ -2705,8 +2648,7 @@ CREATE TABLE IF NOT EXISTS `estimacion` (
 
 INSERT INTO `estimacion` (`id`, `id_socio`, `year`, `estimados`, `entregados`) VALUES
 (2, 1, 2011, 0.00, 2.00),
-(3, 2, 2011, 0.00, 16.00),
-(4, 3, 2011, 0.00, 24.00),
+(4, 3, 2011, 0.00, 0.00),
 (5, 4, 2011, 0.00, 54.00),
 (6, 5, 2011, 0.00, 16.00),
 (7, 6, 2011, 0.00, 13.00),
@@ -2734,7 +2676,9 @@ INSERT INTO `estimacion` (`id`, `id_socio`, `year`, `estimados`, `entregados`) V
 (29, 28, 2011, 0.00, 0.00),
 (30, 29, 2011, 0.00, 0.00),
 (31, 30, 2011, 0.00, 0.00),
-(32, 299, 2011, 0.00, 0.00);
+(32, 299, 2011, 0.00, 0.00),
+(33, 284, 2010, 500.00, 0.00),
+(34, 68, 2010, 100.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -2743,7 +2687,7 @@ INSERT INTO `estimacion` (`id`, `id_socio`, `year`, `estimados`, `entregados`) V
 --
 
 CREATE TABLE IF NOT EXISTS `fotos` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `foto` text COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -2754,7 +2698,7 @@ CREATE TABLE IF NOT EXISTS `fotos` (
 --
 
 CREATE TABLE IF NOT EXISTS `grupos` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `grupo` text COLLATE latin1_spanish_ci NOT NULL,
   `codigo_grupo` text COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -2794,7 +2738,7 @@ INSERT INTO `grupos` (`id`, `grupo`, `codigo_grupo`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `lotes` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `codigo_lote` text COLLATE latin1_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2998,15 +2942,15 @@ INSERT INTO `lotes` (`id`, `id_socio`, `codigo_lote`, `fecha`, `peso`, `humedad`
 --
 
 CREATE TABLE IF NOT EXISTS `niveles` (
-  `id_niveles` int(11) NOT NULL,
-  `niveles` varchar(45) DEFAULT NULL
+`id_niveles` int(11) NOT NULL,
+  `nivel` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `niveles`
 --
 
-INSERT INTO `niveles` (`id_niveles`, `niveles`) VALUES
+INSERT INTO `niveles` (`id_niveles`, `nivel`) VALUES
 (1, 'administrador'),
 (2, 'contador'),
 (3, 'bodeguero'),
@@ -3020,7 +2964,7 @@ INSERT INTO `niveles` (`id_niveles`, `niveles`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `pagos` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `exportable` float(10,2) NOT NULL,
@@ -3048,7 +2992,7 @@ INSERT INTO `pagos` (`id`, `lote`, `fecha`, `exportable`, `descarte`, `fuera`, `
 --
 
 CREATE TABLE IF NOT EXISTS `parcelas` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `coorX` int(11) NOT NULL,
   `coorY` int(11) NOT NULL,
@@ -3167,7 +3111,7 @@ INSERT INTO `parcelas` (`id`, `id_socio`, `coorX`, `coorY`, `alti`, `sup_total`,
 --
 
 CREATE TABLE IF NOT EXISTS `persona` (
-  `id_persona` int(11) NOT NULL,
+`id_persona` int(11) NOT NULL,
   `nombres` text,
   `apellidos` text,
   `cedula` bigint(20) DEFAULT NULL,
@@ -3178,7 +3122,7 @@ CREATE TABLE IF NOT EXISTS `persona` (
   `foto` text,
   `genero` char(1) DEFAULT NULL,
   `id_canton` int(10) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=313 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=311 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `persona`
@@ -3252,7 +3196,7 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 (66, ' Segundo Ramon', 'Salinas Castillo', 1900159144, 0, '1962-10-17', '', '', '', '', 1),
 (67, ' Josefino De Jesus', 'Suarez Bravo', 1103208110, 0, '0000-00-00', '', '', '', '', 1),
 (68, ' Gaona Castillo', 'Vilma Francisca', 1105101149, 0, '1991-07-24', '', '', '', '', 1),
-(69, ' Indalecio', 'Abad Abad', 1104518863, 0, '1981-01-29', '', '', '', 'm', 1),
+(69, ' Indalecio', 'Abad Abad', 1104518863, 0, '1981-01-29', '', '', '', 'm', NULL),
 (70, ' Segundo Aurelio', 'Calva Abad', 1900255355, 0, '1963-11-16', '', '', '', '', 1),
 (71, ' Jose Marcial', 'Abad Pintado', 1900324615, 0, '1973-04-15', '', '', '', '', 1),
 (72, ' Simon Bolivar', 'Gaona Calva', 1103147862, 0, '1971-10-08', '', '', '', '', 1),
@@ -3488,9 +3432,7 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 (302, 'Harvey', 'Merino', 0, 0, '0000-00-00', '', '', '', 'm', 1),
 (303, 'Manuel', 'Tillaguango', 0, 0, '0000-00-00', '', '', '', 'm', 1),
 (304, 'Jose', 'Cueva', NULL, 0, NULL, NULL, NULL, NULL, NULL, 1),
-(310, 'Nuevo', 'Nuevo', 123123, 0, '0000-00-00', 'art_s@hotmail.es', '', NULL, 'm', 5),
-(311, 'Javier Alexander', 'Fierro Vargas', 1105163677, 980180841, '1995-07-22', 'fjaveir@gmail.com', 'Capuli', '', '1', 16),
-(312, 'Juan Andres', 'Pruebas', 1105163677, 985180847, '1995-07-22', 'fjkv@gmail.com', 'loja', '', '1', 114);
+(310, 'Nuevo', 'Nuevo', 123123, 0, '0000-00-00', 'art_s@hotmail.es', '', NULL, 'm', 5);
 
 -- --------------------------------------------------------
 
@@ -3499,9 +3441,9 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 --
 
 CREATE TABLE IF NOT EXISTS `provincia` (
-  `id_provincia` int(11) NOT NULL,
+`id_provincia` int(11) NOT NULL,
   `provincia` varchar(45) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `provincia`
@@ -3509,29 +3451,7 @@ CREATE TABLE IF NOT EXISTS `provincia` (
 
 INSERT INTO `provincia` (`id_provincia`, `provincia`) VALUES
 (1, 'Zamora Chinchipe'),
-(2, 'Loja'),
-(3, 'Azuay'),
-(4, 'Bolívar'),
-(5, 'Cañar'),
-(6, 'Carchi'),
-(7, 'Chiborazo'),
-(8, 'Cotopaxi'),
-(9, 'El Oro'),
-(10, 'Esmeraldas'),
-(11, 'Gálapagos'),
-(12, 'Guayas'),
-(13, 'Imbabura'),
-(14, 'Los Ríos'),
-(15, 'Manabí'),
-(16, 'Morona Santiago'),
-(17, 'Napo'),
-(18, 'Orellana'),
-(19, 'Pastaza'),
-(20, 'Pichincha'),
-(21, 'Santa Elena'),
-(22, 'Santo Domingo de los Tsáchilas'),
-(23, 'Sucumbios'),
-(24, 'Tungurahua');
+(2, 'Loja');
 
 -- --------------------------------------------------------
 
@@ -3540,7 +3460,7 @@ INSERT INTO `provincia` (`id_provincia`, `provincia`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `socios` (
-  `id_socio` int(11) NOT NULL,
+`id_socio` int(11) NOT NULL,
   `id_grupo` int(11) DEFAULT NULL,
   `id_persona` int(11) DEFAULT NULL,
   `codigo` text COLLATE latin1_spanish_ci NOT NULL
@@ -3618,7 +3538,7 @@ INSERT INTO `socios` (`id_socio`, `id_grupo`, `id_persona`, `codigo`) VALUES
 (65, 5, 66, 'CU15'),
 (66, 5, 67, 'CU17'),
 (67, 5, 68, 'CU19'),
-(68, NULL, 69, '58'),
+(68, 2, 69, 'AG60'),
 (69, 5, 70, 'CU21'),
 (70, 5, 71, 'CU22'),
 (71, 5, 72, 'CU23'),
@@ -3862,7 +3782,7 @@ INSERT INTO `socios` (`id_socio`, `id_grupo`, `id_persona`, `codigo`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `subparcelas` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_parcela` int(11) NOT NULL,
   `superficie` float(10,2) NOT NULL,
   `variedad` text COLLATE latin1_spanish_ci NOT NULL,
@@ -3884,7 +3804,7 @@ CREATE TABLE IF NOT EXISTS `subparcelas` (
 --
 
 INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `variedad2`, `siembra`, `densidad`, `marco`, `hierbas`, `sombreado`, `roya`, `broca`, `ojo_pollo`, `mes_inicio_cosecha`, `duracion_cosecha`) VALUES
-(1, 1, 2.00, 'catimoro', 'catucaï¿½', 2005, 0, 'Regular', 'Limpio', 'Poco', '0', '0', '0', 'Enero', 0),
+(1, 1, 2.00, 'catimoro', 'catucaï¿½', 2005, 0, 'Regular', 'Limpio', 'Poco', '0', '25', '0', '', 0),
 (2, 2, 4.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (3, 3, 1.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (4, 4, 3.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
@@ -3987,24 +3907,19 @@ INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `varied
 --
 
 CREATE TABLE IF NOT EXISTS `usuarios` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
   `pass` text COLLATE latin1_spanish_ci NOT NULL,
   `id_nivel` int(11) NOT NULL,
-  `id_persona` int(11) DEFAULT NULL,
-  `estado` varchar(2) COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `id_persona` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`, `estado`) VALUES
-(1, 'admin', 'admin', 1, 304, 'A'),
-(2, 'prueba', '123', 3, 310, 'A'),
-(5, 'Jafv', '123', 1, NULL, 'A'),
-(6, 'Javier', '12345', 3, NULL, 'A'),
-(7, 'Nuevo2', '123', 2, NULL, 'B');
+INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`) VALUES
+(1, 'admin', 'admin', 1, 304);
 
 --
 -- Índices para tablas volcadas
@@ -4014,139 +3929,139 @@ INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`, `estado`
 -- Indices de la tabla `acciones`
 --
 ALTER TABLE `acciones`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `altas`
 --
 ALTER TABLE `altas`
-  ADD PRIMARY KEY (`id`), ADD KEY `fk_alta_SOCIO_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_alta_SOCIO_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `analisis`
 --
 ALTER TABLE `analisis`
-  ADD PRIMARY KEY (`id_analisis`), ADD KEY `fk_subparcela_analisis_idx` (`id_subparcela`);
+ ADD PRIMARY KEY (`id_analisis`), ADD KEY `fk_subparcela_analisis_idx` (`id_subparcela`);
 
 --
 -- Indices de la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
-  ADD PRIMARY KEY (`id`), ADD KEY `FK_SUBPARCELA_ASOCIACION_idx` (`subparcela_id`);
+ ADD PRIMARY KEY (`id`), ADD KEY `FK_SUBPARCELA_ASOCIACION_idx` (`subparcela_id`);
 
 --
 -- Indices de la tabla `canton`
 --
 ALTER TABLE `canton`
-  ADD PRIMARY KEY (`id_canton`), ADD KEY `FK_provincia_idx` (`id_provincia`);
+ ADD PRIMARY KEY (`id_canton`), ADD KEY `FK_provincia_idx` (`id_provincia`);
 
 --
 -- Indices de la tabla `catas`
 --
 ALTER TABLE `catas`
-  ADD PRIMARY KEY (`id`), ADD KEY `fk:CATA_LOTE_idx` (`lote`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk:CATA_LOTE_idx` (`lote`);
 
 --
 -- Indices de la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
-  ADD PRIMARY KEY (`id`), ADD KEY `fk_:SOCIO_CERTIFICACION_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_:SOCIO_CERTIFICACION_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `comentario`
 --
 ALTER TABLE `comentario`
-  ADD PRIMARY KEY (`id_COMENTARIO`), ADD KEY `FK_Comentario_cuenta_idx` (`id_usuario`), ADD KEY `FK_Foto_COmentario_idx` (`Id_foto`);
+ ADD PRIMARY KEY (`id_COMENTARIO`), ADD KEY `FK_Comentario_cuenta_idx` (`id_usuario`), ADD KEY `FK_Foto_COmentario_idx` (`Id_foto`);
 
 --
 -- Indices de la tabla `configuracion`
 --
 ALTER TABLE `configuracion`
-  ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`);
+ ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`);
 
 --
 -- Indices de la tabla `despachos`
 --
 ALTER TABLE `despachos`
-  ADD PRIMARY KEY (`id`), ADD KEY `fk_despacho_lote_idx` (`lote`), ADD KEY `FK_DESPACHO_ENVIO_idx` (`envio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_despacho_lote_idx` (`lote`), ADD KEY `FK_DESPACHO_ENVIO_idx` (`envio`);
 
 --
 -- Indices de la tabla `envios`
 --
 ALTER TABLE `envios`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
-  ADD PRIMARY KEY (`id`), ADD KEY `fk:_Estimacion_socio_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk:_Estimacion_socio_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `fotos`
 --
 ALTER TABLE `fotos`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `grupos`
 --
 ALTER TABLE `grupos`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `lotes`
 --
 ALTER TABLE `lotes`
-  ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`), ADD KEY `FK_SOCIO_LOTE_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`), ADD KEY `FK_SOCIO_LOTE_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `niveles`
 --
 ALTER TABLE `niveles`
-  ADD PRIMARY KEY (`id_niveles`);
+ ADD PRIMARY KEY (`id_niveles`);
 
 --
 -- Indices de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  ADD PRIMARY KEY (`id`), ADD KEY `FK_PAGO_LOTE_idx` (`lote`);
+ ADD PRIMARY KEY (`id`), ADD KEY `FK_PAGO_LOTE_idx` (`lote`);
 
 --
 -- Indices de la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
-  ADD PRIMARY KEY (`id`), ADD KEY `FK_PARCELA_SOCIO_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `FK_PARCELA_SOCIO_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `persona`
 --
 ALTER TABLE `persona`
-  ADD PRIMARY KEY (`id_persona`), ADD KEY `FK_id_provincia_idx` (`id_canton`);
+ ADD PRIMARY KEY (`id_persona`), ADD KEY `FK_id_provincia_idx` (`id_canton`);
 
 --
 -- Indices de la tabla `provincia`
 --
 ALTER TABLE `provincia`
-  ADD PRIMARY KEY (`id_provincia`);
+ ADD PRIMARY KEY (`id_provincia`);
 
 --
 -- Indices de la tabla `socios`
 --
 ALTER TABLE `socios`
-  ADD PRIMARY KEY (`id_socio`), ADD KEY `id_socio` (`id_socio`), ADD KEY `FK_SOCIO_GRUPO_idx` (`id_grupo`), ADD KEY `FK_PERSONA_SOCIO_idx` (`id_persona`);
+ ADD PRIMARY KEY (`id_socio`), ADD KEY `id_socio` (`id_socio`), ADD KEY `FK_SOCIO_GRUPO_idx` (`id_grupo`), ADD KEY `FK_PERSONA_SOCIO_idx` (`id_persona`);
 
 --
 -- Indices de la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-  ADD PRIMARY KEY (`id`), ADD KEY `fk_subparcela_parcela_idx` (`id_parcela`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_subparcela_parcela_idx` (`id_parcela`);
 
 --
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`), ADD KEY `USUARIOS_NIVELES` (`id_nivel`), ADD KEY `USUARIOS_PERSONA` (`id_persona`);
+ ADD PRIMARY KEY (`id`), ADD KEY `USUARIOS_NIVELES` (`id_nivel`), ADD KEY `USUARIOS_PERSONA` (`id_persona`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -4156,117 +4071,117 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `acciones`
 --
 ALTER TABLE `acciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=706;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=712;
 --
 -- AUTO_INCREMENT de la tabla `altas`
 --
 ALTER TABLE `altas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=48;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=52;
 --
 -- AUTO_INCREMENT de la tabla `analisis`
 --
 ALTER TABLE `analisis`
-  MODIFY `id_analisis` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id_analisis` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=731;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=732;
 --
 -- AUTO_INCREMENT de la tabla `canton`
 --
 ALTER TABLE `canton`
-  MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=222;
+MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT de la tabla `catas`
 --
 ALTER TABLE `catas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=146;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=146;
 --
 -- AUTO_INCREMENT de la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=332;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=341;
 --
 -- AUTO_INCREMENT de la tabla `comentario`
 --
 ALTER TABLE `comentario`
-  MODIFY `id_COMENTARIO` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id_COMENTARIO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `configuracion`
 --
 ALTER TABLE `configuracion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `despachos`
 --
 ALTER TABLE `despachos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `envios`
 --
 ALTER TABLE `envios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=33;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=35;
 --
 -- AUTO_INCREMENT de la tabla `fotos`
 --
 ALTER TABLE `fotos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `grupos`
 --
 ALTER TABLE `grupos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
 --
 -- AUTO_INCREMENT de la tabla `lotes`
 --
 ALTER TABLE `lotes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=172;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=172;
 --
 -- AUTO_INCREMENT de la tabla `niveles`
 --
 ALTER TABLE `niveles`
-  MODIFY `id_niveles` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+MODIFY `id_niveles` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=313;
+MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=311;
 --
 -- AUTO_INCREMENT de la tabla `provincia`
 --
 ALTER TABLE `provincia`
-  MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=25;
+MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `socios`
 --
 ALTER TABLE `socios`
-  MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=306;
+MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=306;
 --
 -- AUTO_INCREMENT de la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=302;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=302;
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- Restricciones para tablas volcadas
 --

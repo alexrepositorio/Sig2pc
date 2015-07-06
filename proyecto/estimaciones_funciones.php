@@ -4,7 +4,6 @@ function insertarestimacion($socio,$fecha,$estimados,$entregados){
     $SQL="call SP_estimaciones_ins('".$socio."','".$fecha."','".$estimados."','".$entregados."')";
 	mysqli_query($link,$SQL)or die(mysqli_error($link)); 
 }
-
 function estimacion($criterio,$socio)
 {
 	require("conect.php");

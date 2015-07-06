@@ -53,7 +53,7 @@ $estimado_actual=$estimado_actual[0];
 echo "</table>";
 echo "<br><br>";
 
-$resultado_lotes=obtenerLotesfecha($_GET["socio"],$estimado_actual["year"]);
+$resultado_lotes=LotesConsultarid_fecha($_GET["socio"],$estimado_actual["year"]);
 if (is_array($resultado_lotes)) {
 	foreach ($resultado_lotes as $lot) {
 		$pesos_del_socio[]=$lot["peso"];

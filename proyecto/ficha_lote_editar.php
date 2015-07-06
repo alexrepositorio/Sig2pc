@@ -53,16 +53,11 @@ if(isset ($_GET["guarda"]))
 	$contaminado_lote = $POST["contaminado"];
 	$calidad_lote = $POST["calidad"];
 	$id_lote = $_GET["guarda"];
-
-	//Funcion de lotes para actualizar
-
-	lotes_actualizar($id_lote_socio, $codigo_lote, $fecha_lote,
+	lotes_actualizar($id_lote,$id_lote_socio, $codigo_lote, $fecha_lote,
 		$peso_lote, $humedad_lote, $rto_descarte_lote, $rto_exportable_lote,
 		$defecto_negro_lote, $defecto_vinagre_lote, $defecto_decolorado_lote, 
 		$defecto_mordido_lote, $defecto_brocado_lote, $reposo_lote, $moho_lote,
 		$fermento_lote, $contaminado_lote, $calidad_lote, $id_lote);
-
-	//para el historial
 	echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
 	<meta http-equiv='Refresh' content='2;url=ficha_lote.php?lote=$_GET[guarda]'></font></h1></div>";
 

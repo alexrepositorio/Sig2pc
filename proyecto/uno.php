@@ -105,10 +105,9 @@ $tipos_sabor_res=array('Refrescante',
 					'Agrio',
 					'Vinoso',
 					'Áspero',
-					'Salado');
+					'Saldo');
 
 function transformar_a_lista($resultado){
-
 	if (mysqli_num_rows($resultado)>0) {
     	$lista=mysqli_fetch_all($resultado,MYSQLI_ASSOC);     			   		
    		return(utf8_convertidor($lista));
@@ -202,39 +201,38 @@ header ('Location: login.php');
 
 function Vactuales(){
 
-require("conect.php");	
+require("lote_funciones.php");
+require("pagos_funciones.php");
+require("despachos_funciones.php");
 // catas pendientes
-$SQL_catas_pendientes="SELECT codigo_lote FROM lotes WHERE calidad='A' AND codigo_lote NOT IN (SELECT lote FROM catas)";
-$resultado=mysqli_query($link,$SQL_catas_pendientes);
-$cuenta_catas=mysqli_num_rows($resultado);
-
-	$cuenta_catas="<font size=6>(<font color=red><b>$cuenta_catas</b></font>)</font>";
-
-
+//$SQL_catas_pendientes="SELECT codigo_lote FROM lotes WHERE calidad='A' AND codigo_lote NOT IN (SELECT lote FROM catas)";
+$resultado=LotesConsultarCriterio('v_actuales','');
+if (is_array($resultado)) {
+	$cuenta_catas=count($resultado);
+}else{
+	$cuenta_catas=0;
+}
+$cuenta_catas="<font size=6>(<font color=red><b>$cuenta_catas</b></font>)</font>";
 
 // pagos pendientes
-$SQL_pagos_pendientes="SELECT codigo_lote FROM lotes WHERE codigo_lote NOT IN (SELECT lote FROM pagos)";
-$resultado2=mysqli_query($link,$SQL_pagos_pendientes);
-$cuenta_pagos=mysqli_num_rows($resultado2);
-
-		$cuenta_pagos="<font size=6>(<font color=red><b>$cuenta_pagos</b></font>)</font>";
+$resultado2=pagos_consultar_criterio('v_actuales','');
+if (is_array($resultado2)) {
+	$cuenta_pagos=count($resultado2);
+}else{
+	$cuenta_pagos=0;
+}
+$cuenta_pagos="<font size=6>(<font color=red><b>$cuenta_pagos</b></font>)</font>";
 	
 //*****************************
-
 // estado de almacén
-$SQL_estado_almacen_entradas="SELECT SUM(peso) FROM lotes";
-$resultado3=mysqli_query($link,$SQL_estado_almacen_entradas);
-$almacen_entradas=mysqli_fetch_row($resultado3);
-$almacen_entradas=$almacen_entradas[0];
-$SQL_estado_almacen_salidas="SELECT SUM(cantidad) FROM despachos";
-$resultado4=mysqli_query($link,$SQL_estado_almacen_salidas);
-$almacen_salidas=mysqli_fetch_row($resultado4);
-$almacen_salidas=$almacen_salidas[0];
+
+$resultado3=LotesConsultarCriterio('entradas_almacen','');
+$almacen_entradas=$resultado3[0]["entradas"];
+$resultado4=despachos_consultar_criterio('salidas_almacen','');
+$almacen_salidas=$resultado4[0]["salidas"];
 $stock_almacen=$almacen_entradas-$almacen_salidas;
 $stock_almacen="<font size=6>(<font color=red><b>".$stock_almacen."qq</b></font>)</font>";
 //*****************************
-
-
 return array($cuenta_pagos,$cuenta_catas,$stock_almacen);
 }
 

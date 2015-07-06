@@ -1,8 +1,6 @@
 <?php
 include ("cabecera.php");
 include ("configuracion_funciones.php");
-
-
 //******************************************
 if(isset ($_POST["editar"])){
 
@@ -27,7 +25,6 @@ echo "<input type='submit' value='Guardar'>";
 echo "</form></div>";
 }
 //**********TABLA AUTOMATICA*****************************************************************
-
 include("pie.php");
 
 ?>

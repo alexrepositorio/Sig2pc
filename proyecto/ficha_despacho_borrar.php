@@ -2,13 +2,11 @@
 include ("cabecera.php");
 include ("despachos_funciones.php");
 
-if(isset ($_GET["despacho"]) AND isset($_GET["borra"])){
-	
+if(isset ($_GET["despacho"]) AND isset($_GET["borra"])){	
 	eliminar_despacho($_GET["borra"]);
 	echo "<div align=center><h1>BORRANDO, ESPERA...
 	<meta http-equiv='Refresh' content='2;url=almacen.php'></font></h1></div>";
 }else{
-	//muestra_array($socio);
 	$resultado=despachos_consultar_criterio('id',$_GET["despacho"]);
 	$lote = $resultado[0];
 	echo "<div align=center><h1>Borrar el despacho del lote ".$_GET["lote"]."</h1><br><br>";

@@ -13,7 +13,6 @@ if (is_array($resultado)) {
 		echo "</td></tr>";
 	}
 }else{
-	//echo "<tr><td align=center><a href=ficha_parcela.php?parcela=".$_GET["parcela"]."><button class=boton>volver</button></a></td></tr>";
 	echo "<td align=center><a href=ficha_analisis_nuevo.php?parcela=".$_GET["parcela"]."&suparcela=".$_GET["subparcela"].">";
 	echo "<img src=images/add.png width=50><br><h4>nuevo</a>";
 	echo "</td>";

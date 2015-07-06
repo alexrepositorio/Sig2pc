@@ -5,12 +5,7 @@ function cargar_datos($criterio){
 	mysqli_query($link, "SET NAMES 'utf8'");
 	$SQL = "call SP_pagos_cons_datos('".$criterio."')";
 	$resultado = mysqli_query($link, $SQL);
-
-	while ($row = mysqli_fetch_array($resultado, MYSQLI_ASSOC)) {
-		$datos[] = $row;
-	}
-
-	return $datos;
+	return (transformar_a_lista($resultado));
 }
 
 //consultar datos del socio en referencia al lote   ((( Preliminar -> debe quedar como la función siguiente )))
@@ -54,53 +49,26 @@ function busqueda_catas($lote){
 	return (transformar_a_lista($resultado));
 }
 
-function busqueda_pagos($criterio, $valor){
+function busqueda_pagos($lote){
 	require("conect.php");
-	$SQL = "call SP_pagos_cons_pagos('".$criterio."','".$valor."')";
-	$resultado = mysqli_query($link, $SQL);
+	$SQL = "call SP_pagos_cons('lote','".$lote."')";
+	$resultado = mysqli_query($link, $SQL) or die(mysqli_error($link));
 	return (transformar_a_lista($resultado));
 }
 
-function insertar_pagos($codigo_lote, $fecha, $exportable, $descarte, $fuera, $calidad, $cliente = "0", $microlote = "0", $tazadorada = "0"){
-	require("conect.php");
-	$SQL = "call SP_pagos_ins('".$codigo_lote."','".$fecha."','".$exportable."','".$descarte."','".$fuera."','".$calidad."','".$cliente."','".$microlote."','".$tazadorada."')";
-	$resultado = mysqli_query($link, $SQL);
-}
-
-function actualizar_pagos($fecha, $exportable, $descarte, $fuera, $calidad, $cliente = "0", $microlote = "0", $tazadorada = "0", $id){
-	require("conect.php");
-	$SQL = "call SP_pagos_upd('".$fecha."','".$exportable."','".$descarte."','".$fuera."','".$calidad."','".$cliente."','".$microlote."','".$tazadorada."','".$id."')";
-	$resultado = mysqli_query($link, $SQL);
-}
-
-function actualizar_calidad($calidad, $lote){
-	require("conect.php");
-	$SQL = "call SP_pagos_upd_calidad('".$calidad."','".$lote."')";
-	$resultado = mysqli_query($link, $SQL);
-}
-
 //Cambiar o buscar la función para esta acción
-function altas_bajas($socio)
-{
-	include ("conect.php");
-	mysqli_query($link, "SET NAMES 'utf8'");
-	$SQL="SELECT * FROM altas WHERE id_socio='$socio'";
-	$resultado=mysqli_query($link, $SQL);
-	while($socio = mysqli_fetch_array($resultado,MYSQLI_ASSOC)){
-	$id=$socio["id"];
-	$altas[$id]["estado"]=$socio["estado"];	
-	$altas[$id]["year"]=$socio["fecha"];	
-	}
-	if(isset($altas)){return ($altas);}
-}
-//Sin probar aún, probar guardado de sentencia (historial)
+//Sin probar aún, probar guardado de sentencia
 function borrar_pago($pago){
 	include ("conect.php");
 	$SQL = "call SP_pagos_del('".$pago."')";
 	$resultado = mysqli_query($link, $SQL);
 	$sentencia = "DELETE FROM pagos WHERE id=$pago";
-	$cadena=str_replace("'", "", $sentencia);
-	guarda_historial($cadena);
+}
+function pagos_consultar_criterio($criterio,$valor){
+	require("conect.php");
+	$SQL = "call SP_pagos_cons('".$criterio."','".$valor."')";
+	$resultado = mysqli_query($link, $SQL) or die(mysqli_error($link));
+	return (transformar_a_lista($resultado));
 }
 
 ?>

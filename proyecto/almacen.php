@@ -180,19 +180,13 @@ if(isset($lotes)){
 		echo "<td align=center>".implode("<br>", $despachos_del_lote)."<hr>Total: $cantidad_despachada $unidades_despachadas</td>";
 		echo "<td align=center><h4>".round($restante,2)." qq</td>";
 		echo "<td align=center>";
-		//if($cantidad_despachada>0){echo "<a href=ficha_despacho_editar.php?lote=".$lote["codigo_lote"]."><img title=editar src=images/pencil.png width=25></a>";}
-		//if($cantidad_despachada>0){echo "<a href=ficha_despacho_borrar.php?pago=".$lote["codigo_lote"]."&codigo=".$lote["codigo_lote"]."><img title=borrar src=images/cross.png width=25></a>";}
 		if($restante>0){
 			echo "<a href=ficha_despacho_nuevo.php?lote=".$lote["codigo_lote"]."&restante=$restante><img title='añadir despacho al lote' src=images/add.png width=25></a>";
 		}
 			echo "	  </td></tr>";	
 	}
 }
-	
-
 echo "</table></div>";
-
-
 include("pie.php");
 
 ?>

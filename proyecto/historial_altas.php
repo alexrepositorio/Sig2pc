@@ -5,7 +5,7 @@ include ("altas_funciones.php");
 
 $socio = consultarCriterio('id',$_GET["socio"]);
 $socio=$socio[0];
-$estatus=altas_bajas($_GET["socio"]);
+$estatus=altas_consultar('socio',$_GET["socio"]);
 
 if (isset ($_GET["borrar"])) {
 	eliminaraltas($_GET["borrar"]);

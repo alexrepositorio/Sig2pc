@@ -11,6 +11,7 @@ if(isset ($_POST["estado"])){
 }
 else{
 	$socio=consultarCriterio('id',$_GET["socio"]);
+	$socio=$socio[0];
 	echo "<div align=center><h1>NUEVO ESTADO PARA ".$socio["nombres"]." ".$socio["apellidos"]."</h1><br>";
 	echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 	echo "<table class=tablas>";

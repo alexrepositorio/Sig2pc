@@ -13,36 +13,35 @@ if(!isset($_GET["criterio"]))
 	$encontrados="";
 	$resultado=LotesConsultarCriterio('','');
 }else{
-	if(isset($_GET["socio"]))
-	{
+	if(isset($_GET["socio"])){
 		$_POST["busca"]=$_GET["socio"];
+	}
+	if (isset($_POST["busca"])) {
+		$resultado=LotesConsultarCriterio($_GET["criterio"],$_POST["busca"]);
+	}else{
+		$resultado=LotesConsultarCriterio($_GET["criterio"],'');
 	}
 	$encontrados="ENCONTRADOS";
 	$envio_val = $_GET["criterio"];
 	
-	$resultado=LotesConsultarCriterio('socio',$_GET["criterio"]);
-
-	$criterio="<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> es <i>''$_texto''</i></h4>";
+	$criterio="<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> <i></i></h4>";
 }
-                        
-//$resultado=mysqli_query($link, $SQL);
-
-$cuenta=count($resultado);
-foreach ($resultado as $row) {
-	$lotes[]=$row;
-	$pesos[]=$row["peso"];
-}
-if(!isset($pesos))
-{
+if (is_array($resultado)) {
+	$cuenta=count($resultado);
+	foreach ($resultado as $row) {
+		$lotes[]=$row;
+		$pesos[]=$row["peso"];
+	}
+}else{
+	$cuenta=$resultado;
 	$pesos[]=0;
 }
-
 echo "<div align=center><h1>Listado de lotes</h1><br><br>";
 echo "<table border=0 cellpadding=0 cellspacing=10><tr>";
-echo "<td align=center><a href=lotes.php?criterio=organico&opcion=si>";
+echo "<td align=center><a href=lotes.php?criterio=organico>";
 echo "<img src=images/organico.png width=50><br><h4>Orgánicos</a>";
 echo "</td>";
-echo "<td align=center><a href=lotes.php?criterio=organico&opcion=no>";
+echo "<td align=center><a href=lotes.php?criterio=no_organico>";
 echo "<img src=images/noorganico.png width=50><br><h4>No Orgánicos</a>";
 echo "</td>";
 echo "<td align=center><h4>Socio<br><form name=form1 action=".$_SERVER['PHP_SELF']."?criterio=socio method='post'>";
@@ -61,23 +60,24 @@ foreach ($lista as $rowsocio) {
 		$lotess="(".$rowsocio["lotes"]." $lotes_t)";
 		$mark="style='background-color:skyblue; color:blue;'";
 	}else{
-		$mark="";$lotess="";
+		$mark="";
+		$lotess="";
 	}
 	$socio_n=$rowsocio["codigo"]."-".$rowsocio["apellidos"].", ".$rowsocio["nombres"]." $lotess";
-	echo "<option $mark value='".$rowsocio["codigo"]."'>$socio_n</option>";
+	echo "<option $mark value='".$rowsocio["id_socio"]."'>$socio_n</option>";
 }
 
 echo "</select><br>";
 echo "<input type='submit' value='buscar'>";
 echo "</form></td>";
 echo "<td align=center><h4>Grupo<br><form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-echo "<input list='grupos' name='busca' required>";	
+echo "<input list='grupos' name='busca'>";	
 	echo "<datalist  id='grupos'>";	
 	//echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
-	$grupos=consultarGrupo('lista','');
+	$grupos=consultarGrupo('','');
  	foreach ($grupos as $grupo)
 	{
-		echo "<option>".$grupo["grupo"]."</option>";
+		echo "<option value=".$grupo["id"].">".$grupo["grupo"]."</option>";
 	}
 	echo "</datalist></br>";
 	echo "<input type='submit' value='filtrar'>";
@@ -113,19 +113,14 @@ if(isset($lotes))
 	{
 		$datos_socio=consultarCriterio('id',$lote["id_socio"]);
 		$datos_socio=$datos_socio[0];
-		$estatus=certificacion('socio',$datos_socio["id_socio"]);
-		if (is_array($estatus)) {
-			$estatus_actual=certificacion('actual',$datos_socio["id_socio"]);
-			$estatus_actual=$estatus_actual[0];
-			if($estatus_actual["estatus"]=="O")
+		$estatus=certificacion('actual',$datos_socio["id_socio"]);
+		$estatus_actual=$estatus[0];
+		if($estatus_actual["estatus"]=="O")
 			{
 				$estatus_t="<img title='socio CON certificación orgánica' src=images/organico.png width=25>";
 			}else{
 				$estatus_t="<img title='socio SIN certificación orgánica' src=images/noorganico.png width=25>";
 			}
-		}else{
-			$estatus_t="<img title='socio SIN certificación orgánica' src=images/noorganico.png width=25>";
-		}
 		
 		$trillado_gr=configuracion_cons('parametro','gr_muestra')[0]["valor"]-($lote["rto_exportable"]+$lote["rto_descarte"]);
 		$trillado=100-($lote["rto_exportable"]+$lote["rto_descarte"])/configuracion_cons('parametro','gr_muestra')[0]["valor"]*100;

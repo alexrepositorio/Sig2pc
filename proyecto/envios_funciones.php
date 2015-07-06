@@ -92,7 +92,6 @@
 			return array($resultado,$nuevo_id,$cadena);
 		}
 
-
 	//FALTA¡¡¡¡¡Implementada en linea 8 de ficha_envio.php
 	function ficha_envio_presentar($link)
 		{				
