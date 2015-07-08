@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-07-2015 a las 23:57:10
+-- Tiempo de generación: 08-07-2015 a las 02:05:34
 -- Versión del servidor: 5.6.17
 -- Versión de PHP: 5.5.12
 
@@ -526,6 +526,12 @@ BEGIN
 	UPDATE grupos SET grupo =in_grupo,codigo_grupo = in_codigo
     	WHERE id=in_id;
 END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_historial_ins`(IN `usuario` VARCHAR(20), IN `accion` VARCHAR(20), IN `fecha` TIMESTAMP, IN `datos` VARCHAR(100), IN `tabla` VARCHAR(20), IN `maquina` VARCHAR(20))
+    NO SQL
+begin
+	insert into historial values ('', usuario, accion, fecha, datos, tabla, maquina);
+end$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_ins_catas`(IN `p_id` INT(11), IN `p_lote` INT(11), IN `p_fecha` TIMESTAMP, IN `p_catador` TEXT, IN `p_tostado` INT(11), IN `p_fragancia` FLOAT(10,2), IN `p_tipo_aroma1` TEXT, IN `p_nota_aroma` TEXT, IN `p_sabor` FLOAT(10,2), IN `p_tipo_sabor` TEXT, IN `p_nota_sabor` TEXT, IN `p_sabor_residual` FLOAT(10,2), IN `p_tipo_sabor_residual` TEXT, IN `p_nota_sabor_residual` TEXT, IN `p_acidez` FLOAT(10,2), IN `p_cuerpo` FLOAT(10,2), IN `p_uniformidad` FLOAT(10,2), IN `p_balance` FLOAT(10,2), IN `p_puntaje_catador` FLOAT(10,2), IN `p_taza_limpia` FLOAT(10,2), IN `p_dulzor` FLOAT(10,2), IN `p_nota_catacion` TEXT, IN `p_puntuacion` FLOAT(10,2), IN `p_d_fermento` INT(11), IN `p_d_metalico` INT(11), IN `p_d_quimico` INT(11), IN `p_d_vinagre` INT(11), IN `p_d_stinker` INT(11), IN `p_d_fenol` INT(11), IN `p_d_reposo` INT(11), IN `p_d_moho` INT(11), IN `p_d_terroso` INT(11), IN `p_d_extrano` INT(11), IN `p_d_sucio` INT(11), IN `p_d_astringente` INT(11), IN `p_d_quaquers` INT(11), IN `p_dl_cereal` INT(11), IN `p_dl_fermento` INT(11), IN `p_dl_reposo` INT(11), IN `p_dl_moho` INT(11), IN `p_dl_astringencia` INT(11), IN `p_d_general` INT(11))
 BEGIN
@@ -2945,7 +2951,7 @@ CREATE TABLE IF NOT EXISTS `envios` (
   `chofer` text COLLATE latin1_spanish_ci NOT NULL,
   `responsable` text COLLATE latin1_spanish_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=21 ;
 
 --
 -- Volcado de datos para la tabla `envios`
@@ -2955,7 +2961,21 @@ INSERT INTO `envios` (`id`, `fecha`, `destino`, `chofer`, `responsable`) VALUES
 (1, '2014-06-03 20:15:22', 'FAPECAFES', 'manolo', 'cosmel'),
 (2, '2014-06-04 20:30:26', 'ZAMORA', 'Juanitosss', 'Manolo'),
 (3, '2014-06-03 22:19:54', 'Loja', 'Albertito', 'Manolo'),
-(4, '2014-06-07 05:15:17', 'Quito', 'Manolo', 'Juanito');
+(4, '2014-06-07 05:15:17', 'Quito', 'Manolo', 'Juanito'),
+(7, '2015-07-08 05:38:21', 'NINGUNO', 'NINGUNO', 'NINGUNO'),
+(8, '2015-07-08 05:38:21', 'NINGUNO', 'NINGUNO', 'NINGUNO'),
+(9, '2015-07-08 05:38:21', 'NINGUNO', 'NINGUNO', 'NINGUNO'),
+(10, '2015-07-08 05:38:21', 'NINGUNO', 'NINGUNO', 'NINGUNO'),
+(11, '2015-07-08 05:46:03', 'NINGUNO', 'NINGUNO', 'NINGUNO'),
+(12, '2015-07-08 05:46:03', 'NINGUNO', 'NINGUNO', 'NINGUNO'),
+(13, '2015-07-08 05:50:51', 'aaa', 'bbb', 'ccc'),
+(14, '2015-07-08 05:50:51', 'aaa', 'bbb', 'ccc'),
+(15, '2015-07-08 05:50:51', 'aaa', 'bbb', 'ccc'),
+(16, '2015-07-08 05:50:51', 'aaa', 'bbb', 'ccc'),
+(17, '2015-07-08 05:50:51', 'aaa', 'bbb', 'ccc'),
+(18, '2015-07-08 05:58:59', 'aa', 'vv', 'sdad'),
+(19, '2015-07-08 05:58:59', 'aa', 'vv', 'sdad'),
+(20, '2015-07-08 06:06:45', 'comienzo', 'final', 'final');
 
 -- --------------------------------------------------------
 
@@ -3063,6 +3083,38 @@ INSERT INTO `grupos` (`id`, `grupo`, `codigo_grupo`) VALUES
 (21, 'SAN MARTIN', 'SM'),
 (22, 'TAPALA', 'TN'),
 (23, 'VALLERMOSO', 'VH');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `historial`
+--
+
+CREATE TABLE IF NOT EXISTS `historial` (
+  `id_historial` int(11) NOT NULL AUTO_INCREMENT,
+  `usuario` varchar(25) NOT NULL,
+  `accion` varchar(25) NOT NULL,
+  `fecha` timestamp NOT NULL,
+  `datos` varchar(100) NOT NULL,
+  `tabla` varchar(20) NOT NULL,
+  `maquina` varchar(30) NOT NULL,
+  PRIMARY KEY (`id_historial`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
+
+--
+-- Volcado de datos para la tabla `historial`
+--
+
+INSERT INTO `historial` (`id_historial`, `usuario`, `accion`, `fecha`, `datos`, `tabla`, `maquina`) VALUES
+(1, 'jos', 'insercion', '2015-07-05 05:00:00', 'dasd as as asscassac sa sa a', 'ENVIOS', 'josepc'),
+(2, 'admin', 'INSERCION', '2015-07-08 05:50:03', 'sss', 'ENVIOS', 'sss'),
+(3, 'admin', 'INSERCION', '2015-07-08 05:59:35', 'call SP_envios_ins(\r\n			 2015-07-08 00:58:59 ,\r\n			 aa ,\r\n			 vv ,\r\n			 sdad )', 'ENVIOS', 'sss'),
+(4, 'admin', 'INSERCION', '2015-07-08 06:06:50', 'call SP_envios_ins(\r\n			 2015-07-08 01:06:45 ,\r\n			 final ,\r\n			 final ,\r\n			 final )', 'ENVIOS', 'JoseLuis_Pc'),
+(5, 'admin', 'EDICION', '2015-07-08 06:11:46', 'call SP_envios_con( editar , 20 )', 'ENVIOS', 'JoseLuis_Pc'),
+(6, 'admin', 'EDICION', '2015-07-08 06:11:54', 'call SP_envios_con( editar , 20 )', 'ENVIOS', 'JoseLuis_Pc'),
+(7, 'admin', 'EDICION', '2015-07-08 06:13:16', 'call SP_envios_upd(\r\n			 2015-07-08 01:06:45 ,\r\n			 final ,\r\n			 final ,\r\n			 final ,\r\n			 20 )', 'ENVIOS', 'JoseLuis_Pc'),
+(8, 'admin', 'EDICION', '2015-07-08 06:20:41', 'call SP_envios_upd(\r\n			 2015-07-08 01:06:45 ,\r\n			 finala ,\r\n			 final ,\r\n			 final ,\r\n			 20 )', 'ENVIOS', 'JoseLuis_Pc'),
+(9, 'admin', 'EDICION', '2015-07-08 06:22:05', 'call SP_envios_upd(\r\n			 2015-07-08 01:06:45 ,\r\n			 comienzo ,\r\n			 final ,\r\n			 final ,\r\n			 20 )', 'ENVIOS', 'JoseLuis_Pc');
 
 -- --------------------------------------------------------
 

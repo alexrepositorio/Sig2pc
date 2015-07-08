@@ -1,4 +1,5 @@
 <?php
+  include ("historial_funciones.php");
 	function busquedas($criterio,$post){		
 		require("conect.php");   				
     	$SQL="call SP_envios_con('".$criterio."','".$post."')";//Procedimiento Almacenado
@@ -55,7 +56,8 @@
 			'".$chofer."',
 			'".$responsable."')";//Procedimientos Almacenado;
 		$resultado=mysqli_query($link, $SQL_edit)or die(mysqli_error($link));		
-		$nuevo_id=mysqli_insert_id($link);
+		$nuevo_id=mysqli_insert_id($link);		
+		guarda_historia($_SESSION["user"], 'INSERCION', date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL_edit) ,'ENVIOS', gethostname());	
 		return array($resultado, $nuevo_id);	
 	}
 
@@ -80,6 +82,7 @@
 			'".$envio."')";//Procedimientos Almacenado;
 
 		$resultado=mysqli_query($link, $SQL_edit) or die(mysqli_error($link));
+		guarda_historia($_SESSION["user"], 'EDICION', date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL_edit) ,'ENVIOS', gethostname());	
 		$nuevo_id=mysqli_insert_id($link);
 		$cadena=str_replace("'", "", $SQL_edit);
 			return array($resultado,$nuevo_id,$cadena);
