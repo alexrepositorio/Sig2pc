@@ -1,5 +1,6 @@
 <?php
 include("cabecera_login.php");
+include("users_funciones.php");
 if (isset($_POST["user"]) AND isset($_POST["pass"])) {
 	validar();
 } 

@@ -54,6 +54,7 @@ function imprimir(id)
 <?php
 include("titulo.html");
 include ("uno.php");
+include ("historial_funciones.php");
 
 session_start();
 

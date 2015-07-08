@@ -43,7 +43,7 @@ echo "<tr><th><h4>Grupo</th><td>";
 echo "<input list='grupos' name='poblacion'>";	
 echo "<datalist  id='grupos'>";	
 //echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
- $grupos=obtenerGrupos();
+ $grupos=consultarGrupo('lista','');
  foreach ($grupos as $grupo)
 	{
 		echo "<option>".$grupo["grupo"]."</option>";

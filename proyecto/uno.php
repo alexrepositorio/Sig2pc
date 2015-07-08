@@ -1,4 +1,27 @@
 <?php
+$tabla_constantes=Array("envios" => "envios",
+	"usuarios" => "usuarios",
+	"socios" => "socios",
+	"altas" => "altas",
+	"lotes"=>"lotes",
+	"parcelas"=>"parcelas",
+	"personas"=>"persona",
+	"despachos"=>"despachos",
+	"altas"=>"altas",
+	"analisis"=>"analisis",
+	"asociaciones"=>"asociaciones",
+	"catas"=>"catas",
+	"certificaciones"=>"certificaciones",
+	"configuraciones"=>"configuraciones",
+	"estimaciones"=>"estimaciones",
+	"grupos"=>"grupos",
+	"subparcelas"=>"subparcelas");
+
+$operaciones_constantes=Array(
+	"I" => "INSERCIÓN",
+	"U" => "EDICION",
+	"D" => "BORRADO"
+	);
 $marcos=Array("Regular","Medio","Aleatorio");
 $hierbas=Array("Limpio","Medio","Muchas");
 $sombreados=Array("Poco","Medio","Mucho");
@@ -106,6 +129,8 @@ $tipos_sabor_res=array('Refrescante',
 					'Vinoso',
 					'Áspero',
 					'Saldo');
+
+
 
 function transformar_a_lista($resultado){
 	if (mysqli_num_rows($resultado)>0) {

@@ -9,11 +9,17 @@ function certificacion($criterio,$in_socio)
 function certificarsocio($id,$anio,$estado){	
 	require("conect.php");
     $sql="call SP_socio_certificar('".$id."','".$anio."','".$estado."')";
-    $result=mysqli_query($link,$sql) or die(mysqli_error($link));
+    mysqli_query($link,$sql) or die(mysqli_error($link));
+    global $operaciones_constantes,$tabla_constantes;
+    guarda_historia($_SESSION["user"], $operaciones_constantes["I"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["certificaciones"], gethostname()); 
+    require("config_disconnect.php");
 }
 function certificacionborrar($id){
 	require("conect.php");
     $SQL="call SP_certificaciones_del('".$id."')";
-    $result=mysqli_query($link,$SQL) or die(mysqli_error($link));
+    mysqli_query($link,$SQL) or die(mysqli_error($link));
+    global $operaciones_constantes,$tabla_constantes;
+    guarda_historia($_SESSION["user"], $operaciones_constantes["D"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["certificaciones"], gethostname()); 
+    require("config_disconnect.php");
 }
 

@@ -4,6 +4,7 @@ function catas_consultar($criterio,$valor)
 	require("conect.php");
 	$SQL="CALL SP_catas_cons('".$criterio."','".$valor."')";
 	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
+    require("config_disconnect.php");
 	return(transformar_a_lista($resultado));
 }
 function catas_insertar($p_id,$p_lote,$p_fecha,$p_catador,$p_tostado,$p_fragancia,$p_tipo_aroma1,$p_nota_aroma,
@@ -22,6 +23,9 @@ function catas_insertar($p_id,$p_lote,$p_fecha,$p_catador,$p_tostado,$p_fraganci
 		'".$p_d_terroso."','".$p_d_extrano."','".$p_d_sucio."','".$p_d_astringente."','".$p_d_quaquers."',
 		'".$p_dl_cereal."','".$p_dl_fermento."','".$p_dl_reposo."','".$p_dl_moho."','".$p_dl_astringencia."','".$p_d_general."')";
 	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
+	global $operaciones_constantes,$tabla_constantes;
+    guarda_historia($_SESSION["user"], $operaciones_constantes["I"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["catas"], gethostname()); 
+    require("config_disconnect.php");
 }
 function catas_actualizar($p_id,$p_lote,$p_fecha,$p_catador,$p_tostado,$p_fragancia,$p_tipo_aroma1,$p_nota_aroma,
 	$p_sabor,$p_tipo_sabor,$p_nota_sabor,$p_sabor_residual,$p_tipo_sabor_residual,$p_nota_sabor_residual,
@@ -39,6 +43,9 @@ function catas_actualizar($p_id,$p_lote,$p_fecha,$p_catador,$p_tostado,$p_fragan
 		'".$p_d_terroso."','".$p_d_extrano."','".$p_d_sucio."','".$p_d_astringente."','".$p_d_quaquers."',
 		'".$p_dl_cereal."','".$p_dl_fermento."','".$p_dl_reposo."','".$p_dl_moho."','".$p_dl_astringencia."','".$p_d_general."')";
 	$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
+	global $operaciones_constantes,$tabla_constantes;
+    guarda_historia($_SESSION["user"], $operaciones_constantes["U"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["catas"], gethostname()); 
+    require("config_disconnect.php");
 }
 
 ?>

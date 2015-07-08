@@ -29,7 +29,6 @@ echo "</datalist></td></tr>";
 echo "<tr><th><h4>Nombres</th><td>";
 echo "<select name=nombre required>";
 			echo "<option value=''>Verifique que sus nombres esten en la base</option>";
-			$result=;
   	 $nombress=obtenerNombres();
  foreach ($nombress as $nombre)
 	{

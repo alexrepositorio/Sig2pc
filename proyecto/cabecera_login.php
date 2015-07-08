@@ -11,6 +11,5 @@
 
 <?php
 include("titulo.html");
-include("usuarios_funciones.php");
 ?>
 
