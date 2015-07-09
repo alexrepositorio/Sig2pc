@@ -1,5 +1,4 @@
 <?php
-  include ("historial_funciones.php");
 	function busquedas($criterio,$post){		
 		require("conect.php");   				
     	$SQL="call SP_envios_con('".$criterio."','".$post."')";//Procedimiento Almacenado
