@@ -6,26 +6,21 @@ include ("pagos_funciones.php");
 include ("certificaciones_funciones.php");
 include ("estimaciones_funciones.php");
 
-		// $SQL="SELECT * FROM pagos where lote='".$_GET["lote"]."'";
 		$pago1 = busqueda_pagos("lote",$_GET["lote"]);
 		$cuenta = count($pago1);
-		// $res_pago=mysqli_query($link, $SQL);
-		// $cuenta=mysqli_num_rows($res_pago);
+
 		if($cuenta==0){
 			$pago["exportable"]="<h4><font color=red>Pendiente</font></h4>";
 			$pago["descarte"]="<h4><font color=red>Pendiente</font></h4>";
 			$pago["calidad"]="<h4><font color=red>Pendiente</font></h4>";
 			$total="<h4><font color=red>Pendiente</font></h4>";}
 		else{
-			// $pago = mysqli_fetch_array($res_pago,MYSQLI_ASSOC);
 			$pago = busqueda_pagos("lote",$_GET["lote"]);
 			$total = $pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["calidad"];
 		}
 
 		$lote = busqueda_lotes("lote", $_GET["lote"]);
-		// $SQL="SELECT * FROM lotes where codigo_lote='".$_GET["lote"]."'";
-		// $res_lote=mysqli_query($link, $SQL);
-		// $lote = mysqli_fetch_array($res_lote,MYSQLI_ASSOC);
+
 		$pilado = round((($lote[0]["peso"]*(1-($lote[0]["humedad"])/100))/0.88)*($lote[0]["rto_pilado"])/100,2);
 		$exportable = round($pilado*($lote[0]["rto_exportable"]/100),2);
 		$descarte = round($pilado-$exportable,2);
@@ -35,16 +30,13 @@ include ("estimaciones_funciones.php");
 			$input_q="NO APTO<input type='hidden' name=calidad value='0'>";}
 		else{
 			$cata1 = busqueda_catas($_GET["lote"]);
-			// $SQL="SELECT * FROM catas where lote='".$_GET["lote"]."'";
-			// $res_cata=mysqli_query($link, $SQL);
-			// $cuenta_catas=mysqli_num_rows($res_cata);
+
 			if(empty($cata1)){
 				$cata["puntuacion"]="PEND";
 				$input_q="PENDIENTE DE CATA<input type='hidden' name=calidad value='0'>";
 			}
 			else{
 				$cata = busqueda_catas($_GET["lote"]);
-				// $cata = mysqli_fetch_array($res_cata,MYSQLI_ASSOC);
 				$input_q="$<input type='text' name=calidad value='".$pago[0]["calidad"]."'>";
 				if($cata["puntuacion"]<=84){
 					$input_q="NO APTO<input type='hidden' name=calidad value='0'>";
@@ -56,11 +48,6 @@ include ("estimaciones_funciones.php");
 if(isset ($_POST["calidad"])){
 
 	actualizar_calidad($_POST["calidad"], $_GET["lote"]);
-	
-	// $SQL_edit="UPDATE pagos SET 
-	// 				calidad='".$_POST["calidad"]."' 
-	// 				WHERE lote='".$_GET["lote"]."'";
-	// $resultado=mysqli_query($link, $SQL_edit);
 
 	//echo "$SQL_edit";
 	//para el historial

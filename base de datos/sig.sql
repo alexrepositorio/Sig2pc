@@ -787,19 +787,6 @@ left join persona on socios.id_persona=persona.id_persona group by socios.id_soc
 	END case;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_fechas`()
-BEGIN
-
-SELECT DISTINCT date_format(fecha,'%Y-%m-%d') as fecha FROM lotes ORDER BY fecha ASC;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_grupos`()
-BEGIN
-
-SELECT grupo as pob, codigo_grupo as cod FROM grupos ORDER BY codigo_grupo ASC;
-
-END$$
-
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_lotes`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20))
 BEGIN
 
@@ -807,6 +794,10 @@ case  criterio
 	when ''
 	then
 	SELECT * FROM lotes order by fecha desc;
+    
+    when 'lote'
+	then
+	SELECT * FROM lotes WHERE id=valor;
 	            
 	when 'socio'
 	then
@@ -815,9 +806,9 @@ case  criterio
 
 	when 'localidad'
 	then
-	
-    SELECT lotes.* FROM lotes 
-    LEFT JOIN socios on lotes.id_socio=socios.codigo
+    
+    SELECT * FROM lotes 
+    LEFT JOIN socios on lotes.id_socio=socios.id_socio
     LEFT JOIN grupos on socios.id_grupo=grupos.id 
     WHERE grupos.grupo = valor order by fecha desc;
                     
@@ -830,8 +821,11 @@ case  criterio
 	when 'pendientes'
 	then               
 	SELECT * FROM lotes WHERE codigo_lote NOT IN(SELECT lote FROM pagos) order by fecha desc;				
-					                         
-	END case;
+    
+    when 'pago'
+    then
+    SELECT lotes.*, pagos.exportable FROM lotes LEFT JOIN pagos on lotes.id=pagos.lote WHERE lotes.id_socio = valor;
+END case;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_nombre_socio`(IN `id` VARCHAR(20))
@@ -851,6 +845,56 @@ SELECT socios.id_socio, persona.nombres, persona.apellidos, socios.codigo, count
 left join lotes on socios.id_socio=lotes.id_socio 
 left join persona on socios.id_persona=persona.id_persona group by socios.id_socio ORDER BY codigo ASC;
 
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_pagos`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20))
+    NO SQL
+BEGIN
+case  criterio
+	when 'lote'
+	then
+	SELECT * FROM pagos where lote=valor;
+    
+    when 'pago'
+	then
+    SELECT * FROM pagos where id=valor;
+END case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_pagos_del`(IN `in_pago` VARCHAR(20))
+    NO SQL
+DELETE FROM pagos WHERE id=in_pago$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_ins`(IN `in_codigo_lote` VARCHAR(20), IN `in_fecha` DATE, IN `in_exportable` FLOAT(10,2), IN `in_descarte` FLOAT(10,2), IN `in_fuera` FLOAT(10,2), IN `in_calidad` FLOAT(10,2), IN `in_cliente` FLOAT(10,2), IN `in_microlote` FLOAT(10,2), IN `in_tazadorada` FLOAT(10,2))
+    NO SQL
+BEGIN
+
+INSERT INTO pagos (`lote`,`fecha`,`exportable`,`descarte`,`fuera`,`calidad`,`cliente`,`microlote`,`tazadorada`)
+VALUES (in_codigo_lote, in_fecha, in_exportable, in_descarte, in_fuera, in_calidad, in_cliente, in_microlote, in_tazadorada);
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_upd`(IN `in_fecha` DATE, IN `in_exportable` FLOAT(10,2), IN `in_descarte` FLOAT(10,2), IN `in_fuera` FLOAT(10,2), IN `in_calidad` FLOAT(10,2), IN `in_cliente` FLOAT(10,2), IN `in_microlote` FLOAT(10,2), IN `in_tazadorada` FLOAT(10,2), IN `in_id` INT)
+    NO SQL
+BEGIN
+
+UPDATE pagos SET
+    fecha = in_fecha,
+    exportable = in_exportable,
+    descarte = in_descarte,
+    fuera = in_fuera,
+    calidad = in_calidad,
+    cliente = in_cliente,
+    microlote = in_microlote,
+    tazadorada = in_tazadorada
+    WHERE id = in_id;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_upd_calidad`(IN `in_calidad` FLOAT(10,2), IN `in_lote` INT)
+    NO SQL
+BEGIN
+	UPDATE pagos SET calidad = in_calidad WHERE lote = in_lote;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_parcelas_cons`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20)
