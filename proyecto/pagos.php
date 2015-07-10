@@ -298,17 +298,16 @@
 				$unidades_dolar = "";
 				$unidades_dolar_cata = "";
 			}else{
-				$pago = busqueda_pagos($lote["id"]);
+				$pago = busqueda_pagos("lote",$lote["id"]);
 				$unidades_dolar = "$";
 
-				if($pago[0]["calidad"] == 0){
-					$pago[0]["calidad"] = "<h4><font color=red>Pendiente</font></h4>";
-					$unidades_dolar_cata = "";
-					$total = $pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["fuera"]+$pago[0]["microlote"]+$pago[0]["tazadorada"];
+				if($pago[0]["calidad"]==0){
+					$pago[0]["calidad"]="<h4><font color=red>Pendiente</font></h4>";
+					$unidades_dolar_cata="";
+					$total = $pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["fuera"]+$pago[0]["cliente"]+$pago[0]["microlote"]+$pago[0]["tazadorada"];
 				}else{
-					$total = $pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["fuera"]+$pago[0]["calidad"]+$pago[0]["cliente"]+$pago[0]["microlote"]+$pago[0]["tazadorada"];
-				}
-							
+					$total=$pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["fuera"]+$pago[0]["calidad"]+$pago[0]["cliente"]+$pago[0]["microlote"]+$pago[0]["tazadorada"];
+				}		
 			}
 
 			$totales[]=$total;

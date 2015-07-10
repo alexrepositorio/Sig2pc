@@ -39,10 +39,10 @@ function busqueda_catas($lote){
 	return (transformar_a_lista($resultado));
 }
 
-function busqueda_pagos($lote){
+function busqueda_pagos($criterio, $valor){
 	require("conect.php");
-	$SQL = "call SP_pagos_cons('lote','".$lote."')";
-	$resultado = mysqli_query($link, $SQL) or die(mysqli_error($link));
+	$SQL = "call SP_pagos_cons_pagos('".$criterio."','".$valor."')";
+	$resultado = mysqli_query($link, $SQL);
 	return (transformar_a_lista($resultado));
 }
 

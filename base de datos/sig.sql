@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.11
+-- version 4.4.3
 -- http://www.phpmyadmin.net
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 09-07-2015 a las 21:39:22
--- Versión del servidor: 5.6.21
--- Versión de PHP: 5.6.3
+-- Servidor: localhost
+-- Tiempo de generación: 10-07-2015 a las 03:39:42
+-- Versión del servidor: 5.6.24
+-- Versión de PHP: 5.5.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de datos: `sig`
+-- Base de datos: `sig_integrada`
 --
 
 DELIMITER $$
@@ -562,11 +562,7 @@ then
 END case;
 end$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_cons`(
-in criterio varchar(20),
-in valor varchar(20),
-in valor2 varchar(20)
-)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_cons`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20), IN `valor2` VARCHAR(20))
 BEGIN
 	case  criterio
 when 'socio'
@@ -634,7 +630,7 @@ then
     order by fecha desc;  
 when 'pagos'
 then 
-	SELECT * FROM lotes 
+	SELECT lotes.*, pagos.exportable FROM lotes 
 	LEFT JOIN pagos on lotes.id=pagos.lote 
 	WHERE lotes.id_socio=valor 
 	order by lotes.fecha asc;    
@@ -746,10 +742,7 @@ BEGIN
 	SELECT * FROM niveles;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_pagos_cons`(
-in criterio varchar(20),
-in valor varchar(20)
-)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_pagos_cons`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20))
 BEGIN
 case criterio
 when 'lote'
@@ -758,7 +751,9 @@ then
 when 'v_actuales'
 then
 	SELECT * FROM lotes WHERE id NOT IN (SELECT lote FROM pagos);
-    
+when 'pago'
+	then
+    SELECT * FROM pagos where id=valor;
 end case;
 END$$
 
@@ -838,15 +833,6 @@ WHERE socios.id_socio=id;
 
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_socios`()
-BEGIN
-
-SELECT socios.id_socio, persona.nombres, persona.apellidos, socios.codigo, count(lotes.id_socio) FROM socios 
-left join lotes on socios.id_socio=lotes.id_socio 
-left join persona on socios.id_persona=persona.id_persona group by socios.id_socio ORDER BY codigo ASC;
-
-END$$
-
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_pagos`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20))
     NO SQL
 BEGIN
@@ -859,6 +845,15 @@ case  criterio
 	then
     SELECT * FROM pagos where id=valor;
 END case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_pagos_cons_socios`()
+BEGIN
+
+SELECT socios.id_socio, persona.nombres, persona.apellidos, socios.codigo, count(lotes.id_socio) FROM socios 
+left join lotes on socios.id_socio=lotes.id_socio 
+left join persona on socios.id_persona=persona.id_persona group by socios.id_socio ORDER BY codigo ASC;
+
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_pagos_del`(IN `in_pago` VARCHAR(20))
@@ -1099,7 +1094,7 @@ SELECT socios.id_socio as id,`nombres`, `apellidos`, socios.codigo as codigo, `c
                 
 when 'id'
 then               
-SELECT `id_socio`,`nombres`, `apellidos`, socios.codigo as codigo,canton.canton as canton,provincia.provincia as provincia, `cedula`,`celular`, `f_nacimiento`, `email`, `direccion`, `genero`,`grupo` as poblacion FROM persona
+SELECT `id_socio`,`nombres`, `apellidos`, socios.codigo as codigo,canton.canton as canton,provincia.provincia as provincia, `cedula`,`celular`, `f_nacimiento`, `email`, `direccion`, `foto`, `genero`,`grupo` as poblacion FROM persona
 	left join socios
 	on socios.id_persona=persona.id_persona
 	left join grupos
@@ -1284,7 +1279,7 @@ DELIMITER ;
 --
 
 CREATE TABLE IF NOT EXISTS `acciones` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `accion` text COLLATE latin1_spanish_ci NOT NULL
@@ -2016,7 +2011,7 @@ INSERT INTO `acciones` (`id`, `user`, `fecha`, `accion`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `altas` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `estado` text COLLATE latin1_spanish_ci NOT NULL
@@ -2083,7 +2078,7 @@ INSERT INTO `altas` (`id`, `id_socio`, `fecha`, `estado`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `analisis` (
-`id_analisis` int(11) NOT NULL,
+  `id_analisis` int(11) NOT NULL,
   `id_subparcela` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `muestra` int(11) NOT NULL,
@@ -2117,7 +2112,7 @@ CREATE TABLE IF NOT EXISTS `analisis` (
 --
 
 CREATE TABLE IF NOT EXISTS `asociaciones` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `concepto` text COLLATE latin1_spanish_ci NOT NULL,
   `valor` text COLLATE latin1_spanish_ci NOT NULL,
   `tipo` text COLLATE latin1_spanish_ci NOT NULL,
@@ -2368,7 +2363,7 @@ INSERT INTO `asociaciones` (`id`, `concepto`, `valor`, `tipo`, `elemento`, `subp
 --
 
 CREATE TABLE IF NOT EXISTS `canton` (
-`id_canton` int(11) NOT NULL,
+  `id_canton` int(11) NOT NULL,
   `canton` varchar(45) DEFAULT NULL,
   `id_provincia` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=222 DEFAULT CHARSET=utf8;
@@ -2607,7 +2602,7 @@ INSERT INTO `canton` (`id_canton`, `canton`, `id_provincia`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `catas` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `catador` text COLLATE latin1_spanish_ci NOT NULL,
@@ -2809,7 +2804,7 @@ INSERT INTO `catas` (`id`, `lote`, `fecha`, `catador`, `tostado`, `fragancia`, `
 --
 
 CREATE TABLE IF NOT EXISTS `certificacion` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `year` int(11) NOT NULL,
   `estatus` text COLLATE latin1_spanish_ci NOT NULL
@@ -2891,7 +2886,7 @@ INSERT INTO `certificacion` (`id`, `id_socio`, `year`, `estatus`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `comentario` (
-`id_COMENTARIO` int(11) NOT NULL,
+  `id_COMENTARIO` int(11) NOT NULL,
   `Comentario` varchar(45) DEFAULT NULL,
   `id_usuario` int(11) NOT NULL,
   `Id_foto` int(11) DEFAULT NULL
@@ -2904,7 +2899,7 @@ CREATE TABLE IF NOT EXISTS `comentario` (
 --
 
 CREATE TABLE IF NOT EXISTS `configuracion` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `parametro` text COLLATE latin1_spanish_ci NOT NULL,
   `descripcion` text COLLATE latin1_spanish_ci NOT NULL,
   `valor` text COLLATE latin1_spanish_ci NOT NULL
@@ -2930,7 +2925,7 @@ INSERT INTO `configuracion` (`id`, `parametro`, `descripcion`, `valor`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `despachos` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `cantidad` float(10,2) NOT NULL,
@@ -2957,7 +2952,7 @@ INSERT INTO `despachos` (`id`, `lote`, `fecha`, `cantidad`, `envio`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `envios` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `destino` text COLLATE latin1_spanish_ci NOT NULL,
   `chofer` text COLLATE latin1_spanish_ci NOT NULL,
@@ -2981,7 +2976,7 @@ INSERT INTO `envios` (`id`, `fecha`, `destino`, `chofer`, `responsable`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `estimacion` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `year` int(11) NOT NULL,
   `estimados` double(10,2) NOT NULL,
@@ -3033,7 +3028,7 @@ INSERT INTO `estimacion` (`id`, `id_socio`, `year`, `estimados`, `entregados`) V
 --
 
 CREATE TABLE IF NOT EXISTS `fotos` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `foto` text COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -3044,7 +3039,7 @@ CREATE TABLE IF NOT EXISTS `fotos` (
 --
 
 CREATE TABLE IF NOT EXISTS `grupos` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `grupo` text COLLATE latin1_spanish_ci NOT NULL,
   `codigo_grupo` text COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -3084,7 +3079,7 @@ INSERT INTO `grupos` (`id`, `grupo`, `codigo_grupo`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `historial` (
-`id_historial` int(11) NOT NULL,
+  `id_historial` int(11) NOT NULL,
   `usuario` varchar(25) NOT NULL,
   `accion` varchar(25) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -3127,7 +3122,7 @@ INSERT INTO `historial` (`id_historial`, `usuario`, `accion`, `fecha`, `datos`, 
 --
 
 CREATE TABLE IF NOT EXISTS `lotes` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `codigo_lote` text COLLATE latin1_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -3331,7 +3326,7 @@ INSERT INTO `lotes` (`id`, `id_socio`, `codigo_lote`, `fecha`, `peso`, `humedad`
 --
 
 CREATE TABLE IF NOT EXISTS `niveles` (
-`id_niveles` int(11) NOT NULL,
+  `id_niveles` int(11) NOT NULL,
   `nivel` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
@@ -3353,7 +3348,7 @@ INSERT INTO `niveles` (`id_niveles`, `nivel`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `pagos` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `exportable` float(10,2) NOT NULL,
@@ -3363,7 +3358,7 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   `cliente` float(10,2) NOT NULL,
   `microlote` float(10,2) NOT NULL,
   `tazadorada` float(10,2) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `pagos`
@@ -3372,7 +3367,10 @@ CREATE TABLE IF NOT EXISTS `pagos` (
 INSERT INTO `pagos` (`id`, `lote`, `fecha`, `exportable`, `descarte`, `fuera`, `calidad`, `cliente`, `microlote`, `tazadorada`) VALUES
 (1, 93, '2014-09-18 21:38:38', 800.00, 70.00, 0.00, 0.00, 0.00, 0.00, 0.00),
 (2, 37, '2014-09-23 02:41:21', 0.00, 0.00, 100.00, 0.00, 0.00, 0.00, 0.00),
-(3, 36, '2014-09-25 14:53:29', 1499.00, 190.00, 0.00, 0.00, 45.00, 250.00, 300.00);
+(3, 36, '2014-09-25 14:53:29', 1499.00, 190.00, 0.00, 0.00, 45.00, 250.00, 300.00),
+(4, 170, '2015-07-10 05:00:00', 0.00, 0.00, 50.00, 0.00, 60.00, 70.00, 80.00),
+(5, 171, '2015-07-10 05:00:00', 0.00, 0.00, 10.00, 0.00, 20.00, 30.00, 40.00),
+(6, 168, '2015-07-10 05:00:00', 0.00, 0.00, 15.00, 0.00, 22.00, 23.00, 24.00);
 
 -- --------------------------------------------------------
 
@@ -3381,7 +3379,7 @@ INSERT INTO `pagos` (`id`, `lote`, `fecha`, `exportable`, `descarte`, `fuera`, `
 --
 
 CREATE TABLE IF NOT EXISTS `parcelas` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `coorX` int(11) NOT NULL,
   `coorY` int(11) NOT NULL,
@@ -3500,7 +3498,7 @@ INSERT INTO `parcelas` (`id`, `id_socio`, `coorX`, `coorY`, `alti`, `sup_total`,
 --
 
 CREATE TABLE IF NOT EXISTS `persona` (
-`id_persona` int(11) NOT NULL,
+  `id_persona` int(11) NOT NULL,
   `nombres` text,
   `apellidos` text,
   `cedula` bigint(20) DEFAULT NULL,
@@ -3832,7 +3830,7 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 --
 
 CREATE TABLE IF NOT EXISTS `provincia` (
-`id_provincia` int(11) NOT NULL,
+  `id_provincia` int(11) NOT NULL,
   `provincia` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
@@ -3873,7 +3871,7 @@ INSERT INTO `provincia` (`id_provincia`, `provincia`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `socios` (
-`id_socio` int(11) NOT NULL,
+  `id_socio` int(11) NOT NULL,
   `id_grupo` int(11) DEFAULT NULL,
   `id_persona` int(11) DEFAULT NULL,
   `codigo` text COLLATE latin1_spanish_ci NOT NULL
@@ -4196,7 +4194,7 @@ INSERT INTO `socios` (`id_socio`, `id_grupo`, `id_persona`, `codigo`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `subparcelas` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `id_parcela` int(11) NOT NULL,
   `superficie` float(10,2) NOT NULL,
   `variedad` text COLLATE latin1_spanish_ci NOT NULL,
@@ -4321,7 +4319,7 @@ INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `varied
 --
 
 CREATE TABLE IF NOT EXISTS `usuarios` (
-`id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
   `pass` text COLLATE latin1_spanish_ci NOT NULL,
   `id_nivel` int(11) NOT NULL,
@@ -4348,145 +4346,168 @@ INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`, `estado`
 -- Indices de la tabla `acciones`
 --
 ALTER TABLE `acciones`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `altas`
 --
 ALTER TABLE `altas`
- ADD PRIMARY KEY (`id`), ADD KEY `fk_alta_SOCIO_idx` (`id_socio`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_alta_SOCIO_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `analisis`
 --
 ALTER TABLE `analisis`
- ADD PRIMARY KEY (`id_analisis`), ADD KEY `fk_subparcela_analisis_idx` (`id_subparcela`);
+  ADD PRIMARY KEY (`id_analisis`),
+  ADD KEY `fk_subparcela_analisis_idx` (`id_subparcela`);
 
 --
 -- Indices de la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
- ADD PRIMARY KEY (`id`), ADD KEY `FK_SUBPARCELA_ASOCIACION_idx` (`subparcela_id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_SUBPARCELA_ASOCIACION_idx` (`subparcela_id`);
 
 --
 -- Indices de la tabla `canton`
 --
 ALTER TABLE `canton`
- ADD PRIMARY KEY (`id_canton`), ADD KEY `FK_provincia_idx` (`id_provincia`);
+  ADD PRIMARY KEY (`id_canton`),
+  ADD KEY `FK_provincia_idx` (`id_provincia`);
 
 --
 -- Indices de la tabla `catas`
 --
 ALTER TABLE `catas`
- ADD PRIMARY KEY (`id`), ADD KEY `fk:CATA_LOTE_idx` (`lote`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk:CATA_LOTE_idx` (`lote`);
 
 --
 -- Indices de la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
- ADD PRIMARY KEY (`id`), ADD KEY `fk_:SOCIO_CERTIFICACION_idx` (`id_socio`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_:SOCIO_CERTIFICACION_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `comentario`
 --
 ALTER TABLE `comentario`
- ADD PRIMARY KEY (`id_COMENTARIO`), ADD KEY `FK_Comentario_cuenta_idx` (`id_usuario`), ADD KEY `FK_Foto_COmentario_idx` (`Id_foto`);
+  ADD PRIMARY KEY (`id_COMENTARIO`),
+  ADD KEY `FK_Comentario_cuenta_idx` (`id_usuario`),
+  ADD KEY `FK_Foto_COmentario_idx` (`Id_foto`);
 
 --
 -- Indices de la tabla `configuracion`
 --
 ALTER TABLE `configuracion`
- ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id` (`id`);
 
 --
 -- Indices de la tabla `despachos`
 --
 ALTER TABLE `despachos`
- ADD PRIMARY KEY (`id`), ADD KEY `fk_despacho_lote_idx` (`lote`), ADD KEY `FK_DESPACHO_ENVIO_idx` (`envio`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_despacho_lote_idx` (`lote`),
+  ADD KEY `FK_DESPACHO_ENVIO_idx` (`envio`);
 
 --
 -- Indices de la tabla `envios`
 --
 ALTER TABLE `envios`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
- ADD PRIMARY KEY (`id`), ADD KEY `fk:_Estimacion_socio_idx` (`id_socio`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk:_Estimacion_socio_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `fotos`
 --
 ALTER TABLE `fotos`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `grupos`
 --
 ALTER TABLE `grupos`
- ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `historial`
 --
 ALTER TABLE `historial`
- ADD PRIMARY KEY (`id_historial`);
+  ADD PRIMARY KEY (`id_historial`);
 
 --
 -- Indices de la tabla `lotes`
 --
 ALTER TABLE `lotes`
- ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`), ADD KEY `FK_SOCIO_LOTE_idx` (`id_socio`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id` (`id`),
+  ADD KEY `FK_SOCIO_LOTE_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `niveles`
 --
 ALTER TABLE `niveles`
- ADD PRIMARY KEY (`id_niveles`);
+  ADD PRIMARY KEY (`id_niveles`);
 
 --
 -- Indices de la tabla `pagos`
 --
 ALTER TABLE `pagos`
- ADD PRIMARY KEY (`id`), ADD KEY `FK_PAGO_LOTE_idx` (`lote`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_PAGO_LOTE_idx` (`lote`);
 
 --
 -- Indices de la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
- ADD PRIMARY KEY (`id`), ADD KEY `FK_PARCELA_SOCIO_idx` (`id_socio`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_PARCELA_SOCIO_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `persona`
 --
 ALTER TABLE `persona`
- ADD PRIMARY KEY (`id_persona`), ADD KEY `FK_id_provincia_idx` (`id_canton`);
+  ADD PRIMARY KEY (`id_persona`),
+  ADD KEY `FK_id_provincia_idx` (`id_canton`);
 
 --
 -- Indices de la tabla `provincia`
 --
 ALTER TABLE `provincia`
- ADD PRIMARY KEY (`id_provincia`);
+  ADD PRIMARY KEY (`id_provincia`);
 
 --
 -- Indices de la tabla `socios`
 --
 ALTER TABLE `socios`
- ADD PRIMARY KEY (`id_socio`), ADD KEY `id_socio` (`id_socio`), ADD KEY `FK_SOCIO_GRUPO_idx` (`id_grupo`), ADD KEY `FK_PERSONA_SOCIO_idx` (`id_persona`);
+  ADD PRIMARY KEY (`id_socio`),
+  ADD KEY `id_socio` (`id_socio`),
+  ADD KEY `FK_SOCIO_GRUPO_idx` (`id_grupo`),
+  ADD KEY `FK_PERSONA_SOCIO_idx` (`id_persona`);
 
 --
 -- Indices de la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
- ADD PRIMARY KEY (`id`), ADD KEY `fk_subparcela_parcela_idx` (`id_parcela`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_subparcela_parcela_idx` (`id_parcela`);
 
 --
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
- ADD PRIMARY KEY (`id`), ADD KEY `USUARIOS_PERSONA` (`id_persona`), ADD KEY `FK_USUARIO_NIVEL_idx` (`id_nivel`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `USUARIOS_PERSONA` (`id_persona`),
+  ADD KEY `FK_USUARIO_NIVEL_idx` (`id_nivel`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -4496,122 +4517,122 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `acciones`
 --
 ALTER TABLE `acciones`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=712;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=712;
 --
 -- AUTO_INCREMENT de la tabla `altas`
 --
 ALTER TABLE `altas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=52;
 --
 -- AUTO_INCREMENT de la tabla `analisis`
 --
 ALTER TABLE `analisis`
-MODIFY `id_analisis` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_analisis` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=732;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=732;
 --
 -- AUTO_INCREMENT de la tabla `canton`
 --
 ALTER TABLE `canton`
-MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=222;
+  MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=222;
 --
 -- AUTO_INCREMENT de la tabla `catas`
 --
 ALTER TABLE `catas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=146;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=146;
 --
 -- AUTO_INCREMENT de la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=341;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=341;
 --
 -- AUTO_INCREMENT de la tabla `comentario`
 --
 ALTER TABLE `comentario`
-MODIFY `id_COMENTARIO` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_COMENTARIO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `configuracion`
 --
 ALTER TABLE `configuracion`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `despachos`
 --
 ALTER TABLE `despachos`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `envios`
 --
 ALTER TABLE `envios`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=35;
 --
 -- AUTO_INCREMENT de la tabla `fotos`
 --
 ALTER TABLE `fotos`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `grupos`
 --
 ALTER TABLE `grupos`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
 --
 -- AUTO_INCREMENT de la tabla `historial`
 --
 ALTER TABLE `historial`
-MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;
+  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;
 --
 -- AUTO_INCREMENT de la tabla `lotes`
 --
 ALTER TABLE `lotes`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=172;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=172;
 --
 -- AUTO_INCREMENT de la tabla `niveles`
 --
 ALTER TABLE `niveles`
-MODIFY `id_niveles` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+  MODIFY `id_niveles` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT de la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=313;
+  MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=313;
 --
 -- AUTO_INCREMENT de la tabla `provincia`
 --
 ALTER TABLE `provincia`
-MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=25;
+  MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT de la tabla `socios`
 --
 ALTER TABLE `socios`
-MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=307;
+  MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=307;
 --
 -- AUTO_INCREMENT de la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=302;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=302;
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- Restricciones para tablas volcadas
 --
@@ -4620,101 +4641,101 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 -- Filtros para la tabla `altas`
 --
 ALTER TABLE `altas`
-ADD CONSTRAINT `fk_alta_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_alta_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `analisis`
 --
 ALTER TABLE `analisis`
-ADD CONSTRAINT `fk_subparcela_analisis` FOREIGN KEY (`id_subparcela`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_subparcela_analisis` FOREIGN KEY (`id_subparcela`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
-ADD CONSTRAINT `FK_SUBPARCELA_ASOCIACION` FOREIGN KEY (`subparcela_id`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_SUBPARCELA_ASOCIACION` FOREIGN KEY (`subparcela_id`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `canton`
 --
 ALTER TABLE `canton`
-ADD CONSTRAINT `fk_provin` FOREIGN KEY (`id_provincia`) REFERENCES `provincia` (`id_provincia`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_provin` FOREIGN KEY (`id_provincia`) REFERENCES `provincia` (`id_provincia`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `catas`
 --
 ALTER TABLE `catas`
-ADD CONSTRAINT `fk_CATA_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_CATA_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
-ADD CONSTRAINT `fk_SOCIO_CERTIFICACION` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_SOCIO_CERTIFICACION` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `comentario`
 --
 ALTER TABLE `comentario`
-ADD CONSTRAINT `FK_Comentario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `FK_Foto_COmentario` FOREIGN KEY (`Id_foto`) REFERENCES `fotos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_Comentario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_Foto_COmentario` FOREIGN KEY (`Id_foto`) REFERENCES `fotos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `despachos`
 --
 ALTER TABLE `despachos`
-ADD CONSTRAINT `FK_DESPACHO_ENVIO` FOREIGN KEY (`envio`) REFERENCES `envios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `fk_despacho_lote` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_DESPACHO_ENVIO` FOREIGN KEY (`envio`) REFERENCES `envios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_despacho_lote` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
-ADD CONSTRAINT `fk_Estimacion_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_Estimacion_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `lotes`
 --
 ALTER TABLE `lotes`
-ADD CONSTRAINT `FK_SOCIO_LOTE` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_SOCIO_LOTE` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `pagos`
 --
 ALTER TABLE `pagos`
-ADD CONSTRAINT `FK_PAGO_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_PAGO_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
-ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `persona`
 --
 ALTER TABLE `persona`
-ADD CONSTRAINT `fk_canton` FOREIGN KEY (`id_canton`) REFERENCES `canton` (`id_canton`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_canton` FOREIGN KEY (`id_canton`) REFERENCES `canton` (`id_canton`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `socios`
 --
 ALTER TABLE `socios`
-ADD CONSTRAINT `FK_PERSONA_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `FK_SOCIO_GRUPO` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_PERSONA_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_SOCIO_GRUPO` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id_parcela`) REFERENCES `parcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id_parcela`) REFERENCES `parcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-ADD CONSTRAINT `FK_USUARIO_NIVEL` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `FK_USUARIO_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `FK_USUARIO_NIVEL` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `FK_USUARIO_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

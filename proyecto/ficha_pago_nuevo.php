@@ -9,7 +9,7 @@
 	include ("catas_funciones.php");
 	include ("altas_funciones.php");
 
-	$pago1 = busqueda_pagos($_GET["lote"]);
+	$pago1 = busqueda_pagos("lote", $_GET["lote"]);
 	if (is_array($pago1)) {
 		$cuenta = count($pago1);
 		$total = $pago1["exportable"]+$pago1["descarte"]+$pago1["calidad"];
@@ -23,6 +23,7 @@
 
 	$lote = LotesConsultarCriterio("id", $_GET["lote"]);
 	$lote = $lote[0];
+
 	$trillado_gr = configuracion_cons('parametro',"gr_muestra")[0]["valor"]-($lote["rto_exportable"]+$lote["rto_descarte"]);
 	$trillado = 100-($lote["rto_exportable"]+$lote["rto_descarte"])/configuracion_cons('parametro',"gr_muestra")[0]["valor"]*100;
 	$descarte_prc = ($lote["rto_descarte"]/($lote["rto_exportable"]+$lote["rto_descarte"])*100)+1.5;
@@ -89,13 +90,13 @@
 	}else{
 		$enlace_altas = "<a href=historial_altas_nuevo.php?socio=".$socio["id_socio"].">añadir</a>";
 	}
-	
+
 	$lotes = LotesConsultarpagos($socio["id_socio"]);
 	if (is_array($lotes)) {
 		$cuenta_lotes = count($lotes);
-		foreach ($lotes as $lote) {
-			$pesos_del_socio[] = $lote["peso"];	
-			$todos_lotes_del_socio[] = $lote;
+		foreach ($lotes as $lote1) {
+			$pesos_del_socio[] = $lote1["peso"];	
+			$todos_lotes_del_socio[] = $lote1;
 		}
 		$peso_entregado = array_sum($pesos_del_socio);
 		$cuenta_lotes_t = "(<font color=red><b>$cuenta_lotes</b></font>)";
@@ -128,9 +129,11 @@
 
 //muestra_array($socio);
 
+	if($socio["foto"]==""){$socio["foto"]="no_foto.png";}
+
 	echo "<form name=form action=".$_SERVER['PHP_SELF']."?lote=".$_GET["lote"]." method='post'>";
 	echo "<table class=tablas>";
-	echo "
+	echo "<tr><th><h4><img src=images/".$socio["foto"]." width=150></th>
 	<td colspan=2><h4>".$socio["codigo"]."-".$socio["nombres"]." ".$socio["apellidos"]."
 	&nbsp&nbsp&nbsp<a href=pagos.php?criterio=socio&socio=".$socio["id_socio"]."><img width=15 src=images/history.png></a><br>
 	".$socio["poblacion"]."<br><br>Lote:<hr>".$lote["codigo_lote"]."<br>".$lote["fecha"]."<br>
@@ -161,12 +164,15 @@
 		echo "<tr><th><h6>Código</td><th><h6>Fecha</td><th><h6>Pergamino</td><th><h6>Acumulado</td><th><h6>Restante</td><th><h6>Pagado</td></tr>";
 		$acumulado=0;
 		$restante=$estimado_actual["estimados"]*(1+(configuracion_cons('parametro',"margen_contrato")[0]["valor"]/100));
+		
 		foreach($todos_lotes_del_socio as $ls){
 			if(strtotime($ls["fecha"])<=strtotime($lote["fecha"])) {
 				if($ls["exportable"]>0){
-					$pagado=1;$enlace_pago = "";
+					$pagado=1;
+					$enlace_pago = "";
 				} else {
-					$pagado=0;$enlace_pago = "<a href=ficha_pago_nuevo.php?lote=".$ls["id"].">";
+					$pagado=0;
+					$enlace_pago = "<a href=ficha_pago_nuevo.php?lote=".$ls["id"].">";
 				}	
 				$pagado = yes_no($pagado);
 				$acumulado = $acumulado+$ls["peso"];
@@ -237,12 +243,21 @@
 	echo "<tr><th><h4>Fecha</th><td colspan=2><input type='text' name=fecha value='".date("Y-m-d H:i:s",time())."'></td></tr>";
 	echo "<tr><th><h4>Exportable</th><td><b>$exportable_qq qq</td><td>$<input type=$hidden name=exportable ></td></tr>";
 	echo "<tr><th><h4>Descarte</th><td><b>$descarte_qq qq</td><td>$<input type=$hidden name=descarte ></td></tr>";
-	if($acumulado>$estimado_actual["estimados"]){echo "<tr><th><h4>Fuera de contrato</th><td><b>$diferencia qq</td><td>$<input type='text' name=fuera ></td></tr>";}
-	else{echo "<tr><th><h4>Fuera de contrato</th><td><b>$diferencia qq</td><td>$0<input type='hidden' value=0 name=fuera ></td></tr>";}
+	if($acumulado>$estimado_actual["estimados"]){
+		echo "<tr><th><h4>Fuera de contrato</th><td><b>$diferencia qq</td><td>$<input type='text' name=fuera ></td></tr>";
+	} else {
+		echo "<tr><th><h4>Fuera de contrato</th><td><b>$diferencia qq</td><td>$0<input type='hidden' value=0 name=fuera ></td></tr>";
+	}
 	echo "<tr><th><h4>Extra por calidad</th><td><b>".$cata["puntuacion"]."</td><td>$input_q</td></tr>";
-	if(in_array($_SESSION['acceso'],$permisos_admin)){echo "<tr><th><h4>Extra por Cliente</th><td colspan=2>$<input type='text' name=cliente value=''><b>*solo admin</b></td></tr>";}
-	if(in_array($_SESSION['acceso'],$permisos_admin)){echo "<tr><th><h4>Extra por Mircolote</th><td colspan=2>$<input type='text' name=microlote value=''><b>*solo admin</b></td></tr>";}
-	if(in_array($_SESSION['acceso'],$permisos_admin)){echo "<tr><th><h4>Extra por Taza Dorada</th><td colspan=2>$<input type='text' name=tazadorada value=''><b>*solo admin</b></td></tr>";}
+	if(in_array($_SESSION['acceso'],$permisos_admin)){
+		echo "<tr><th><h4>Extra por Cliente</th><td colspan=2>$<input type='text' name=cliente value=''><b>*solo admin</b></td></tr>";
+	}
+	if(in_array($_SESSION['acceso'],$permisos_admin)){
+		echo "<tr><th><h4>Extra por Mircolote</th><td colspan=2>$<input type='text' name=microlote value=''><b>*solo admin</b></td></tr>";
+	}
+	if(in_array($_SESSION['acceso'],$permisos_admin)){
+		echo "<tr><th><h4>Extra por Taza Dorada</th><td colspan=2>$<input type='text' name=tazadorada value=''><b>*solo admin</b></td></tr>";
+	}
 	echo "</table><br>";
 	echo "<input type='hidden' name=codigo_lote value='".$_GET["lote"]."'>";
 	echo "<input type='submit' value='Guardar'>";
