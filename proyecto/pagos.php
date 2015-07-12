@@ -1,10 +1,8 @@
 <?php
 	include ("cabecera.php");
-	include ("pagos_funciones.php");
-	include ("socio.php");
+	include ("socio_funciones.php");
 	include ("certificaciones_funciones.php");
 	include ("configuracion_funciones.php");
-	include ("lote_funciones.php");
 	include ("grupos_funciones.php");
 	include ("estimaciones_funciones.php");
 	include ("altas_funciones.php");
@@ -20,14 +18,16 @@
 		if(isset($_GET["socio"])) {
 			$_POST["busca"] = $_GET["socio"];
 		}
-
 		if(!isset($_POST["busca"])) {
 			$lotes = LotesConsultarCriterio($_GET["criterio"], ""); //caso de pendientes
 		}else{
-			$lotes = LotesConsultarCriterio($_GET["criterio"], $_POST["busca"]);
+			if (isset($_POST["busca2"])) {
+				$lotes=LotesConsultarfecha($_POST["busca"],$_POST["busca2"]);
+			}else{
+				$lotes = LotesConsultarCriterio($_GET["criterio"], $_POST["busca"]);
+			}
 		}
 		$encontrados = "ENCONTRADOS";
-
 		if ($_GET["criterio"] == "socio") {
 			$datos_del_socio = consultarCriterio('id',$_POST["busca"]);
 			$datos_del_socio = $datos_del_socio[0];
@@ -35,7 +35,12 @@
 		} elseif ($_GET["criterio"] == "pendientes") {
 			$_texto = "";
 		} else{
-			$_texto = "es <i>\"".$_POST["busca"]."\"</i>";
+			if (!isset($_POST["busca2"])) {
+				$_texto = "es <i>\"".$_POST["busca"]."\"</i>";
+			}else{
+				$_texto = "desde <i>\"".$_POST["busca"]."\" hasta  ".$_POST["busca2"]."</i>";
+
+			}
 		}
 		$criterio = "<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> $_texto</h4>";
 	}
@@ -86,26 +91,25 @@
 
 	//Combobox Grupo
 	echo "<td align=center><h4>Grupo<br><form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-	echo "<select name=busca>";
-	$grupos = consultarGrupo('','');
-	foreach ($grupos as $grupo)
+	echo "<input list='grupos' name='busca' value='Seleccione...' required>";	
+	echo "<datalist  id='grupos'>";	
+	$grupos=consultarGrupo('lista','');
+ 	foreach ($grupos as $grupo)
 	{
-		echo "<option value='".$grupo["id"]."''>(".$grupo["codigo_grupo"].")  ".$grupo["grupo"]."</option>";
+		echo "<option>".$grupo["grupo"]."</option>";
 	}
-	echo "</select>";
+	echo "</datalist></br>";
 	echo "<input type='submit' value='filtrar'>";
 	echo "</form></td>";
-
 	//Combobox Fecha
-	echo "<td align=center><h4>Fecha<br><form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
-	echo "<select name=busca>";
-	$fechas = cargar_datos('fecha');
-	if (is_array($fechas)) {
-		foreach ($fechas as $fecha) {
-		echo "<option value=".$fecha['fecha'].">".$fecha['fecha']."</option>";
-		}
-	}
-	echo "</select>";
+	echo "<td align=center><h4>Fecha<br>
+	<form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
+	echo "
+		<label for='desde'>Desde:</label>
+		<input type='date' name='busca' id='desde' >
+		<label for='hasta'>Hasta:</label>
+		<input type='date' name='busca2' id='hasta'>
+	";
 	echo "<input type='submit' value='filtrar'>";
 	echo "</form></td>";
 
@@ -186,8 +190,9 @@
 	}
 	//************************fin información del socio elegido
 
-	echo "<table id='table_id' style='width: 80%' class='tablas' posicion>";
-	echo "<tr><th width=500px>";
+	echo "<table id='table_id' style='width: 90%' class='tablas' posicion>";
+	echo "<thead>";
+	echo "<th width=500px>";
 	echo "<h4>LOTES $encontrados</h4> ($cuenta) total:$sumatotal qq pergamino";
 	echo "</th>";
 	echo "<th width=20px><h6>Exportable</h6></th>";
@@ -198,8 +203,9 @@
 	echo "<th width=20px><h6>Extra Microlote</h6></th>";
 	echo "<th width=20px><h6>Extra Taza dorada</h6></th>";
 	echo "<th width=20px><h6>Total</h6></th>";
-	echo "<th width=20px><h6>Opciones de Pago</h6></th></tr>";
-
+	echo "<th width=20px><h6>Opciones de Pago</h6></th>";
+		echo "</thead>";
+		echo "<tbody>";
 	if(is_array($lotes)){
 		foreach ($lotes as $lote){
 			$datos_socio = consultarCriterio('id',$lote["id_socio"]);//información del socio de cada lote
@@ -210,7 +216,7 @@
 				$estatus_actual = certificacion('actual',$lote["id_socio"]);
 				if (is_array($estatus_actual)) {
 					$estatus_actual = $estatus_actual[0];
-					if ($estatus_actual["estatus"] == "O") {
+					if (strpos($estatus_actual["estatus"], 'O')) {
 						$estatus_t = "<img title='socio CON certificación orgánica' src=images/organico.png width=25>";
 					}else{
 						$estatus_t = "<img title='socio SIN certificación orgánica' src=images/noorganico.png width=25>";
@@ -375,7 +381,7 @@
 		echo "<th><h4>$".round(array_sum($totales),2)."</th>";
 		echo "<th align=center></th></tr>";
 	}
-
+	echo "</tbody>";
 	echo "</table></div>";
 	include("pie.php");
 ?>

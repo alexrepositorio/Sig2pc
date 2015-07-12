@@ -1,16 +1,13 @@
 <?php
 include ("cabecera.php");
-include ("conect.php");
 include ("configuracion_funciones.php");
-include ("pagos_funciones.php");
 include ("certificaciones_funciones.php");
 include ("estimaciones_funciones.php");
 include ("altas_funciones.php");
+include ("catas_funciones.php");
 
 		$pago1 = busqueda_pagos("pago", $_GET["pago"]);
 		$cuenta = count($pago1);
-		print_r($pago1);
-
 		if($cuenta==0){
 			$pago["exportable"]="<h4><font color=red>Pendiente</font></h4>";
 			$pago["descarte"]="<h4><font color=red>Pendiente</font></h4>";
@@ -21,7 +18,7 @@ include ("altas_funciones.php");
 			$total = $pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["calidad"];
 		}
 
-		$lote = busqueda_lotes("lote", $pago[0]["lote"]);
+		$lote = LotesConsultarCriterio("id",$pago[0]["lote"]);
 
 		$trillado_gr=configuracion_cons('parametro',"gr_muestra")[0]["valor"]-($lote[0]["rto_exportable"]+$lote[0]["rto_descarte"]);
 		$trillado=100-($lote[0]["rto_exportable"]+$lote[0]["rto_descarte"])/configuracion_cons('parametro',"gr_muestra")[0]["valor"]*100;
@@ -50,7 +47,7 @@ include ("altas_funciones.php");
 		}
 		else{
 			$input_q="$<input type='text' name=calidad>";
-			$cata1 = busqueda_catas($pago[0]["lote"]);
+			$cata1 = catas_consultar("lote",$pago[0]["lote"]);
 			// $SQL="SELECT * FROM catas where lote='".$_GET["lote"]."'";
 			// $res_cata=mysqli_query($link, $SQL);
 			// $cuenta_catas=mysqli_num_rows($res_cata);
@@ -59,7 +56,7 @@ include ("altas_funciones.php");
 				$input_q="PENDIENTE DE CATA<input type='hidden' name=calidad value='0'>";
 			}
 			else{
-				$cata = busqueda_catas($pago[0]["lote"]);
+				$cata = catas_consultar("lote",$pago[0]["lote"]);;
 				// $cata = mysqli_fetch_array($res_cata,MYSQLI_ASSOC);
 				$input_q="$<input type='text' name=calidad>";
 				if($cata[0]["puntuacion"]<=configuracion_cons('parametro',"extra_cata")[0]["valor"]){
@@ -79,20 +76,18 @@ include ("altas_funciones.php");
 		$enlace_estimado="<a href=historial_estimacion_nuevo.php?socio=".$socio["id_socio"].">añadir</a>";}
 
 	$altas = altas_consultar('actual',$socio["id_socio"]);
-
+	$altas=$altas[0];
 	if(is_array($altas)){
-		$ultimafecha=max(array_keys($altas));
 		$enlace_altas="<a href=historial_altas.php?socio=".$socio["id_socio"].">ver historial</a>";}
 	else{
-		$ultimafecha=0;
 		$enlace_altas="<a href=historial_altas_nuevo.php?socio=".$socio["id_socio"].">añadir</a>";
 	}
 
-	if($altas[$ultimafecha]["year"]==0){
-		$altas[$ultimafecha]["year"]="<i>\"fecha desconocida\"</i>";
-		$altas[$ultimafecha]["estado"]="";}
+	if($altas["year"]==0){
+		$altas["year"]="<i>\"fecha desconocida\"</i>";
+		$altas["estado"]="";}
 	else{
-		$altas[$ultimafecha]["year"]=date("d-m-Y",strtotime($altas[$ultimafecha]["year"]));
+		$altas["year"]=date("d-m-Y",strtotime($altas[$ultimafecha]["year"]));
 	}	
 
 //lotes entregados por el socio
@@ -148,13 +143,12 @@ echo "<div align=center><h1>NUEVO PAGO</h1><br>";
 
 //muestra_array($socio);
 
-if($socio["foto"]==""){$socio["foto"]="no_foto.png";}
 
 
 echo "<form name=form action=".$_SERVER['PHP_SELF']."?pago=".$_GET["pago"]."&edit=1 method='post'>";
 echo "<table class=tablas>";
-echo "<tr><th><h4><img src=images/".$socio["foto"]." width=150></th>
-<td colspan=2><h4>".$socio["codigo"]."-".$socio["nombres"]." ".$socio["apellidos"]."
+echo "
+<td colspan=3><h4>".$socio["codigo"]."-".$socio["nombres"]." ".$socio["apellidos"]."
 &nbsp&nbsp&nbsp<a href=pagos.php?criterio=socio&socio=".$socio["codigo"]."><img width=15 src=images/history.png></a><br>
 ".$socio["poblacion"]."<br><br>Lote:<hr>".$lote["codigo_lote"]."<br>".$lote["fecha"]."<br>
 Calidad: ".$lote["calidad"].$estatus_t."</td></tr>";
@@ -174,7 +168,7 @@ echo "<tr><th colspan=3>";
 		}
 		echo "		
 		</td>
-		<td width=33% valign=top><div align=center><h3>Estado actual</h3><br>$enlace_altas<hr><h4>".$altas[$ultimafecha]["estado"]." el<br>".$altas[$ultimafecha]["year"]."</div></td>
+		<td width=33% valign=top><div align=center><h3>Estado actual</h3><br>$enlace_altas<hr><h4>".$altas["estado"]." el<br>".$altas["year"]."</div></td>
 		</tr></table>";
 		
 		
@@ -187,7 +181,7 @@ echo "<tr><th colspan=3>";
 			if(strtotime($ls["fecha"])<=strtotime($lote["fecha"]))
 			{
 			if($ls["exportable"]>0){$pagado=1;$enlace_pago="";}
-							   else{$pagado=0;$enlace_pago="<a href=ficha_pago_nuevo.php?lote=".$ls["codigo_lote"].">";}	
+							   else{$pagado=0;$enlace_pago="<a href=ficha_pago_nuevo.php?lote=".$ls["id"].">";}	
 			$pagado=yes_no($pagado);
 			$acumulado=$acumulado+$ls["peso"];
 			$restante=$restante-$ls["peso"];
@@ -268,7 +262,7 @@ if($acumulado>$estimado[$estimado_actual]["estimados"]){
 } else {
 	echo "<tr><th><h4>Fuera de contrato</th><td><b>$diferencia qq</td><td>$0<input type='hidden' value=0 name=fuera ></td></tr>";
 }
-echo "<tr><th><h4>Extra por calidad</th><td><b>".$cata["puntuacion"]."</td><td>$input_q</td></tr>";
+echo "<tr><th><h4>Extra por calidad</th><td><b>".$cata[0]["puntuacion"]."</td><td>$input_q</td></tr>";
 if(in_array($_SESSION['acceso'],$permisos_admin)){
 	echo "<tr><th><h4>Extra por Cliente</th><td colspan=2>$<input type='text' name=cliente  value=".$pago[0]["cliente"]."><b>*solo admin</b></td></tr>";
 }

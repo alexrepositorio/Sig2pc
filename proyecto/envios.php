@@ -10,15 +10,18 @@
 		$vacio="";
 		//FUNCION
 		list($SQL,$_texto)=busquedas($criterio,$vacio) ;
-
 	}else{
 		if(isset($_GET["socio"])){
 			$_POST["busca"]=$_GET["socio"];
 		}	
+		if (isset($_POST["busca2"])) {
+			$envios=enviosConsultarfecha($_POST["busca"],$_POST["busca2"]);
+		}else{
+			list($SQL,$_texto)=busquedas($_POST["criterio"],$_POST["busca"]) ;
+		}
 		$encontrados="ENCONTRADOS";
 		//FUNCION
-		list($SQL,$_texto)=busquedas($_POST["criterio"],$_POST["busca"]) ;
-		$criterio="<h4>Criterio de búsqueda: <b>".$_POST["criterio"]."</b> es <i>''$_texto''</i></h4>";
+		$criterio="<h4>Criterio de búsqueda: <b>".$_POST["criterio"]."</b> es <i></i></h4>";
 	}
 	//FUNCION
 	list($resultado,$cuenta,$envios)=resultado_sentencias($SQL);
@@ -26,27 +29,23 @@
 	$post='';
 	echo "<div align=center><h1>Listado de envíos</h1><br><br>";
 	echo "<table border=0 cellpadding=15 cellspacing=0><tr>";
-	
-	echo "<td align=center><h4>Fecha<br><form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
-	echo "<input type='hidden' name=criterio value=fecha>";
-	echo "<select name=busca>";
-		//FUNCION
-	$fecha=catalogo_fechas($criterio,$post);
-	
-	foreach ($fecha as $fechas)
-		{
-			echo "<option value='$fechas'>$fechas</option>";
-		}
-	echo "</select><br>";
+	echo "<td align=center><h4>Fecha<br>
+	<form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
+	echo "
+		<label for='desde'>Desde:</label>
+		<input type='date' name='busca' id='desde' >
+		<label for='hasta'>Hasta:</label>
+		<input type='date' name='busca2' id='hasta'>
+	";
 	echo "<input type='submit' value='filtrar'>";
 	echo "</form></td>";
-
+	
 	echo "<td align=center><a href=ficha_envio_nuevo.php>";
 	echo "<img src=images/add.png width=50><br><h4>nuevo</a>";
 	echo "</td>";
 	echo "</tr></table>";
 	echo "<div align=center>$criterio<br>";
-	echo "<table class=tablas>";
+	echo "<table id='table_id' style='width: 40%' class='tablas' posicion>";
 		echo "<tr><th>";
 		echo "<h4>ENVIOS $encontrados</h4> ($cuenta)";
 		echo "</th>";

@@ -1,6 +1,6 @@
 <?php
 include ("cabecera.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("altas_funciones.php");
 include ("estimaciones_funciones.php");
 if(isset ($_POST["estimados"])){	

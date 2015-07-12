@@ -14,7 +14,7 @@ function insertar_despacho($lote,$fecha,$cant,$envio)
 	mysqli_query($link,$SQL) or die(mysqli_error($link));
 	global $operaciones_constantes,$tabla_constantes;	
 	guarda_historia($_SESSION["user"], $operaciones_constantes["I"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["despachos"], gethostname());	
-	require("config_disconect.php");
+	require("config_disconnect.php");
 }
 function eliminar_despacho($id){
 	require("conect.php");
@@ -22,6 +22,6 @@ function eliminar_despacho($id){
 	mysqli_query($link,$SQL) or die(mysqli_error($link));
 	global $operaciones_constantes,$tabla_constantes;
 	guarda_historia($_SESSION["user"], $operaciones_constantes["D"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["despachos"], gethostname());	
-	require("config_disconect.php");
+	require("config_disconnect.php");
 }
 ?>

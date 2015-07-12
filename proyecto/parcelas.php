@@ -6,7 +6,7 @@ include ("grupos_funciones.php");
 include ("subparcelas_funciones.php");
 include ("analisis_funciones.php");
 include ("asociaciones_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 
 if(!isset($_GET["criterio"]))
 {
@@ -64,7 +64,7 @@ if (is_array($parcelas)) {
 			if(!isset($siembras[$parcela["id"]])){
 				$siembras[$parcela["id"]][]="edad sin especificar";
 			}			
-			$asociaciones=asociaciones_consultar($parcela["id"]);
+			$asociaciones=asociaciones_consultar("parcela",$parcela["id"]);
 			if (is_array($asociaciones)) {
 				foreach ($asociaciones as $asociacion) {
 					$asoc_cultivos[$parcela["id"]][]=$asociacion["concepto"];
@@ -118,7 +118,7 @@ if (is_array($parcelas)) {
 	echo "</form></td>";
 	echo "<td align=center><h4>Grupo<br>
 	<form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-	echo "<input list='grupos' name='busca' required>";	
+	echo "<input list='grupos' name='busca' value='Seleccione...' required>";	
 	echo "<datalist  id='grupos'>";	
 	//echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
 	$grupos=consultarGrupo('lista','');
@@ -137,25 +137,26 @@ if (is_array($parcelas)) {
 	echo "</tr></table>";
 	echo "<div align=center>$criterio<br>";
 	echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
-		echo "<tr><th width=500px>";
+	echo "<thead>";
+		echo "<th width=500px>";
 		echo "<h4>PARCELAS $encontrados</h4> ($cuenta parcelas, $total_cafe ha de café)";
 		echo "</th>";
-		echo "<th width=20px><h6>opciones</h6></th></tr>";
-
+		echo "<th width=13%><h6>opciones</h6></th>";
+		echo "</thead>";
+		echo "<tbody>";
 	if(isset($parcelas) && $cuenta>0)
 	{
 		foreach ($parcelas as $parcela)
 		{
 			$datos_socio=consultarCriterio('id',$parcela["id_socio"]);		
 			$estatus_actual=certificacion('actual',$datos_socio[0]["id_socio"]);
-			if(isset($estatus)){
-				if(!is_null($estatus_actual)){
+			$estatus_actual=$estatus_actual[0];
+				if(strrpos($estatus_actual["estatus"], 'O')){
 					$estatus_t="<img title='socio CON certificación orgánica' src=images/organico.png width=25 valign=top>";
 				}else{
 					$estatus_t="<img title='socio SIN certificación orgánica' src=images/noorganico.png width=25 valign=top>";
 				}
-			}else{$estatus_t="";
-		}
+			
 			//analisis de suelos*******************************************************************		
 				//$sql_analisis="SELECT * FROM analisis WHERE id_subparcela in (SELECT id FROM subparcelas WHERE id_parcela=".$parcela["id"].")";
 				$resultado_analisis=analisis_suelos($parcela["id"]);
@@ -185,6 +186,7 @@ if (is_array($parcelas)) {
 		echo "no data";
 	}
 }else{
+	echo "</tbody>";
 	echo "<div align=center><h1>Sin datos redireccionando.................
 	<meta http-equiv='Refresh' content='2;url=parcelas.php'></font></h1></div>";	
 }

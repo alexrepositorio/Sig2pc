@@ -149,38 +149,6 @@ function utf8_convertidor($array)
     });
     return $array;
 }
-/*
-function nombre_socio($id)
-{
-	include ("conect.php");
-	mysqli_query($link, "SET NAMES 'utf8'");
-	$SQL="SELECT * FROM socios WHERE codigo='$id'";
-	$resultado=mysqli_query($link, $SQL);
-	$socio = mysqli_fetch_array($resultado,MYSQLI_ASSOC);
-	$datos_socio["nombres"]=$socio["nombres"];
-	$datos_socio["apellidos"]=$socio["apellidos"];
-	$datos_socio["codigo"]=$socio["codigo"];
-	$datos_socio["poblacion"]=$socio["poblacion"];
-	$datos_socio["id"]=$socio["id_socio"];
-	$datos_socio["foto"]=$socio["foto"];
-	return ($datos_socio);
-}
-
-function muestra_array($array)
-{
-	echo "<pre>";
-	print_r($array);
-	echo "</pre><br>";
-}
-*/
-
-function guarda_historial($comentario)
-{
-	$link = mysqli_connect("localhost", "root", "", "sig");
-	mysqli_query($link, "SET NAMES 'utf8'");
-	$SQL_historial="INSERT INTO acciones VALUES ('','".$_COOKIE['username']."','".date("Y-m-d H:i:s",time())."','$comentario')";
-	mysqli_query($link, $SQL_historial);		
-}
 
 function yes_no($valor)
 {
@@ -237,7 +205,7 @@ if (is_array($resultado)) {
 }else{
 	$cuenta_catas=0;
 }
-$cuenta_catas="<font size=6>(<font color=red><b>$cuenta_catas</b></font>)</font>";
+$cuenta_catas="(<font color=red><b>$cuenta_catas</b></font>)";
 
 // pagos pendientes
 $resultado2=pagos_consultar_criterio('v_actuales','');
@@ -246,7 +214,7 @@ if (is_array($resultado2)) {
 }else{
 	$cuenta_pagos=0;
 }
-$cuenta_pagos="<font size=6>(<font color=red><b>$cuenta_pagos</b></font>)</font>";
+$cuenta_pagos="(<font color=red><b>$cuenta_pagos</b></font>)";
 	
 //*****************************
 // estado de almacén
@@ -256,7 +224,7 @@ $almacen_entradas=$resultado3[0]["entradas"];
 $resultado4=despachos_consultar_criterio('salidas_almacen','');
 $almacen_salidas=$resultado4[0]["salidas"];
 $stock_almacen=$almacen_entradas-$almacen_salidas;
-$stock_almacen="<font size=6>(<font color=red><b>".$stock_almacen."qq</b></font>)</font>";
+$stock_almacen="(<font color=red><b>".$stock_almacen."qq</b></font>)";
 //*****************************
 return array($cuenta_pagos,$cuenta_catas,$stock_almacen);
 }

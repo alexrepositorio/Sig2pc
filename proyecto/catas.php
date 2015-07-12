@@ -1,13 +1,15 @@
 <?php
 include ("cabecera.php");
-include ("conect.php");
 include ("catas_funciones.php");
-include ("lote_funciones.php");
-if(isset($_POST["fecha"])){
-	$resultado=LotesConsultarCriterio('fecha_catas',$_POST["fecha"]);
-}else{
+echo "<div align=center><h1>Listado de lotes para Cata</h1><br><br>";
+if(!isset($_POST["busca"])){
 	$resultado=LotesConsultarCriterio('','');
+}else{
+	$resultado=LotesConsultarfecha($_POST["busca"],$_POST["busca2"]);
+	$_texto="Desde: ".$_POST["busca"]." Hasta:   ".$_POST['busca2']."";
+	echo "<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> $_texto</h4> </br>";
 }
+
 if (is_array($resultado)) {
 	foreach ($resultado as $row) {
 		$lotes[]=$row;
@@ -24,24 +26,27 @@ if (is_array($resultado)) {
 		}
 	}		
 }
-echo "<div align=center><h1>Listado de lotes para Cata</h1><br><br>";
-echo "<td align=center><h4>Fecha<br><form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
-echo "<select name=fecha>";
-$r_fec=LotesConsultarCriterio('fechas','');
-if (is_array($r_fec)) {
-	foreach ($r_fec as $rowfec) {
-		echo "<option value='$fecha'>".$rowfec["fecha"]."</option>";
-	}
-}
-echo "</select><br>";
-echo "<input type='submit' value='filtrar'>";
-echo "</form></td>";
+
+	echo "<td align=center><h4>Fecha<br>
+	<form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
+	echo "
+		<label for='desde'>Desde:</label>
+		<input type='date' name='busca' id='desde' >
+		<label for='hasta'>Hasta:</label>
+		<input type='date' name='busca2' id='hasta'>
+	";
+	echo "<input type='submit' value='filtrar'>";
+	echo "</form></td>";
 echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
-	echo "<tr><th width=500px>";
-	echo "<h4>LOTES</h4>";
-	echo "</th>";
-	echo "<th width=20px><h6>cata</h6></th>";
-	echo "<th width=20px><h6>opciones</h6></th></tr>";
+echo "<thead>";
+		echo "<th width=500px>";
+		echo "<h4>LOTES</h4>";
+		echo "</th>";
+		echo "<th width=20px><h6>cata</h6></th>";
+		echo "<th width=20px><h6>opciones</h6></th>";
+		echo "</thead>";
+		echo "<tbody>";
+	
 
 if(isset($lotes))
 {
@@ -53,7 +58,7 @@ if(isset($lotes))
 		echo "<td>";
 	if($puntuacion[$lote["id"]]>0){
 			echo "<a href=ficha_cata_editar.php?lote=".$lote["id"]."><img title=editar src=images/pencil.png width=25></a>
-				  <a href=ficha_cata_borrar.php?cata=".$lote["id"]."><img title=borrar src=images/cross.png width=25></a>
+				  <a href=ficha_cata_borrar.php?lote=".$lote["id"]."><img title=borrar src=images/cross.png width=25></a>
 				  <a href=ficha_cata.php?lote=".$lote["id"]."><img title=ver src=images/ver.png width=25></a>";
 			if($fragancia[$lote["id"]]>0 && $sabor[$lote["id"]]>0 && $balance[$lote["id"]]>0){
 				echo "<a href=perfil_cata.php?lote=".$lote["id"]."><img width=25 src=images/radar.png></a><br><br>";
@@ -66,6 +71,7 @@ if(isset($lotes))
 		echo "</td></tr>";
 	}
 }
+echo "</tbody>";
 echo "</table></div>";
 include("pie.php");
 ?>

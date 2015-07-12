@@ -1,13 +1,13 @@
 <?php
 include ("cabecera.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("grupos_funciones.php");
 include ("canton_funciones.php");
 include ("provincias_funciones.php");
 
 if(isset ($_POST["update"])){
 actualizarsocio($_POST["update"],$_POST["nombres"],$_POST["apellidos"],calcular_codigo($_POST["poblacion"]),$_POST["cedula"],$_POST["celular"],$_POST["f_nacimiento"]
-,$_POST["direccion"],$_POST["poblacion"],$_POST["canton"],$_POST["provincia"],$_POST["genero"],$_POST["email"]);	
+,$_POST["direccion"],$_POST["poblacion"],$_POST["canton"],$_POST["genero"],$_POST["email"]);	
 echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
 <meta http-equiv='Refresh' content='2;url=ficha_socio.php?user=".$_POST["update"]."'></font></h1></div>";
 }else{
@@ -21,11 +21,11 @@ echo "<div align=center><h1>Edición de la Ficha del socio</h1><br><h2>".$socio[
 echo "<table class=tablas>";
 echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 echo "<input type='hidden' name='update' value=".$_GET["user"].">";
-echo "<tr><th align=right><h4>Nombres</td><td><input type='text' name=nombres value='".$socio["nombres"]."'></td></tr>";
-echo "<tr><th align=right><h4>Apellidos</td><td><input type='text' name=apellidos value='".$socio["apellidos"]."'></td></tr>";
+echo "<tr><th align=right><h4>Nombres</td><td><input type='text' name=nombres value='".$socio["nombres"]."' pattern='[Aa-Zz]{2,20}'></td></tr>";
+echo "<tr><th align=right><h4>Apellidos</td><td><input type='text' name=apellidos value='".$socio["apellidos"]."'  pattern='[Aa-Zz]{2,20}'></td></tr>";
 echo "<tr><th align=right><h4>Código</th><td>*se calculará automáticamente</td></tr>";
 echo "<tr><th align=right><h4>Grupo</th><td>";
-echo "<input list='grupos' name='poblacion' required>";	
+echo "<input list='grupos' name='poblacion' value='".$socio["poblacion"]."' required>";	
 echo "<datalist  id='grupos'>";	
 $grupos=consultarGrupo('lista','');
  foreach ($grupos as $grupo)
@@ -40,9 +40,8 @@ echo "<tr><th align=right><h4>email</td><td><input type='email' name=email value
 echo "<tr><th align=right><h4>Dirección</td><td><input type='text' name=direccion value='".$socio["direccion"]."'></td></tr>";
 //echo "<tr><th align=right><h4>Cantón</td><td><input type='text' name=canton value='".$socio["canton"]."'></td></tr>";
 echo "<tr><th align=right><h4>Canton</th><td>";
-echo "<input list='cantones' name='canton'>";	
-echo "<datalist  id='cantones'>";	
-
+echo "<input list='cantones' name='canton' value='".$socio["canton"]."' >";	
+echo "<datalist  id='cantones' >";	
  $cantones=listar_cantones();
  foreach ($cantones as $canton)
 	{
@@ -50,15 +49,6 @@ echo "<datalist  id='cantones'>";
 	}
 echo "</datalist></td></tr>";
 
-echo "<tr><th align=right><h4>Provincias</th><td>";
-echo "<input list='provincias' name='provincia'>";	
-echo "<datalist  id='provincias'>";	
- $provincias=listar_provincias();
- foreach ($provincias as $provincia)
-	{
-		echo "<option>".$provincia["provincia"]."</option>";
-	}
-echo "</datalist></td></tr>";
 
 //echo "<tr><th align=right><h4>Provincia</td><td><input type='text' name=provincia value='".$socio["provincia"]."'></td></tr>";
 echo "<tr><th><h4>Género</th><td><select name=genero>

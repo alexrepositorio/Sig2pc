@@ -2,6 +2,9 @@
 session_start();
 include("cabecera_index.php");
 list ($cuenta_pagos,$cuenta_catas,$stock_almacen) = Vactuales();
+$cuenta_pagos="<font size=6.5>$cuenta_pagos </font>";
+$cuenta_catas="<font size=6.5>$cuenta_catas </font>";
+$stock_almacen="<font size=6.5>$stock_almacen </font>";
 $height=150;
 $width=300;
 echo "<div align=center>";

@@ -1,13 +1,16 @@
 <?php
 include ("cabecera.php");
 include ("parcelas_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 $riegos=Array("Aspersión","Goteo","Gravedad","Ninguno");
 
 if(isset ($_POST["id_socio"])){
 
 	insertar_parcela($_POST["id_socio"],$_POST["coorX"],$_POST["coorY"],$_POST["alti"],$_POST["sup_total"],$_POST["MOcontratada"],
 		$_POST["MOfamiliar"],$_POST["Miembros_familia"],$_POST["riego"]);
+echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
+	<meta http-equiv='Refresh' content='2;url=parcelas.php'></font></h1></div>";	
+
 }else{
 
 //**********TABLA AUTOMATICA*****************************************************************

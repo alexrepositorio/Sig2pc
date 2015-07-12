@@ -123,7 +123,7 @@ if(in_array($_SESSION['acceso'],$permisos_administrativos)){
 	echo "<td><a href=ficha_cata_editar.php?lote=".$_GET["lote"]."><h3>EDITAR</h3></a></td>";
 }
 if(in_array($_SESSION['acceso'],$permisos_administrativos)){
-	echo "<td><a href=ficha_cata_borrar.php?lote=".$_GET["lote"]."><h3>ELIMINAR</h3></a></td>";
+	echo "<td><a href=ficha_cata_borrar.php?cata=".$cata["id"]."><h3>ELIMINAR</h3></a></td>";
 }
 echo "</tr></table></div>";
 include("pie.php");

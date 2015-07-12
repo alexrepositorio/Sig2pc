@@ -1,20 +1,13 @@
 <?php
 include ("cabecera.php");
-
+include ("analisis_funciones.php");
 
 
 if(isset($_GET["analisis"]) AND isset($_GET["borra"])){
-	
-$SQL_edit="DELETE FROM analisis WHERE id_analisis='".$_GET["borra"]."'";
-$resultado=mysqli_query($link, $SQL_edit);
 
-$cadena=str_replace("'", "", $SQL_edit);
-guarda_historial($cadena);
-//echo "$SQL_edit";
-
-echo "<div align=center><h1>BORRANDO, ESPERA...
-<meta http-equiv='Refresh' content='2;url=analisis.php?subparcela=".$_GET["subparcela"]."&parcela=".$_GET["parcela"]."'></font></h1></div>";
-	
+	$resultado=analisis_del($_GET["borra"]);
+	echo "<div align=center><h1>BORRANDO, ESPERA...
+	<meta http-equiv='Refresh' content='2;url=analisis.php?subparcela=".$_GET["subparcela"]."&parcela=".$_GET["parcela"]."'></font></h1></div>";
 }
 
 
@@ -23,9 +16,8 @@ else{
 
 
 //muestra_array($socio);
-$SQL="SELECT * FROM analisis where id_analisis='".$_GET["analisis"]."'";
-$resultado=mysqli_query($link, $SQL);
-$lote = mysqli_fetch_array($resultado,MYSQLI_ASSOC);
+$resultado=analisis_cons_id($_GET["analisis"]);
+$lote = $resultado[0];
 
 echo "<div align=center><h1>Borrar el analisis</h1><br><h2>".$lote["fecha"]."<br>subparcela #".$lote["id_subparcela"]."<br><br><br>";
 

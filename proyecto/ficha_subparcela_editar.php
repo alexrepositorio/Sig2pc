@@ -92,7 +92,8 @@ echo "<input type='submit' value='Guardar'>";
 echo "</form></div>";
 
 //*****************************ASOCIACIONES*********************************************
-$resultado_asoc=asociaciones_consultar($_GET["subparcela"]);
+$resultado_asoc=asociaciones_consultar('subparcela',$_GET["subparcela"]);
+
 if (is_array($resultado_asoc)) {
 	foreach ($resultado_asoc as $asoc) {
 		$asociaciones[]=$asoc;
@@ -106,9 +107,13 @@ echo "<tr><th><h4>Cultivos</td>";
 echo "<td>";
 if(isset($asociaciones)){
 	foreach($asociaciones as $key=>$asociacion){
-	if($asociacion["tipo"]=="cultivo"){
-		echo $asociacion["concepto"]." (".$asociacion["valor"].")<a title=borrar href=?borrar_asoc=".$asociacion["id"]."&subparcela=".$_GET["subparcela"]."><img valign=top src=images/cross.png></a><br>";}
-}}else{echo"No existen";}
+		if($asociacion["tipo"]=="cultivo"){
+			echo $asociacion["concepto"]." (".$asociacion["valor"].")<a title=borrar href=?borrar_asoc=".$asociacion["id"]."&subparcela=".$_GET["subparcela"]."><img valign=top src=images/cross.png></a><br>";
+		}
+	}
+}else{
+	echo"No existen";
+}
 echo "</td>";
 echo "<td>";
 echo "<form name=form1 action=".$_SERVER['PHP_SELF']."?asociacion=cultivo&subparcela=".$_GET["subparcela"]." method='post'>";

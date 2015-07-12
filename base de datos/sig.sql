@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.4.3
+-- version 4.2.11
 -- http://www.phpmyadmin.net
 --
--- Servidor: localhost
--- Tiempo de generación: 10-07-2015 a las 03:39:42
--- Versión del servidor: 5.6.24
--- Versión de PHP: 5.5.24
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 12-07-2015 a las 22:28:45
+-- Versión del servidor: 5.6.21
+-- Versión de PHP: 5.6.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de datos: `sig_integrada`
+-- Base de datos: `sig2`
 --
 
 DELIMITER $$
@@ -69,11 +69,21 @@ case  criterio
 when 'subparcelas'
 then
 	SELECT * FROM analisis WHERE id_subparcela=in_id;
-	
+when 'id'
+then
+	SELECT * FROM analisis WHERE id_analisis=in_id;
+		
 when ''
 then
 	SELECT * FROM analisis WHERE id_subparcela in (SELECT id FROM subparcelas WHERE id_parcela=in_id);
 END case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_analisis_del`(
+in in_id int(11)
+)
+BEGIN
+	delete from analisis where id_analisis=in_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_analisis_ins`(
@@ -103,7 +113,7 @@ in in_f_p float(10,2),
 in in_f_k float(10,2)
 )
 BEGIN
-	INSERT INTO analisis VALUES(
+	INSERT INTO analisis VALUES('',
 		in_id_subparcela, in_fecha, in_muestra ,in_submuestra , in_estructura ,
 		in_grado,in_rocas,in_rocas_size,in_profundidad,in_pendiente,
 		in_lombrices,in_densidad_aparente,in_observaciones,in_s_ph,in_s_n,
@@ -111,11 +121,68 @@ BEGIN
         in_f_p,in_f_k );
 END$$
 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_analisis_upd`(
+in in_id_subparcela int(11),
+in in_fecha date,
+in in_muestra int(11),
+in in_submuestra int(11),
+in in_estructura varchar(20),
+in in_grado varchar(20),
+in in_rocas int(11),
+in in_rocas_size  int(11),
+in in_profundidad int(11),
+in in_pendiente int(11),
+in in_lombrices int(11),
+in in_densidad_aparente float(10,2),
+in in_observaciones varchar(30),
+in in_s_ph float(10,2),
+in in_s_n float(10,2),
+in in_s_p float(10,2),
+in in_s_k float(10,2),
+in in_s_ca float(10,2),
+in in_s_mg float(10,2),
+in in_s_mo float(10,2),
+in in_s_textura varchar(20),
+in in_f_n float(10,2),
+in in_f_p float(10,2),
+in in_f_k float(10,2),
+in in_id_analisis int(11)
+)
+BEGIN
+	UPDATE analisis SET
+				id_subparcela=in_id_subparcela,
+				fecha=in_fecha,
+				muestra=in_muestra,
+				submuestras=in_submuestra,
+				estructura=in_estructura,
+				grado=in_grado,
+				rocas=in_rocas,
+				rocas_size=in_rocas_size ,
+				profundidad=in_profundidad,
+				pendiente=in_pendiente,
+				lombrices=in_lombrices,
+				densidad_aparente=in_densidad_aparente,
+				observaciones=in_observaciones,
+				s_ph=in_s_ph,
+				s_n=in_s_n,
+				s_p=in_s_p,
+				s_k=in_s_k,
+				s_ca=in_s_ca,
+				s_mg=in_s_mg,
+				s_mo=in_s_mo,
+				s_textura=in_s_textura,
+				f_n=in_f_n,
+				f_p=in_f_p,
+				f_k=in_f_k
+				WHERE id_analisis=in_id_analisis;
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_asociaciones_cons`(
+in criterio varchar(20),
 in in_id int
 )
 BEGIN
-	SELECT * FROM asociaciones WHERE elemento='parcela' AND subparcela_id=in_id;
+	SELECT * FROM asociaciones WHERE elemento=criterio AND subparcela_id=in_id;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_asociaciones_del`(
@@ -132,7 +199,7 @@ in in_concepto varchar(20),
 in in_valor  varchar(20),
 in in_tipo varchar(20),
 in in_elemento varchar(20),
-in in_suparcela int(11) 
+in in_subparcela int(11) 
 
 )
 BEGIN
@@ -154,6 +221,9 @@ case criterio
 	when 'lote'
     then
 		SELECT * FROM catas where lote=valor;
+	when 'id'
+    then
+		select * from catas where id=valor;
 	when ''
     then
 		select * from catas;
@@ -161,7 +231,15 @@ case criterio
 end case;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_catas_ins`(IN `p_id` INT(11), IN `p_lote` INT(11), 
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_catas_del`(IN `p_id` INT(11))
+BEGIN
+DELETE FROM `catas`
+WHERE `id` = p_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_catas_ins`(
+
+ IN `p_lote` INT(11), 
 IN `p_fecha` TIMESTAMP, IN `p_catador` TEXT,
  IN `p_tostado` INT(11), IN `p_fragancia` FLOAT(10,2),
  IN `p_tipo_aroma1` TEXT, IN `p_nota_aroma` TEXT,
@@ -183,7 +261,7 @@ IN `p_fecha` TIMESTAMP, IN `p_catador` TEXT,
  IN `p_dl_reposo` INT(11), IN `p_dl_moho` INT(11), 
  IN `p_dl_astringencia` INT(11), IN `p_d_general` INT(11))
 BEGIN
-INSERT INTO `catas`(`id`, `lote`, `fecha`, `catador`, 
+INSERT INTO `catas`( `lote`, `fecha`, `catador`, 
 `tostado`, `fragancia`, `tipo_aroma1`, `nota_aroma`, 
 `sabor`, `tipo_sabor`, `nota_sabor`, `sabor_residual`, 
 `tipo_sabor_residual`, `nota_sabor_residual`, `acidez`, `cuerpo`, 
@@ -194,7 +272,7 @@ INSERT INTO `catas`(`id`, `lote`, `fecha`, `catador`,
 `d_extrano`, `d_sucio`, `d_astringente`, `d_quaquers`, 
 `dl_cereal`, `dl_fermento`, `dl_reposo`, `dl_moho`, 
 `dl_astringencia`, `d_general`) 
-VALUES (p_id, p_lote, p_fecha, p_catador, 
+VALUES ( p_lote, p_fecha, p_catador, 
 p_tostado, p_fragancia, p_tipo_aroma1, p_nota_aroma, 
 p_sabor, p_tipo_sabor, p_nota_sabor, p_sabor_residual, 
 p_tipo_sabor_residual, p_nota_sabor_residual, p_acidez, p_cuerpo, 
@@ -306,12 +384,6 @@ BEGIN
     where id=in_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_del_catas`(IN `p_id` INT(11))
-BEGIN
-DELETE FROM `catas`
-WHERE `id` = p_id;
-END$$
-
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_despachos_cons`(
 in criterio varchar(20),
 in valor varchar(20)
@@ -358,7 +430,8 @@ BEGIN
 INSERT INTO despachos VALUES('',in_lote,in_fecha,in_cantidad,in_envio);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_con`(IN `criterio` VARCHAR(22), IN `post` VARCHAR(22))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_con`(
+IN `criterio` VARCHAR(22), IN `post` VARCHAR(22))
     NO SQL
 BEGIN
 case  criterio
@@ -393,6 +466,13 @@ then
             LEFT JOIN grupos on socios.id_grupo= grupos.id
 			WHERE despachos.envio=post order by despachos.fecha desc;    
 END case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_con_fecha`(
+IN `valor` VARCHAR(20), IN `valor2` VARCHAR(20))
+BEGIN
+	SELECT * FROM envios 
+	 WHERE fecha between CAST(valor AS DATE) and CAST(valor2 AS DATE);
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_envios_ins`(IN `fecha` DATETIME, IN `destino` VARCHAR(22), IN `chofer` VARCHAR(22), IN `responsable` VARCHAR(22))
@@ -518,7 +598,8 @@ END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_historial_cons`(
 in criterio varchar(20),
-in valor varchar(20)
+in valor varchar(20),
+in valor2 varchar(20)
 )
 BEGIN
 	case criterio
@@ -531,7 +612,8 @@ BEGIN
 		when 'fecha'
 		then
 			SELECT * FROM historial 
-            WHERE date_format(fecha,'%Y-%m-%d') = valor order by fecha asc;
+	 WHERE fecha between CAST(valor AS DATE) and CAST(valor2 AS DATE);
+            
 	end case;
         
 END$$
@@ -539,7 +621,7 @@ END$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_historial_ins`(IN `usuario` VARCHAR(20), IN `accion` VARCHAR(20), IN `fecha` TIMESTAMP, IN `datos` VARCHAR(100), IN `tabla` VARCHAR(20), IN `maquina` VARCHAR(20))
     NO SQL
 begin
-	insert into historial values ('', usuario, accion, fecha, datos, tabla, maquina);
+	insert into historial(usuario, accion, fecha, datos, tabla, maquina) values (usuario, accion, fecha, datos, tabla, maquina);
 end$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lista_usuarios_con`(IN `criterio` VARCHAR(20))
@@ -562,7 +644,9 @@ then
 END case;
 end$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_cons`(IN `criterio` VARCHAR(20), IN `valor` VARCHAR(20), IN `valor2` VARCHAR(20))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_cons`(
+IN `criterio` VARCHAR(20), 
+IN `valor` VARCHAR(20), IN `valor2` VARCHAR(20))
 BEGIN
 	case  criterio
 when 'socio'
@@ -576,7 +660,7 @@ then
 	SELECT * FROM lotes 
 	INNER JOIN socios on lotes.id_socio=socios.id_socio 
 	LEFT JOIN grupos ON grupos.id=socios.id_grupo
-	WHERE grupos.id=valor  
+	where  grupo like CONCAT('%', valor, '%') 
 	order by fecha desc;
     
 when 'organico'
@@ -590,7 +674,7 @@ then
     
 when 'no_organico'
 then
-	SELECT * FROM lotes 
+	SELECT lotes.*,grupos.*,socios.* FROM lotes 
 	INNER JOIN socios on lotes.id_socio=socios.id_socio 
 	LEFT JOIN grupos ON grupos.id=socios.id_grupo
     left join certificacion on certificacion.id_socio=socios.id_socio
@@ -600,12 +684,12 @@ then
 when 'fecha'
 then                
 	 SELECT * FROM lotes 
-	 WHERE date_format(fecha,'%Y-%m-%d') = valor;
+	 WHERE fecha between CAST(valor AS DATE) and CAST(valor2 AS DATE);
      
 when 'fecha_catas'
     then
 		select * from lotes WHERE calidad='A'
-        AND date_format(fecha,'%Y-%m-%d') =valor
+        AND date_format(fecha,'%d-%m-%y') =valor
         order by fecha desc;
 when 'fechas'
 then                
@@ -716,7 +800,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_lote_upd`(
  IN in_calidad varchar(2)
 )
 BEGIN
-	update lote set
+	update lotes set
 	id_socio=in_socio,
 	codigo_lote=in_codigo,
 	fecha=in_fecha,
@@ -929,7 +1013,7 @@ LEFT JOIN subparcelas ON parcelas.id=subparcelas.id_parcela
  LEFT JOIN (SELECT id_socio, year, estatus FROM certificacion 
  WHERE year=(select max(year) from certificacion i 
  where i.id_socio = certificacion.id_socio)) t on parcelas.id_socio=t.id_socio 
-WHERE t.estatus<>'O' GROUP BY parcelas.id;
+WHERE t.estatus is null GROUP BY parcelas.id;
 	
 when 'id_socio'
 then               
@@ -985,7 +1069,9 @@ in in_riego varchar(20)
 )
 BEGIN
 
-INSERT INTO parcelas VALUES ('',in_socio,in_coorX,in_coorY,in_altitud,in_superficie,
+INSERT INTO parcelas(id_socio,coorX,coorY,alti,sup_total,MOcontratada,
+MOfamiliar,Miembros_familia,riego) VALUES 
+(in_socio,in_coorX,in_coorY,in_altitud,in_superficie,
 in_Mocontratada,in_Mofamiliar,in_miembros_familia,in_riego);
 
 END$$
@@ -1081,16 +1167,14 @@ then
 	  order by apellidos asc;
 when 'no_organico'
 then               
-SELECT socios.id_socio as id,`nombres`, `apellidos`, socios.codigo as codigo, `cedula`, `genero`,grupo,estatus as certificacion FROM
+SELECT socios.id_persona as id,`nombres`, `apellidos`, `codigo`, `cedula`, `genero`,grupo,estatus as certificacion FROM
 				socios
 				left join persona on persona.id_persona=socios.id_persona
 				left join certificacion on certificacion.id_socio=socios.id_socio
 				left join grupos on grupos.id=socios.id_grupo
-                where certificacion.estatus is null
-                and socios.id_socio is not null
+				where certificacion.estatus is null
                 group by socios.id_socio
-				order by apellidos asc
-                ;	
+	  order by apellidos asc;
                 
 when 'id'
 then               
@@ -1181,7 +1265,18 @@ BEGIN
   
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_update`(IN `in_id` INT, IN `in_nombre` VARCHAR(20), IN `in_apellido` VARCHAR(20), IN `in_codigo` VARCHAR(4), IN `in_cedula` VARCHAR(20), IN `in_celular` VARCHAR(20), IN `f_nac` DATE, IN `in_direccion` VARCHAR(50), IN `in_poblacion` VARCHAR(30), IN `in_canton` VARCHAR(20), IN `in_provincia` VARCHAR(20), IN `in_genero` CHAR(1), IN `in_mail` VARCHAR(50))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_socio_update`(
+IN `in_id` INT, 
+IN `in_nombre` VARCHAR(20),
+ IN `in_apellido` VARCHAR(20),
+ IN `in_codigo` VARCHAR(4), 
+ IN `in_cedula` VARCHAR(20), 
+ IN `in_celular` VARCHAR(20), 
+ IN `f_nac` DATE, 
+ IN `in_direccion` VARCHAR(50), 
+ IN `in_poblacion` VARCHAR(30), 
+ IN `in_canton` VARCHAR(20),
+ IN `in_genero` CHAR(1), IN `in_mail` VARCHAR(50))
 BEGIN
 
 select id_canton into @cantonId from canton where canton.canton=in_canton;
@@ -1218,6 +1313,86 @@ BEGIN
 		then
 			SELECT * FROM subparcelas WHERE id=in_id;
     end case;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_subparcelas_del`(
+IN in_id int(11)
+
+)
+BEGIN
+	DELETE FROM subparcelas WHERE id=in_id;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_subparcelas_ins`(
+in in_id_parcela int(11),
+in in_superficie float(10,2),
+in in_variedad varchar(20),
+in in_variedad2 varchar(20),
+in in_siembra int(11),
+in in_densidad int(11),
+in in_marco varchar(20),
+in in_hierbas varchar(20),
+in in_sombreado varchar(20),
+in in_roya varchar(29),
+in in_broca varchar(20),
+in in_ojo_pollo varchar(20),
+in in_mes_cosecha varchar(20),
+in in_duracion_cosecha varchar(20)
+
+)
+BEGIN
+	INSERT INTO subparcelas VALUES ('',
+    in_id_parcela,
+ in_superficie ,
+ in_variedad ,
+ in_variedad2 ,
+in_siembra ,
+ in_densidad ,
+in_marco ,
+in_hierbas ,
+in_sombreado,
+in_roya,
+in_broca,
+in_ojo_pollo,
+in_mes_cosecha,
+in_duracion_cosecha 
+   );
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_subparcelas_upd`(
+in in_id_parcela int(11),
+in in_superficie float(10,2),
+in in_variedad varchar(20),
+in in_variedad2 varchar(20),
+in in_siembra int(11),
+in in_densidad int(11),
+in in_marco varchar(20),
+in in_hierbas varchar(20),
+in in_sombreado varchar(20),
+in in_roya varchar(29),
+in in_broca varchar(20),
+in in_ojo_pollo varchar(20),
+in in_mes_cosecha varchar(20),
+in in_duracion_cosecha varchar(20),
+in in_id int(11)
+)
+BEGIN
+	UPDATE subparcelas SET 
+                id_parcela=in_id_parcela,
+                superficie=in_superficie,
+                variedad=in_variedad,
+                variedad2=in_variedad2,
+                siembra=in_siembra,
+                densidad=in_densidad,
+                marco=in_marco,
+                hierbas=in_hierbas,
+                sombreado=in_sombreado,
+                roya=in_roya,
+                broca=in_broca ,
+                ojo_pollo=in_ojo_pollo,
+                mes_inicio_cosecha=in_mes_cosecha,
+                duracion_cosecha=in_duracion_cosecha
+                WHERE id=in_id; 
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `SP_users_del`(in criterio int, IN `operacion` VARCHAR(20))
@@ -1279,7 +1454,7 @@ DELIMITER ;
 --
 
 CREATE TABLE IF NOT EXISTS `acciones` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `accion` text COLLATE latin1_spanish_ci NOT NULL
@@ -2011,7 +2186,7 @@ INSERT INTO `acciones` (`id`, `user`, `fecha`, `accion`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `altas` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `estado` text COLLATE latin1_spanish_ci NOT NULL
@@ -2078,7 +2253,7 @@ INSERT INTO `altas` (`id`, `id_socio`, `fecha`, `estado`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `analisis` (
-  `id_analisis` int(11) NOT NULL,
+`id_analisis` int(11) NOT NULL,
   `id_subparcela` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `muestra` int(11) NOT NULL,
@@ -2103,7 +2278,7 @@ CREATE TABLE IF NOT EXISTS `analisis` (
   `f_n` float(10,2) NOT NULL,
   `f_p` float(10,2) NOT NULL,
   `f_k` float(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -2112,13 +2287,13 @@ CREATE TABLE IF NOT EXISTS `analisis` (
 --
 
 CREATE TABLE IF NOT EXISTS `asociaciones` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `concepto` text COLLATE latin1_spanish_ci NOT NULL,
   `valor` text COLLATE latin1_spanish_ci NOT NULL,
   `tipo` text COLLATE latin1_spanish_ci NOT NULL,
   `elemento` text COLLATE latin1_spanish_ci NOT NULL,
   `subparcela_id` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=732 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=756 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `asociaciones`
@@ -2340,21 +2515,16 @@ INSERT INTO `asociaciones` (`id`, `concepto`, `valor`, `tipo`, `elemento`, `subp
 (592, 'platano', '', 'cultivo', 'parcela', 92),
 (705, 'platano', '', 'cultivo', 'parcela', 296),
 (709, 'gallinas', 'bajo', 'animales', 'parcela', 1),
-(710, 'yuca', 'medio', 'cultivo', 'subparcela', 1),
-(711, 'yuca', 'medio', 'cultivo', 'subparcela', 1),
-(712, 'caï¿½a', 'bajo', 'cultivo', 'subparcela', 1),
-(714, 'cacao', 'alto', 'cultivo', 'subparcela', 1),
-(717, 'yuca', 'medio', 'cultivo', 'subparcela', 1),
 (718, 'caï¿½a', 'medio', 'cultivo', 'subparcela', 1),
-(719, 'yuca', 'bajo', 'cultivo', 'subparcela', 1),
 (723, 'guaba', 'medio', '', 'subparcela', 1),
-(724, 'guaba', 'medio', 'cultivo', 'subparcela', 1),
-(725, 'guaba', 'medio', 'cultivo', 'subparcela', 1),
-(726, 'yuca', 'medio', 'cultivo', 'subparcela', 1),
-(727, 'guaba', 'bajo', 'cultivo', 'subparcela', 1),
-(729, 'faike', 'medio', 'cultivo', 'subparcela', 1),
-(730, 'faike', 'medio', 'cultivo', 'subparcela', 1),
-(731, 'guayaba', 'medio', 'cultivo', 'subparcela', 1);
+(740, 'CaÃ±a', 'medio', 'Cultivo', 'subparcela', 69),
+(743, 'Yuca', 'bajo', 'Cultivo', 'parcela', 69),
+(748, 'Gallinas', 'medio', 'Animales', 'parcela', 69),
+(751, 'Platano', 'alto', 'cultivo', 'subparcela', 1),
+(752, 'Papaya', 'bajo', 'cultivo', 'subparcela', 301),
+(753, 'Naranja', 'medio', 'cultivo', 'subparcela', 304),
+(754, 'Guaba', 'alto', 'cultivo', 'subparcela', 304),
+(755, 'Vacas', 'medio', 'animales', 'parcela', 1);
 
 -- --------------------------------------------------------
 
@@ -2363,7 +2533,7 @@ INSERT INTO `asociaciones` (`id`, `concepto`, `valor`, `tipo`, `elemento`, `subp
 --
 
 CREATE TABLE IF NOT EXISTS `canton` (
-  `id_canton` int(11) NOT NULL,
+`id_canton` int(11) NOT NULL,
   `canton` varchar(45) DEFAULT NULL,
   `id_provincia` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=222 DEFAULT CHARSET=utf8;
@@ -2602,7 +2772,7 @@ INSERT INTO `canton` (`id_canton`, `canton`, `id_provincia`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `catas` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `catador` text COLLATE latin1_spanish_ci NOT NULL,
@@ -2644,7 +2814,7 @@ CREATE TABLE IF NOT EXISTS `catas` (
   `dl_moho` int(11) NOT NULL,
   `dl_astringencia` int(11) NOT NULL,
   `d_general` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=149 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `catas`
@@ -2685,7 +2855,6 @@ INSERT INTO `catas` (`id`, `lote`, `fecha`, `catador`, `tostado`, `fragancia`, `
 (32, 142, '2014-08-07 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (33, 161, '2014-08-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (34, 165, '2014-08-12 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-(35, 170, '2014-08-18 05:00:00', '', 0, 5.00, '', '', 5.00, '', '', 5.00, '', '', 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 0.00, '5', 50.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (36, 67, '2014-07-14 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (37, 74, '2014-07-16 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (38, 13, '2014-02-06 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 84.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -2795,7 +2964,8 @@ INSERT INTO `catas` (`id`, `lote`, `fecha`, `catador`, `tostado`, `fragancia`, `
 (142, 148, '2014-08-08 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 80.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (143, 28, '2014-06-16 10:00:00', '', 0, 0.00, '', '', 0.00, '', '', 0.00, '', '', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, '', 77.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 (144, 160, '2014-09-17 04:15:07', 'juanito', 6, 8.50, 'Frutal,Caramelo,Vainilla', '', 9.50, 'Chocolate amargo,Articulado', '', 6.75, 'Limpio,Dulce', '', 9.00, 8.50, 9.50, 8.75, 9.25, 9.50, 8.75, '', 86.00, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 1, 2),
-(145, 23, '2014-09-28 20:09:18', 'Catador', 6, 8.75, 'Herbal,Vainilla,Neutral', '', 8.00, 'Caramelo,Chocolate dulce', '', 8.25, 'Refrescante,Dulce', '', 9.50, 8.00, 8.75, 8.00, 9.00, 8.25, 8.75, '', 85.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+(145, 23, '2014-09-28 20:09:18', 'Catador', 6, 8.75, 'Herbal,Vainilla,Neutral', '', 8.00, 'Caramelo,Chocolate dulce', '', 8.25, 'Refrescante,Dulce', '', 9.50, 8.00, 8.75, 8.00, 9.00, 8.25, 8.75, '', 85.25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+(148, 170, '2015-07-12 05:00:00', '', 0, 5.00, 'Chocolate amargo', '', 5.00, 'Vinoso', '', 5.00, 'Limpio', '', 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, 5.00, '5', 50.00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -2804,11 +2974,11 @@ INSERT INTO `catas` (`id`, `lote`, `fecha`, `catador`, `tostado`, `fragancia`, `
 --
 
 CREATE TABLE IF NOT EXISTS `certificacion` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `year` int(11) NOT NULL,
   `estatus` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=341 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=356 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `certificacion`
@@ -2877,7 +3047,10 @@ INSERT INTO `certificacion` (`id`, `id_socio`, `year`, `estatus`) VALUES
 (329, 29, 2010, ''),
 (330, 30, 2010, ''),
 (331, 299, 2010, ''),
-(340, 68, 2010, 'O');
+(342, 238, 2000, 'T1'),
+(345, 284, 2000, 'T1'),
+(346, 284, 2000, 'T1'),
+(347, 284, 2000, 'T1');
 
 -- --------------------------------------------------------
 
@@ -2886,7 +3059,7 @@ INSERT INTO `certificacion` (`id`, `id_socio`, `year`, `estatus`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `comentario` (
-  `id_COMENTARIO` int(11) NOT NULL,
+`id_COMENTARIO` int(11) NOT NULL,
   `Comentario` varchar(45) DEFAULT NULL,
   `id_usuario` int(11) NOT NULL,
   `Id_foto` int(11) DEFAULT NULL
@@ -2899,7 +3072,7 @@ CREATE TABLE IF NOT EXISTS `comentario` (
 --
 
 CREATE TABLE IF NOT EXISTS `configuracion` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `parametro` text COLLATE latin1_spanish_ci NOT NULL,
   `descripcion` text COLLATE latin1_spanish_ci NOT NULL,
   `valor` text COLLATE latin1_spanish_ci NOT NULL
@@ -2910,7 +3083,7 @@ CREATE TABLE IF NOT EXISTS `configuracion` (
 --
 
 INSERT INTO `configuracion` (`id`, `parametro`, `descripcion`, `valor`) VALUES
-(1, 'extra_cata', 'puntaje mï¿½nimo de ', '84.00'),
+(1, 'extra_cata', 'puntaje mÃ­nimo de ', '84.00'),
 (2, 'variedades', 'lista de variedades más comunes que maneja la asociación', 'catucaí,catimoro,tipica,criollo,colombia6'),
 (3, 'cultivos', 'lista de cultivos para los seleccionables', 'caña,yuca,naranja,guayaba,guaba,faike,maíz,platano,cacao,huerto,papaya,pasto'),
 (4, 'animales', 'lista de producciones animales que se pueden asociar al café', 'chanchos,gallinas,cuyes,vacas,colmenas,estanque,ganado'),
@@ -2925,7 +3098,7 @@ INSERT INTO `configuracion` (`id`, `parametro`, `descripcion`, `valor`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `despachos` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `cantidad` float(10,2) NOT NULL,
@@ -2937,9 +3110,9 @@ CREATE TABLE IF NOT EXISTS `despachos` (
 --
 
 INSERT INTO `despachos` (`id`, `lote`, `fecha`, `cantidad`, `envio`) VALUES
+(0, 170, '2015-07-12 08:39:54', 1.00, 4),
 (1, 37, '2014-09-25 04:18:41', 2.50, 1),
 (2, 37, '2014-09-25 04:19:22', 1.93, 2),
-(3, 170, '2014-09-25 04:57:14', 4.00, 3),
 (4, 170, '2014-09-28 23:01:57', 3.12, 2),
 (5, 37, '2014-09-28 23:02:33', 0.57, 3),
 (6, 35, '2014-09-28 23:03:20', 4.50, 2),
@@ -2952,7 +3125,7 @@ INSERT INTO `despachos` (`id`, `lote`, `fecha`, `cantidad`, `envio`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `envios` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `destino` text COLLATE latin1_spanish_ci NOT NULL,
   `chofer` text COLLATE latin1_spanish_ci NOT NULL,
@@ -2964,6 +3137,7 @@ CREATE TABLE IF NOT EXISTS `envios` (
 --
 
 INSERT INTO `envios` (`id`, `fecha`, `destino`, `chofer`, `responsable`) VALUES
+(0, '0000-00-00 00:00:00', 'loja', 'Manolo', 'Manolo'),
 (1, '2014-06-03 20:15:22', 'FAPECAFES', 'manolo', 'cosmel'),
 (2, '2014-06-04 20:30:26', 'ZAMORA', 'Juanitosss', 'Manolo'),
 (3, '2014-06-03 22:19:54', 'Loja', 'Albertito', 'Manolo'),
@@ -2976,7 +3150,7 @@ INSERT INTO `envios` (`id`, `fecha`, `destino`, `chofer`, `responsable`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `estimacion` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `year` int(11) NOT NULL,
   `estimados` double(10,2) NOT NULL,
@@ -3028,7 +3202,7 @@ INSERT INTO `estimacion` (`id`, `id_socio`, `year`, `estimados`, `entregados`) V
 --
 
 CREATE TABLE IF NOT EXISTS `fotos` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `foto` text COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
@@ -3039,7 +3213,7 @@ CREATE TABLE IF NOT EXISTS `fotos` (
 --
 
 CREATE TABLE IF NOT EXISTS `grupos` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `grupo` text COLLATE latin1_spanish_ci NOT NULL,
   `codigo_grupo` text COLLATE latin1_spanish_ci NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
@@ -3079,20 +3253,21 @@ INSERT INTO `grupos` (`id`, `grupo`, `codigo_grupo`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `historial` (
-  `id_historial` int(11) NOT NULL,
+`id_historial` int(11) NOT NULL,
   `usuario` varchar(25) NOT NULL,
   `accion` varchar(25) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `datos` varchar(100) NOT NULL,
   `tabla` varchar(20) NOT NULL,
   `maquina` varchar(30) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `historial`
 --
 
 INSERT INTO `historial` (`id_historial`, `usuario`, `accion`, `fecha`, `datos`, `tabla`, `maquina`) VALUES
+(0, 'admin', 'INSERCIÃ“N', '2015-07-12 03:16:12', '', 'certificaciones', 'blackburn'),
 (1, 'jos', 'insercion', '2015-07-05 10:00:00', 'dasd as as asscassac sa sa a', 'ENVIOS', 'josepc'),
 (2, 'admin', 'INSERCION', '2015-07-08 10:50:03', 'sss', 'ENVIOS', 'sss'),
 (3, 'admin', 'INSERCION', '2015-07-08 10:59:35', 'call SP_envios_ins(\r\n			 2015-07-08 00:58:59 ,\r\n			 aa ,\r\n			 vv ,\r\n			 sdad )', 'ENVIOS', 'sss'),
@@ -3113,7 +3288,127 @@ INSERT INTO `historial` (`id_historial`, `usuario`, `accion`, `fecha`, `datos`, 
 (18, 'admin', '', '2015-07-08 23:30:12', 'call SP_socio_update(68,  Indalecio , Abad Abad , AG71 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , ', '', 'blackburn'),
 (19, 'admin', '', '2015-07-08 23:31:00', 'call SP_socio_update(68,  Indalecio , Abad Abad , AG72 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , ', '', 'blackburn'),
 (20, 'admin', '', '2015-07-08 23:33:03', 'call SP_socio_update(68,  Indalecio , Abad Abad , AG73 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , ', '', 'blackburn'),
-(21, 'admin', 'EDICION', '2015-07-08 23:35:55', 'call SP_socio_update(68,  Indalecio , Abad Abad , AG74 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , ', 'socios', 'blackburn');
+(21, 'admin', 'EDICION', '2015-07-08 23:35:55', 'call SP_socio_update(68,  Indalecio , Abad Abad , AG74 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , ', 'socios', 'blackburn'),
+(22, 'admin', 'INSERCIÓN', '2015-07-12 03:40:27', 'call SP_socio_certificar( 68 , 2000 , T1 )', 'certificaciones', 'blackburn'),
+(23, 'admin', 'BORRADO', '2015-07-12 03:43:22', 'call SP_certificaciones_del( 351 )', 'certificaciones', 'blackburn'),
+(24, 'admin', 'INSERCIÃ“N', '2015-07-12 03:50:45', 'call SP_socio_certificar( 68 , 2000 , T1 )', 'certificaciones', 'blackburn'),
+(25, 'admin', 'BORRADO', '2015-07-12 03:58:16', 'call SP_certificaciones_del( 352 )', 'certificaciones', 'blackburn'),
+(26, 'admin', 'INSERCIÃ“N', '2015-07-12 04:00:13', 'call SP_socio_certificar( 68 , 2000 , T1 )', 'certificaciones', 'blackburn'),
+(27, 'admin', 'BORRADO', '2015-07-12 04:00:19', 'call SP_certificaciones_del( 353 )', 'certificaciones', 'blackburn'),
+(28, 'admin', 'EDICION', '2015-07-12 04:37:23', 'call SP_socio_update(68,  Indalecio , Abad Abad , AG75 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , ', 'socios', 'blackburn'),
+(29, 'admin', 'EDICION', '2015-07-12 04:40:50', 'call SP_socio_update(68,  Indalecio , Abad Abad , AG76 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , ', 'socios', 'blackburn'),
+(30, 'admin', 'EDICION', '2015-07-12 04:41:16', 'call SP_socio_update(68, Indalecio1 , Abad Abad , AG77 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , ', 'socios', 'blackburn'),
+(31, 'admin', 'EDICION', '2015-07-12 04:41:26', 'call SP_socio_update(68, Indalecio , Abad Abad , AG78 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , L', 'socios', 'blackburn'),
+(32, 'admin', 'EDICION', '2015-07-12 04:41:57', 'call SP_socio_update(68, 12 , Abad Abad , AG79 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , Loja , M', 'socios', 'blackburn'),
+(33, 'admin', 'EDICION', '2015-07-12 04:42:08', 'call SP_socio_update(68, Indalecio , Abad Abad , AG80 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , L', 'socios', 'blackburn'),
+(34, 'admin', 'INSERCIÃ“N', '2015-07-12 04:42:22', 'call SP_socio_certificar( 68 , 2000 , O )', 'certificaciones', 'blackburn'),
+(35, 'admin', 'BORRADO', '2015-07-12 04:42:36', 'call SP_certificaciones_del( 354 )', 'certificaciones', 'blackburn'),
+(36, 'admin', 'INSERCIÃ“N', '2015-07-12 04:43:30', 'call sp_alta_ins( 68 , Ingreso , 2015-07-11 );', 'altas', 'blackburn'),
+(37, 'admin', 'BORRADO', '2015-07-12 04:43:42', 'call SP_altas_del( 0 )', 'altas', 'blackburn'),
+(38, 'admin', 'INSERCIÃ“N', '2015-07-12 04:43:47', 'call sp_alta_ins( 68 , Ingreso , 2015-07-11 );', 'altas', 'blackburn'),
+(39, 'admin', 'BORRADO', '2015-07-12 04:46:38', 'call SP_altas_del( 0 )', 'altas', 'blackburn'),
+(40, 'admin', 'INSERCIÃ“N', '2015-07-12 04:48:56', 'call SP_estimaciones_ins( 68 , 2015 , 100 , 0 )', 'configuraciones', 'blackburn'),
+(41, 'admin', 'BORRADO', '2015-07-12 04:49:08', 'call SP_estimaciones_del( 0 )', 'configuraciones', 'blackburn'),
+(42, 'admin', 'EDICION', '2015-07-12 04:49:25', 'call SP_socio_update(68, Indalecio , Abad Abad , AG81 , 1104518863 , 0 , 1981-01-29 ,  , AGRODIN , L', 'socios', 'blackburn'),
+(43, 'admin', 'INSERCIÃ“N', '2015-07-12 04:58:43', 'call SP_asociaciones_ins( CaÃ±a , bajo , Subparcela , 69 , Cultivo )', 'asociaciones', 'blackburn'),
+(44, 'admin', 'INSERCIÃ“N', '2015-07-12 04:58:49', 'call SP_asociaciones_ins( Guaba , bajo , Subparcela , 69 , Cultivo )', 'asociaciones', 'blackburn'),
+(45, 'admin', 'INSERCIÃ“N', '2015-07-12 04:59:54', 'call SP_asociaciones_ins( Yuca , bajo , Subparcela , 69 , Cultivo )', 'asociaciones', 'blackburn'),
+(46, 'admin', 'INSERCIÃ“N', '2015-07-12 05:00:43', 'call SP_asociaciones_ins( Yuca , bajo , Subparcela , 69 , Cultivo )', 'asociaciones', 'blackburn'),
+(47, 'admin', 'INSERCIÃ“N', '2015-07-12 05:00:47', 'call SP_asociaciones_ins( Yuca , bajo , Subparcela , 69 , Cultivo )', 'asociaciones', 'blackburn'),
+(48, 'admin', 'INSERCIÃ“N', '2015-07-12 05:07:13', 'call SP_asociaciones_ins( CaÃ±a , medio , Cultivo , subparcela , 69 )', 'asociaciones', 'blackburn'),
+(49, 'admin', 'INSERCIÃ“N', '2015-07-12 05:17:31', 'call SP_asociaciones_ins( Naranja , alto , Cultivo , subparcela , 69 )', 'asociaciones', 'blackburn'),
+(50, 'admin', 'INSERCIÃ“N', '2015-07-12 05:17:54', 'call SP_asociaciones_ins( Naranja , alto , Cultivo , subparcela , 69 )', 'asociaciones', 'blackburn'),
+(51, 'admin', 'BORRADO', '2015-07-12 05:17:57', 'call SP_asociaciones_del( 742 )', 'asociaciones', 'blackburn'),
+(52, 'admin', 'BORRADO', '2015-07-12 05:18:01', 'call SP_asociaciones_del( 741 )', 'asociaciones', 'blackburn'),
+(53, 'admin', 'EDICION', '2015-07-12 05:18:10', 'UPDATE subparcelas SET \r\n                id_parcela= 69 ,\r\n                superficie= 2.00 ,\r\n     ', 'subparcelas', 'blackburn'),
+(54, 'admin', 'INSERCIÃ“N', '2015-07-12 05:21:48', 'call SP_asociaciones_ins( Yuca , bajo , Cultivo , parcela , 69 )', 'asociaciones', 'blackburn'),
+(55, 'admin', 'INSERCIÃ“N', '2015-07-12 05:22:19', 'call SP_asociaciones_ins( Yuca , bajo , Cultivo , parcela , 69 )', 'asociaciones', 'blackburn'),
+(56, 'admin', 'INSERCIÃ“N', '2015-07-12 05:22:50', 'call SP_asociaciones_ins( Yuca , bajo , Cultivo , parcela , 69 )', 'asociaciones', 'blackburn'),
+(57, 'admin', 'BORRADO', '2015-07-12 05:22:56', 'call SP_asociaciones_del( 745 )', 'asociaciones', 'blackburn'),
+(58, 'admin', 'BORRADO', '2015-07-12 05:22:59', 'call SP_asociaciones_del( 744 )', 'asociaciones', 'blackburn'),
+(59, 'admin', 'INSERCIÃ“N', '2015-07-12 05:23:20', 'call SP_asociaciones_ins( Gallinas , medio , Animales , parcela , 69 )', 'asociaciones', 'blackburn'),
+(60, 'admin', 'INSERCIÃ“N', '2015-07-12 05:23:49', 'call SP_asociaciones_ins( Gallinas , medio , Animales , parcela , 69 )', 'asociaciones', 'blackburn'),
+(61, 'admin', 'BORRADO', '2015-07-12 05:23:54', 'call SP_asociaciones_del( 747 )', 'asociaciones', 'blackburn'),
+(62, 'admin', 'BORRADO', '2015-07-12 05:23:56', 'call SP_asociaciones_del( 746 )', 'asociaciones', 'blackburn'),
+(63, 'admin', 'INSERCIÃ“N', '2015-07-12 05:24:01', 'call SP_asociaciones_ins( Gallinas , medio , Animales , parcela , 69 )', 'asociaciones', 'blackburn'),
+(64, 'admin', 'BORRADO', '2015-07-12 05:24:19', 'call SP_asociaciones_del( 746 )', 'asociaciones', 'blackburn'),
+(65, 'admin', 'INSERCIÃ“N', '2015-07-12 05:31:09', 'call SP_asociaciones_ins( CaÃ±a , medio , cultivo , parcela , 1 )', 'asociaciones', 'blackburn'),
+(66, 'admin', 'BORRADO', '2015-07-12 05:31:12', 'call SP_asociaciones_del( 749 )', 'asociaciones', 'blackburn'),
+(67, 'admin', 'INSERCIÃ“N', '2015-07-12 05:31:18', 'call SP_asociaciones_ins( Cuyes , medio , animales , parcela , 1 )', 'asociaciones', 'blackburn'),
+(68, 'admin', 'BORRADO', '2015-07-12 05:31:20', 'call SP_asociaciones_del( 750 )', 'asociaciones', 'blackburn'),
+(69, 'admin', 'EDICION', '2015-07-12 05:31:26', 'call SP_parcelas_update( 2.00 , 9482926 , 707211 , 1178 , 58 , 200 ,\r\n         4 , 3 , Goteo , 1 )', 'parcelas', 'blackburn'),
+(70, 'admin', 'BORRADO', '2015-07-12 05:32:34', 'call SP_asociaciones_del( 711 )', 'asociaciones', 'blackburn'),
+(71, 'admin', 'BORRADO', '2015-07-12 05:32:37', 'call SP_asociaciones_del( 710 )', 'asociaciones', 'blackburn'),
+(72, 'admin', 'BORRADO', '2015-07-12 05:32:39', 'call SP_asociaciones_del( 712 )', 'asociaciones', 'blackburn'),
+(73, 'admin', 'BORRADO', '2015-07-12 05:32:42', 'call SP_asociaciones_del( 724 )', 'asociaciones', 'blackburn'),
+(74, 'admin', 'BORRADO', '2015-07-12 05:32:45', 'call SP_asociaciones_del( 727 )', 'asociaciones', 'blackburn'),
+(75, 'admin', 'BORRADO', '2015-07-12 05:32:47', 'call SP_asociaciones_del( 729 )', 'asociaciones', 'blackburn'),
+(76, 'admin', 'BORRADO', '2015-07-12 05:32:49', 'call SP_asociaciones_del( 726 )', 'asociaciones', 'blackburn'),
+(77, 'admin', 'BORRADO', '2015-07-12 05:32:51', 'call SP_asociaciones_del( 725 )', 'asociaciones', 'blackburn'),
+(78, 'admin', 'BORRADO', '2015-07-12 05:32:53', 'call SP_asociaciones_del( 719 )', 'asociaciones', 'blackburn'),
+(79, 'admin', 'BORRADO', '2015-07-12 05:32:55', 'call SP_asociaciones_del( 731 )', 'asociaciones', 'blackburn'),
+(80, 'admin', 'BORRADO', '2015-07-12 05:32:57', 'call SP_asociaciones_del( 717 )', 'asociaciones', 'blackburn'),
+(81, 'admin', 'BORRADO', '2015-07-12 05:32:59', 'call SP_asociaciones_del( 714 )', 'asociaciones', 'blackburn'),
+(82, 'admin', 'BORRADO', '2015-07-12 05:33:02', 'call SP_asociaciones_del( 730 )', 'asociaciones', 'blackburn'),
+(83, 'admin', 'INSERCIÃ“N', '2015-07-12 05:33:07', 'call SP_asociaciones_ins( Platano , alto , cultivo , subparcela , 1 )', 'asociaciones', 'blackburn'),
+(84, 'admin', 'EDICION', '2015-07-12 05:33:14', 'UPDATE subparcelas SET \r\n                id_parcela= 1 ,\r\n                superficie= 2.00 ,\r\n      ', 'subparcelas', 'blackburn'),
+(85, 'admin', 'INSERCIÃ“N', '2015-07-12 05:33:42', 'INSERT INTO subparcelas VALUES (  ,\r\n                 1 ,\r\n                 20 ,\r\n                 c', 'subparcelas', 'blackburn'),
+(86, 'admin', 'EDICION', '2015-07-12 05:39:57', 'call SP_subparcelas_del( 302 )', 'subparcelas', 'blackburn'),
+(87, 'admin', 'INSERCIÃ“N', '2015-07-12 05:41:07', 'call SP_asociaciones_ins( Papaya , bajo , cultivo , subparcela , 301 )', 'asociaciones', 'blackburn'),
+(88, 'admin', 'EDICION', '2015-07-12 05:41:19', 'UPDATE subparcelas SET \r\n                id_parcela= 1 ,\r\n                superficie= 20.00 ,\r\n     ', 'subparcelas', 'blackburn'),
+(89, 'admin', 'INSERCIÃ“N', '2015-07-12 05:51:22', 'CALL SP_subparcelas_ins( 1 , 20 , catucaÃ­ , catucaÃ­ ,\r\n          , 20 , Regular , Limpio , Poco , ', 'subparcelas', 'blackburn'),
+(90, 'admin', 'EDICION', '2015-07-12 05:51:36', 'call SP_subparcelas_del( 303 )', 'subparcelas', 'blackburn'),
+(91, 'admin', 'EDICION', '2015-07-12 05:55:43', 'CALL SP_subparcelas_upd( 1 , 20.00 , catucaÃ­ , catucaÃ­ ,\r\n         0 , 20 , Medio , Medio , Medio ', 'subparcelas', 'blackburn'),
+(92, 'admin', 'EDICION', '2015-07-12 05:55:58', 'CALL SP_subparcelas_upd( 1 , 2.00 , catimoro , catucaÃ­ ,\r\n         2005 , 0 , Regular , Limpio , Po', 'subparcelas', 'blackburn'),
+(93, 'admin', 'INSERCIÃ“N', '2015-07-12 06:19:15', 'call SP_parcela_ins(31,1,1,1\r\n        ,2.05,1,1,1, AspersiÃ³n )', 'parcelas', 'blackburn'),
+(94, 'admin', 'INSERCIÃ“N', '2015-07-12 06:21:30', 'call SP_parcela_ins(31,1,1,1\r\n        ,1,1,1,1, AspersiÃ³n )', 'parcelas', 'blackburn'),
+(95, 'admin', 'INSERCIÃ“N', '2015-07-12 06:23:25', 'call SP_parcela_ins(31,1,1,1\r\n        ,1,1,1,1, AspersiÃ³n )', 'parcelas', 'blackburn'),
+(96, 'admin', 'INSERCIÃ“N', '2015-07-12 06:24:15', 'call SP_parcela_ins(31,1,1,1\r\n        ,1,1,1,1, AspersiÃ³n )', 'parcelas', 'blackburn'),
+(97, 'admin', 'INSERCIÃ“N', '2015-07-12 06:25:23', 'call SP_parcela_ins(31,1,1,1\r\n        ,1,1,1,1, AspersiÃ³n )', 'parcelas', 'blackburn'),
+(98, 'admin', 'INSERCIÃ“N', '2015-07-12 06:26:12', 'call SP_parcela_ins(31,1,1,1\r\n        ,1,1,1,1, AspersiÃ³n )', 'parcelas', 'blackburn'),
+(99, 'admin', 'INSERCIÃ“N', '2015-07-12 06:26:59', 'call SP_parcela_ins(31,1,1,1\r\n        ,1,1,1,1, AspersiÃ³n )', 'parcelas', 'blackburn'),
+(100, 'admin', 'INSERCIÃ“N', '2015-07-12 07:20:15', 'CALL SP_lote_ins( 68 , APC-00001-15 , 2015-07-12 02:19:37 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , ', 'lotes', 'blackburn'),
+(101, 'admin', 'EDICION', '2015-07-12 07:44:27', 'CALL SP_lote_upd( 184 , 68 , APC-00001-15 , 2000-01-01 , 1.00 , 1.00 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0', 'lotes', 'blackburn'),
+(102, 'admin', 'EDICION', '2015-07-12 07:44:42', 'CALL SP_lote_upd( 184 , 68 , APC-00001-15 ,  , 1.00 , 1.00 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 , 1 ,', 'lotes', 'blackburn'),
+(103, 'admin', 'EDICION', '2015-07-12 07:44:54', 'CALL SP_lote_upd( 184 , 68 , APC-00001-15 ,  , 1.00 , 1.00 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 , 0 ,', 'lotes', 'blackburn'),
+(104, 'admin', 'EDICION', '2015-07-12 07:47:25', 'CALL SP_lote_upd( 184 , 68 , APC-00001-15 ,  , 1.00 , 1.00 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 0 , 0 ,', 'lotes', 'blackburn'),
+(105, 'admin', 'BORRADO', '2015-07-12 07:47:33', 'CALL SP_lote_del( 184 )', 'lotes', 'blackburn'),
+(106, 'admin', 'EDICION', '2015-07-12 07:51:02', 'CALL SP_catas_upd( 35 , 170 , 2014-08-18 00:00:00 ,  , 0 , 5 ,\r\n		  ,  , 5 ,  ,  , 5 ,		\r\n		  ,  , 5', 'catas', 'blackburn'),
+(107, 'admin', 'EDICION', '2015-07-12 08:19:03', 'CALL SP_catas_del( 35 )', 'catas', 'blackburn'),
+(108, 'admin', 'INSERCIÃ“N', '2015-07-12 08:34:20', 'CALL SP_catas_ins( 170 , 2015-07-12 03:33:41 , uno , 0 , 5 ,\r\n		  ,  , 5 ,  ,  , 5 ,\r\n		  ,  , 5 , 5', 'catas', 'blackburn'),
+(109, 'admin', 'EDICION', '2015-07-12 08:34:31', 'CALL SP_catas_del( 146 )', 'catas', 'blackburn'),
+(110, 'admin', 'INSERCIÃ“N', '2015-07-12 08:34:41', 'CALL SP_catas_ins( 170 , 2015-07-12 03:34:37 ,  , 0 , 5 ,\r\n		  ,  , 5 ,  ,  , 5 ,\r\n		  ,  , 5 , 5 , ', 'catas', 'blackburn'),
+(111, 'admin', 'EDICION', '2015-07-12 08:35:34', 'CALL SP_catas_del( 147 )', 'catas', 'blackburn'),
+(112, 'admin', 'INSERCIÃ“N', '2015-07-12 08:35:50', 'CALL SP_catas_ins( 170 , 2015-07-12 03:35:41 ,  , 0 , 5 ,\r\n		 Chocolate amargo ,  , 5 , Vinoso ,  , ', 'catas', 'blackburn'),
+(113, 'admin', 'EDICION', '2015-07-12 08:36:28', 'CALL SP_catas_upd( 148 , 170 , 2015-07-12 03:35:41 ,  , 0 , 5 ,\r\n		 Chocolate amargo ,  , 5 , Vinoso', 'catas', 'blackburn'),
+(114, 'admin', 'BORRADO', '2015-07-12 08:38:07', 'call SP_despachos_del( 3 )', 'despachos', 'blackburn'),
+(115, 'admin', 'BORRADO', '2015-07-12 08:38:33', 'call SP_despachos_del( 3 )', 'despachos', 'blackburn'),
+(116, 'admin', 'INSERCIÃ“N', '2015-07-12 08:39:58', 'call SP_despacho_ins( 170 , 2015-07-12 03:39:54 , 1 , 4 )', 'despachos', 'blackburn'),
+(117, 'admin', 'EDICION', '2015-07-12 08:43:43', 'call SP_envios_upd(\r\n			2014-06-07 00:15:17,\r\n			Quito1,\r\n			Manolo,\r\n			Juanito,\r\n			4)', 'envios', 'blackburn'),
+(118, 'admin', 'EDICION', '2015-07-12 08:43:51', 'call SP_envios_upd(\r\n			2014-06-07 00:15:17,\r\n			Quito,\r\n			Manolo,\r\n			Juanito,\r\n			4)', 'envios', 'blackburn'),
+(119, 'admin', 'INSERCIÃ“N', '2015-07-12 08:44:57', 'call SP_envios_ins(\r\n			,\r\n			loja,\r\n			Manolo,\r\n			Manolo)', 'envios', 'blackburn'),
+(120, 'admin', 'INSERCIÃ“N', '2015-07-12 08:48:31', '', 'persona', 'blackburn'),
+(121, 'admin', 'INSERCIÃ“N', '2015-07-12 08:49:07', 'call SP_usuarios_ins( alex , 1234 , administrador ,  )', 'usuarios', 'blackburn'),
+(122, 'admin', 'BORRADO', '2015-07-12 08:49:14', 'call SP_users_del( 8 , bajas )', 'usuarios', 'blackburn'),
+(123, 'admin', 'BORRADO', '2015-07-12 08:49:23', 'call SP_users_del( 8 , altas )', 'usuarios', 'blackburn'),
+(124, 'admin', 'EDICION', '2015-07-12 08:49:40', 'call SP_user_update(8, alex2 , 1234 , contador )', 'usuarios', 'blackburn'),
+(125, 'admin', 'BORRADO', '2015-07-12 08:49:46', 'call SP_users_del( 8 , bajas )', 'usuarios', 'blackburn'),
+(126, 'admin', 'EDICION', '2015-07-12 08:52:45', 'CALL SP_configuracion_upd( puntaje mÃ­nimo de  , 84.00 , 1 )', 'estimaciones', 'blackburn'),
+(127, 'admin', 'INSERCIÃ“N', '2015-07-12 08:53:19', 'call SP_socio_certificar( 68 , 2000 , T1 )', 'certificaciones', 'blackburn'),
+(128, 'admin', 'BORRADO', '2015-07-12 08:53:39', 'call SP_certificaciones_del( 355 )', 'certificaciones', 'blackburn'),
+(129, 'admin', 'EDICION', '2015-07-12 09:02:36', '', 'grupos', 'blackburn'),
+(130, 'admin', 'EDICION', '2015-07-12 09:04:04', 'call SP_grupos_upd( AGRODIN , AN , 2 )', 'grupos', 'blackburn'),
+(131, 'admin', 'INSERCIÃ“N', '2015-07-12 21:22:24', 'CALL SP_analisis_ins( 1 , 2015-07-12 , 1 , 1 , angular ,\r\n    	 dÃ©bil , 1 , 1 , 1 , 1 ,\r\n    	 0 , ', 'analisis', 'blackburn'),
+(132, 'admin', 'INSERCIÃ“N', '2015-07-12 21:41:23', 'call SP_analisis_upd( 1 , 2015-07-12 , 1 , 1 , angular ,\r\n         dÃ©bil , 1 , 1 , 1 , 1 ,\r\n       ', 'analisis', 'blackburn'),
+(133, 'admin', 'BORRADO', '2015-07-12 21:45:31', 'call SP_analisis_del( 6 )', 'analisis', 'blackburn'),
+(134, 'admin', 'INSERCIÃ“N', '2015-07-12 21:46:26', 'CALL SP_analisis_ins( 1 , 2015-07-12 , 1 , 1 , angular ,\r\n    	 dÃ©bil , 1 , 1 , 1 , 1 ,\r\n    	 0 , ', 'analisis', 'blackburn'),
+(135, 'admin', 'BORRADO', '2015-07-12 21:46:38', 'call SP_analisis_del( 7 )', 'analisis', 'blackburn'),
+(136, 'admin', 'EDICION', '2015-07-12 21:49:22', 'call SP_subparcelas_del( 301 )', 'subparcelas', 'blackburn'),
+(137, 'admin', 'INSERCIÃ“N', '2015-07-12 21:49:55', 'CALL SP_subparcelas_ins( 1 , 20 , catucaÃ­ , catucaÃ­ ,\r\n         2000-01-12 , 20 , Regular , Limpio', 'subparcelas', 'blackburn'),
+(138, 'admin', 'INSERCIÃ“N', '2015-07-12 21:50:07', 'call SP_asociaciones_ins( Naranja , medio , cultivo , subparcela , 304 )', 'asociaciones', 'blackburn'),
+(139, 'admin', 'INSERCIÃ“N', '2015-07-12 21:50:14', 'call SP_asociaciones_ins( Guaba , alto , cultivo , subparcela , 304 )', 'asociaciones', 'blackburn'),
+(140, 'admin', 'INSERCIÃ“N', '2015-07-12 21:50:24', 'call SP_asociaciones_ins( Vacas , medio , animales , parcela , 1 )', 'asociaciones', 'blackburn'),
+(141, 'admin', 'EDICION', '2015-07-12 21:50:32', 'call SP_parcelas_update( 3 , 9482926 , 707211 , 1178 , 58 , 200 ,\r\n         4 , 3 , Goteo , 1 )', 'parcelas', 'blackburn');
 
 -- --------------------------------------------------------
 
@@ -3122,7 +3417,7 @@ INSERT INTO `historial` (`id_historial`, `usuario`, `accion`, `fecha`, `datos`, 
 --
 
 CREATE TABLE IF NOT EXISTS `lotes` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `codigo_lote` text COLLATE latin1_spanish_ci NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -3139,185 +3434,187 @@ CREATE TABLE IF NOT EXISTS `lotes` (
   `moho` tinyint(1) NOT NULL,
   `fermento` tinyint(1) NOT NULL,
   `contaminado` tinyint(1) NOT NULL,
-  `calidad` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+  `calidad` text COLLATE latin1_spanish_ci NOT NULL,
+  `rto_pilado` int(11) DEFAULT '0',
+  `apto_cata` int(1) DEFAULT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=185 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `lotes`
 --
 
-INSERT INTO `lotes` (`id`, `id_socio`, `codigo_lote`, `fecha`, `peso`, `humedad`, `rto_descarte`, `rto_exportable`, `defecto_negro`, `defecto_vinagre`, `defecto_decolorado`, `defecto_mordido`, `defecto_brocado`, `reposo`, `moho`, `fermento`, `contaminado`, `calidad`) VALUES
-(1, 93, 'APC-612', '2014-02-21 10:00:00', 2.65, 12.00, 3, 204, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(2, 297, 'APC-613', '2014-02-21 10:00:00', 3.79, 12.00, 10, 196, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(3, 108, 'APC-614', '2014-02-25 10:00:00', 0.53, 12.00, 16, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(4, 35, 'APC-616', '2014-03-17 10:00:00', 1.54, 16.00, 7, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(5, 53, 'APC-617', '2014-04-11 10:00:00', 3.02, 12.00, 30, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(6, 296, 'APC-618', '2014-04-11 10:00:00', 5.49, 12.00, 25, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(7, 256, 'APC-619', '2014-04-15 10:00:00', 2.04, 23.00, 15, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(8, 295, 'APC-620', '2014-04-15 10:00:00', 8.45, 19.00, 19, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(9, 294, 'APC-621', '2014-04-15 10:00:00', 5.43, 21.00, 6, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(10, 196, 'APC-623', '2014-05-09 10:00:00', 0.52, 12.00, 26, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(11, 108, 'APC-624', '2014-05-13 10:00:00', 3.20, 12.00, 24, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(12, 46, 'APC-625', '2014-05-23 10:00:00', 2.10, 12.00, 21, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(13, 87, 'APC-02', '2014-02-06 10:00:00', 5.67, 12.00, 14, 188, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(14, 87, 'APC-04', '2014-06-02 10:00:00', 2.56, 12.00, 10, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(15, 213, 'APC-05', '2014-06-02 10:00:00', 1.86, 12.00, 8, 194, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(16, 53, 'APC-06', '2014-06-02 10:00:00', 1.19, 12.00, 16, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(17, 5, 'APC-08', '2014-06-02 10:00:00', 2.60, 12.00, 4, 195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(18, 219, 'APC-09', '2014-06-03 10:00:00', 1.81, 12.00, 18, 188, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(19, 49, 'APC-07', '2014-06-02 10:00:00', 6.73, 12.00, 22, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(20, 107, 'APC-10', '2014-06-09 10:00:00', 6.80, 12.00, 37, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(21, 221, 'APC-11', '2014-06-10 10:00:00', 2.10, 12.00, 20, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(22, 258, 'APC-12', '2014-06-11 10:00:00', 0.71, 12.00, 39, 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(23, 5, 'APC-14', '2014-06-11 10:00:00', 3.45, 12.00, 23, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(24, 3, 'APC-15', '2014-06-11 10:00:00', 2.49, 12.00, 15, 189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(25, 9, 'APC-16', '2014-06-12 10:00:00', 2.63, 12.00, 24, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(26, 67, 'APC-17', '2014-06-12 10:00:00', 5.29, 12.00, 13, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(27, 58, 'APC-18', '2014-06-12 10:00:00', 2.25, 12.00, 34, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(28, 290, 'APC-19', '2014-06-16 10:00:00', 1.43, 12.00, 14, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(29, 143, 'APC-20', '2014-06-17 10:00:00', 4.29, 12.00, 11, 198, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(30, 7, 'APC-21', '2014-06-17 10:00:00', 2.52, 12.00, 34, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(31, 267, 'APC-22', '2014-06-18 10:00:00', 1.22, 12.00, 13, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(32, 267, 'APC-23', '2014-06-18 10:00:00', 0.38, 12.00, 10, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(33, 86, 'APC-24', '2014-06-19 10:00:00', 4.36, 12.00, 26, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(34, 223, 'APC-25', '2014-06-20 10:00:00', 6.25, 12.00, 17, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(35, 33, 'APC-26', '2014-06-20 10:00:00', 0.71, 12.00, 43, 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(36, 140, 'APC-27', '2014-06-20 10:00:00', 4.35, 12.00, 22, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(37, 16, 'APC-29', '2014-06-24 10:00:00', 0.55, 12.00, 11, 189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(38, 201, 'APC-30', '2014-06-24 10:00:00', 0.47, 12.00, 13, 189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(39, 5, 'APC-31', '2014-06-24 10:00:00', 1.38, 12.00, 19, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(40, 122, 'APC-32', '2014-06-26 10:00:00', 1.93, 12.00, 10, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(41, 123, 'APC-33', '2014-06-26 10:00:00', 1.53, 12.00, 10, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(42, 153, 'APC-34', '2014-06-26 10:00:00', 0.58, 12.00, 50, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(43, 5, 'APC-35', '2014-06-26 10:00:00', 0.53, 12.00, 20, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(44, 75, 'APC-36', '2014-06-27 10:00:00', 1.21, 12.00, 9, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(45, 15, 'APC-37', '2014-06-27 10:00:00', 1.05, 12.00, 42, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(46, 16, 'APC-38', '2014-06-27 10:00:00', 1.09, 12.00, 31, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(47, 19, 'APC-39', '2014-06-27 10:00:00', 1.47, 12.00, 14, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(48, 19, 'APC-40', '2014-06-27 10:00:00', 3.00, 12.00, 12, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(49, 219, 'APC-41', '2014-06-30 10:00:00', 1.64, 12.00, 17, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(50, 6, 'APC-42', '2014-06-30 10:00:00', 3.55, 12.00, 10, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(51, 6, 'APC-44', '2014-06-30 10:00:00', 5.15, 12.00, 11, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(52, 75, 'APC-45', '2014-07-01 10:00:00', 0.56, 12.00, 15, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(53, 108, 'APC-46', '2014-07-02 10:00:00', 2.59, 12.00, 29, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(54, 67, 'APC-47', '2014-07-02 10:00:00', 4.76, 12.00, 45, 152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(55, 7, 'APC-48', '2014-07-03 10:00:00', 2.79, 12.00, 34, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(56, 297, 'APC-49', '2014-07-03 10:00:00', 4.10, 12.00, 23, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(57, 149, 'APC-50', '2014-07-03 10:00:00', 2.33, 12.00, 17, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(58, 295, 'APC-51', '2014-07-07 10:00:00', 2.35, 12.00, 22, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(59, 137, 'APC-52', '2014-07-07 10:00:00', 2.48, 12.00, 29, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(60, 1, 'APC-53', '2014-07-07 10:00:00', 0.84, 12.00, 24, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(61, 87, 'APC-54', '2014-07-10 10:00:00', 4.00, 12.00, 0, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(62, 87, 'APC-55', '2014-07-11 01:00:00', 5.59, 12.00, 33, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(63, 129, 'APC-56', '2014-07-10 10:00:00', 1.18, 12.00, 20, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(64, 58, 'APC-57', '2014-07-10 10:00:00', 2.72, 12.00, 36, 166, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(65, 213, 'APC-58', '2014-07-11 10:00:00', 1.73, 12.00, 22, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(66, 74, 'APC-59', '2014-07-14 10:00:00', 3.44, 12.00, 27, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(67, 51, 'APC-60', '2014-07-14 10:00:00', 9.75, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(68, 59, 'APC-61', '2014-07-14 10:00:00', 4.38, 12.00, 38, 163, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(69, 49, 'APC-62', '2014-07-14 10:00:00', 15.56, 12.00, 33, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(70, 12, 'APC-63', '2014-07-15 10:00:00', 1.46, 12.00, 45, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(71, 192, 'APC-64', '2014-07-15 10:00:00', 1.22, 12.00, 42, 167, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(72, 107, 'APC-65', '2014-07-16 10:00:00', 1.66, 12.00, 36, 164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(73, 249, 'APC-66', '2014-07-16 10:00:00', 5.09, 12.00, 38, 195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(74, 153, 'APC-67', '2014-07-16 10:00:00', 1.24, 12.00, 25, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(75, 90, 'APC-68', '2014-07-17 10:00:00', 6.59, 12.00, 32, 167, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(76, 90, 'APC-69', '2014-07-17 10:00:00', 0.62, 12.00, 25, 164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MN'),
-(77, 221, 'APC-70', '2014-07-17 10:00:00', 3.67, 12.00, 32, 167, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(78, 209, 'APC-71', '2014-07-21 10:00:00', 4.00, 12.00, 32, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(79, 295, 'APC-72', '2014-07-21 10:00:00', 3.59, 12.00, 23, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(80, 36, 'APC-73', '2014-07-21 10:00:00', 2.95, 12.00, 18, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(81, 36, 'APC-74', '2014-07-21 10:00:00', 2.95, 12.00, 43, 163, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(82, 139, 'APC-75', '2014-07-21 10:00:00', 5.13, 12.00, 32, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(83, 171, 'APC-76', '2014-07-22 10:00:00', 2.22, 12.00, 24, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(84, 255, 'APC-77', '2014-07-23 10:00:00', 2.09, 12.00, 29, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(85, 222, 'APC-78', '2014-07-23 10:00:00', 1.68, 12.00, 27, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(86, 9, 'APC-79', '2014-07-23 10:00:00', 4.20, 12.00, 32, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(87, 201, 'APC-80', '2014-07-24 10:00:00', 1.05, 12.00, 14, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(88, 108, 'APC-81', '2014-07-24 10:00:00', 4.96, 12.00, 35, 164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(89, 146, 'APC-82', '2014-07-24 10:00:00', 1.53, 12.00, 21, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(90, 230, 'APC-83', '2014-07-24 10:00:00', 2.33, 12.00, 24, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(91, 15, 'APC-84', '2014-07-24 10:00:00', 3.83, 12.00, 39, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(92, 71, 'APC85', '2014-07-25 10:00:00', 2.21, 12.00, 26, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(93, 87, 'APC86', '2014-07-28 10:00:00', 9.38, 12.00, 27, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(94, 87, 'APC87', '2014-07-28 20:00:00', 3.45, 12.00, 22, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(95, 3, 'APC88', '2014-07-28 10:00:00', 3.89, 12.00, 24, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(96, 15, 'APC89', '2014-07-29 10:00:00', 1.15, 12.00, 38, 162, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(97, 45, 'APC90', '2014-07-29 10:00:00', 1.52, 12.00, 17, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(98, 143, 'APC91', '2014-07-29 10:00:00', 7.45, 12.00, 21, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(99, 243, 'APC92', '2014-07-30 10:00:00', 1.32, 12.00, 20, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(100, 74, 'APC93', '2014-07-30 10:00:00', 2.81, 12.00, 20, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(101, 174, 'APC94', '2014-07-31 10:00:00', 2.65, 12.00, 22, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(102, 41, 'APC95', '2014-07-31 10:00:00', 1.90, 12.00, 21, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(103, 259, 'APC96', '2014-07-31 10:00:00', 1.73, 12.00, 29, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(104, 256, 'APC97', '2014-07-31 10:00:00', 2.82, 12.00, 19, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(105, 105, 'APC98', '2014-08-01 10:00:00', 7.66, 12.00, 28, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(106, 105, 'APC99', '2014-08-01 10:00:00', 1.00, 12.00, 27, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(107, 7, 'APC100', '2014-08-01 10:00:00', 1.27, 12.00, 27, 164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(108, 292, 'APC-101', '2014-08-01 10:00:00', 4.70, 12.00, 19, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(109, 291, 'APC102', '2014-08-01 10:00:00', 16.70, 12.00, 22, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(110, 288, 'APC103', '2014-08-01 10:00:00', 5.00, 12.00, 27, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(111, 287, 'APC104', '2014-08-01 10:00:00', 10.78, 12.00, 17, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(112, 251, 'APC-105', '2014-08-04 10:00:00', 1.22, 12.00, 22, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(113, 107, 'APC106', '2014-08-04 10:00:00', 0.94, 12.00, 26, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(114, 293, 'APC107', '2014-08-04 10:00:00', 3.85, 12.00, 20, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, ''),
-(115, 214, 'APC108', '2014-08-04 10:00:00', 13.41, 12.00, 25, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(116, 295, 'APC109', '2014-08-04 10:00:00', 2.47, 12.00, 21, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(117, 301, 'APC110', '2014-08-04 10:00:00', 1.42, 12.00, 20, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(118, 239, 'APC111', '2014-08-04 10:00:00', 1.35, 12.00, 27, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(119, 242, 'APC112', '2014-08-04 10:00:00', 0.73, 12.00, 28, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(120, 250, 'APC113', '2014-08-04 10:00:00', 13.80, 12.00, 26, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(121, 215, 'APC114', '2014-08-04 10:00:00', 1.00, 12.00, 25, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, ''),
-(122, 237, 'APC115', '2014-08-04 10:00:00', 0.50, 12.00, 17, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, ''),
-(123, 296, 'APC116', '2014-08-05 10:00:00', 5.19, 12.00, 30, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(124, 292, 'APC117', '2014-08-05 10:00:00', 0.59, 12.00, 63, 156, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(125, 296, 'APC118', '2014-08-05 10:00:00', 4.74, 12.00, 29, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(126, 138, 'APC119', '2014-08-05 10:00:00', 1.46, 12.00, 17, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(127, 155, 'APC120', '2014-08-05 10:00:00', 1.86, 12.00, 24, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(128, 299, 'APC121', '2014-08-06 10:00:00', 3.33, 12.00, 34, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(129, 32, 'APC122', '2014-08-06 10:00:00', 2.67, 12.00, 20, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(130, 93, 'APC123', '2014-08-06 10:00:00', 3.13, 12.00, 11, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(131, 1, 'APC124', '2014-08-06 10:00:00', 2.42, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(132, 300, 'APC125', '2014-08-06 10:00:00', 4.67, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(133, 140, 'APC126', '2014-08-07 10:00:00', 5.59, 12.00, 17, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(134, 122, 'APC127', '2014-08-07 10:00:00', 1.50, 12.00, 20, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(135, 118, 'APC128', '2014-08-07 10:00:00', 0.80, 12.00, 16, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(136, 118, 'APC129', '2014-08-07 10:00:00', 0.74, 12.00, 21, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(137, 257, 'APC130', '2014-08-07 10:00:00', 12.46, 12.00, 29, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(138, 129, 'APC131', '2014-08-07 10:00:00', 1.44, 12.00, 16, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(139, 190, 'APC132', '2014-08-07 10:00:00', 0.78, 12.00, 26, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(140, 201, 'APC133', '2014-08-07 10:00:00', 0.38, 12.00, 23, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(141, 206, 'APC134', '2014-08-07 10:00:00', 0.48, 12.00, 13, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(142, 36, 'APC135', '2014-08-07 10:00:00', 0.41, 12.00, 9, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(143, 36, 'APC136', '2014-08-07 10:00:00', 3.73, 12.00, 29, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(144, 43, 'APC137', '2014-08-08 10:00:00', 2.09, 12.00, 23, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B'),
-(145, 149, 'APC138', '2014-08-08 10:00:00', 2.75, 12.00, 22, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(146, 61, 'APC139', '2014-08-08 10:00:00', 4.54, 12.00, 23, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(147, 221, 'APC140', '2014-08-08 10:00:00', 2.62, 12.00, 27, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(148, 16, 'APC141', '2014-08-08 10:00:00', 1.35, 12.00, 16, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(149, 7, 'APC142', '2014-08-08 10:00:00', 4.12, 12.00, 25, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(150, 253, 'APC143', '2014-08-08 10:00:00', 2.28, 12.00, 23, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(151, 214, 'APC144', '2014-08-08 10:00:00', 1.67, 12.00, 18, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(152, 221, 'APC145', '2014-08-08 10:00:00', 1.90, 12.00, 30, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(153, 298, 'APC146', '2014-08-11 10:00:00', 5.49, 12.00, 29, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(154, 298, 'APC147', '2014-08-11 10:00:00', 0.62, 12.00, 21, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(155, 294, 'APC-148', '2014-08-11 10:00:00', 10.38, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(156, 213, 'APC-149', '2014-08-11 10:00:00', 6.04, 12.00, 30, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(157, 163, 'APC-150', '2014-08-11 10:00:00', 4.14, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(158, 63, 'APC-151', '2014-08-11 10:00:00', 2.83, 12.00, 23, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(159, 222, 'APC-152', '2014-08-11 10:00:00', 1.23, 12.00, 26, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(160, 272, 'APC-153', '2014-08-12 10:00:00', 3.78, 12.00, 25, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(161, 196, 'APC-154', '2014-08-12 10:00:00', 2.16, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(162, 51, 'APC-155', '2014-08-12 10:00:00', 5.62, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(163, 122, 'APC-156', '2014-08-12 10:00:00', 1.22, 12.00, 13, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(164, 19, 'APC-157', '2014-08-12 10:00:00', 2.61, 12.00, 21, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(165, 9, 'APC-158', '2014-08-12 10:00:00', 5.43, 12.00, 26, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(166, 60, 'APC-159', '2014-08-13 10:00:00', 3.87, 12.00, 33, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(167, 153, 'APC-160', '2014-08-13 10:00:00', 2.06, 12.00, 14, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(168, 61, 'APC-161', '2014-08-14 10:00:00', 2.50, 12.00, 18, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(169, 290, 'APC-162', '2014-08-14 10:00:00', 1.57, 12.00, 10, 191, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(170, 50, 'APC-163', '2014-08-18 10:00:00', 7.12, 12.00, 12, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A'),
-(171, 297, 'APC-164', '2014-08-18 10:00:00', 2.22, 12.00, 23, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A');
+INSERT INTO `lotes` (`id`, `id_socio`, `codigo_lote`, `fecha`, `peso`, `humedad`, `rto_descarte`, `rto_exportable`, `defecto_negro`, `defecto_vinagre`, `defecto_decolorado`, `defecto_mordido`, `defecto_brocado`, `reposo`, `moho`, `fermento`, `contaminado`, `calidad`, `rto_pilado`, `apto_cata`) VALUES
+(1, 93, 'APC-612', '2014-02-21 10:00:00', 2.65, 12.00, 3, 204, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(2, 297, 'APC-613', '2014-02-21 10:00:00', 3.79, 12.00, 10, 196, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(3, 108, 'APC-614', '2014-02-25 10:00:00', 0.53, 12.00, 16, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(4, 35, 'APC-616', '2014-03-17 10:00:00', 1.54, 16.00, 7, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(5, 53, 'APC-617', '2014-04-11 10:00:00', 3.02, 12.00, 30, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(6, 296, 'APC-618', '2014-04-11 10:00:00', 5.49, 12.00, 25, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(7, 256, 'APC-619', '2014-04-15 10:00:00', 2.04, 23.00, 15, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(8, 295, 'APC-620', '2014-04-15 10:00:00', 8.45, 19.00, 19, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(9, 294, 'APC-621', '2014-04-15 10:00:00', 5.43, 21.00, 6, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(10, 196, 'APC-623', '2014-05-09 10:00:00', 0.52, 12.00, 26, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(11, 108, 'APC-624', '2014-05-13 10:00:00', 3.20, 12.00, 24, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(12, 46, 'APC-625', '2014-05-23 10:00:00', 2.10, 12.00, 21, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(13, 87, 'APC-02', '2014-02-06 10:00:00', 5.67, 12.00, 14, 188, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(14, 87, 'APC-04', '2014-06-02 10:00:00', 2.56, 12.00, 10, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(15, 213, 'APC-05', '2014-06-02 10:00:00', 1.86, 12.00, 8, 194, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(16, 53, 'APC-06', '2014-06-02 10:00:00', 1.19, 12.00, 16, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(17, 5, 'APC-08', '2014-06-02 10:00:00', 2.60, 12.00, 4, 195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(18, 219, 'APC-09', '2014-06-03 10:00:00', 1.81, 12.00, 18, 188, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(19, 49, 'APC-07', '2014-06-02 10:00:00', 6.73, 12.00, 22, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(20, 107, 'APC-10', '2014-06-09 10:00:00', 6.80, 12.00, 37, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(21, 221, 'APC-11', '2014-06-10 10:00:00', 2.10, 12.00, 20, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(22, 258, 'APC-12', '2014-06-11 10:00:00', 0.71, 12.00, 39, 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(23, 5, 'APC-14', '2014-06-11 10:00:00', 3.45, 12.00, 23, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(24, 3, 'APC-15', '2014-06-11 10:00:00', 2.49, 12.00, 15, 189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(25, 9, 'APC-16', '2014-06-12 10:00:00', 2.63, 12.00, 24, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(26, 67, 'APC-17', '2014-06-12 10:00:00', 5.29, 12.00, 13, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(27, 58, 'APC-18', '2014-06-12 10:00:00', 2.25, 12.00, 34, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(28, 290, 'APC-19', '2014-06-16 10:00:00', 1.43, 12.00, 14, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(29, 143, 'APC-20', '2014-06-17 10:00:00', 4.29, 12.00, 11, 198, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(30, 7, 'APC-21', '2014-06-17 10:00:00', 2.52, 12.00, 34, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(31, 267, 'APC-22', '2014-06-18 10:00:00', 1.22, 12.00, 13, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(32, 267, 'APC-23', '2014-06-18 10:00:00', 0.38, 12.00, 10, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(33, 86, 'APC-24', '2014-06-19 10:00:00', 4.36, 12.00, 26, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(34, 223, 'APC-25', '2014-06-20 10:00:00', 6.25, 12.00, 17, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(35, 33, 'APC-26', '2014-06-20 10:00:00', 0.71, 12.00, 43, 158, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(36, 140, 'APC-27', '2014-06-20 10:00:00', 4.35, 12.00, 22, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(37, 16, 'APC-29', '2014-06-24 10:00:00', 0.55, 12.00, 11, 189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(38, 201, 'APC-30', '2014-06-24 10:00:00', 0.47, 12.00, 13, 189, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(39, 5, 'APC-31', '2014-06-24 10:00:00', 1.38, 12.00, 19, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(40, 122, 'APC-32', '2014-06-26 10:00:00', 1.93, 12.00, 10, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(41, 123, 'APC-33', '2014-06-26 10:00:00', 1.53, 12.00, 10, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(42, 153, 'APC-34', '2014-06-26 10:00:00', 0.58, 12.00, 50, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(43, 5, 'APC-35', '2014-06-26 10:00:00', 0.53, 12.00, 20, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(44, 75, 'APC-36', '2014-06-27 10:00:00', 1.21, 12.00, 9, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(45, 15, 'APC-37', '2014-06-27 10:00:00', 1.05, 12.00, 42, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(46, 16, 'APC-38', '2014-06-27 10:00:00', 1.09, 12.00, 31, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(47, 19, 'APC-39', '2014-06-27 10:00:00', 1.47, 12.00, 14, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(48, 19, 'APC-40', '2014-06-27 10:00:00', 3.00, 12.00, 12, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(49, 219, 'APC-41', '2014-06-30 10:00:00', 1.64, 12.00, 17, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(50, 6, 'APC-42', '2014-06-30 10:00:00', 3.55, 12.00, 10, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(51, 6, 'APC-44', '2014-06-30 10:00:00', 5.15, 12.00, 11, 193, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(52, 75, 'APC-45', '2014-07-01 10:00:00', 0.56, 12.00, 15, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(53, 108, 'APC-46', '2014-07-02 10:00:00', 2.59, 12.00, 29, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(54, 67, 'APC-47', '2014-07-02 10:00:00', 4.76, 12.00, 45, 152, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(55, 7, 'APC-48', '2014-07-03 10:00:00', 2.79, 12.00, 34, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(56, 297, 'APC-49', '2014-07-03 10:00:00', 4.10, 12.00, 23, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(57, 149, 'APC-50', '2014-07-03 10:00:00', 2.33, 12.00, 17, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(58, 295, 'APC-51', '2014-07-07 10:00:00', 2.35, 12.00, 22, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(59, 137, 'APC-52', '2014-07-07 10:00:00', 2.48, 12.00, 29, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(60, 1, 'APC-53', '2014-07-07 10:00:00', 0.84, 12.00, 24, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(61, 87, 'APC-54', '2014-07-10 10:00:00', 4.00, 12.00, 0, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(62, 87, 'APC-55', '2014-07-11 01:00:00', 5.59, 12.00, 33, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(63, 129, 'APC-56', '2014-07-10 10:00:00', 1.18, 12.00, 20, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(64, 58, 'APC-57', '2014-07-10 10:00:00', 2.72, 12.00, 36, 166, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(65, 213, 'APC-58', '2014-07-11 10:00:00', 1.73, 12.00, 22, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(66, 74, 'APC-59', '2014-07-14 10:00:00', 3.44, 12.00, 27, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(67, 51, 'APC-60', '2014-07-14 10:00:00', 9.75, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(68, 59, 'APC-61', '2014-07-14 10:00:00', 4.38, 12.00, 38, 163, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(69, 49, 'APC-62', '2014-07-14 10:00:00', 15.56, 12.00, 33, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(70, 12, 'APC-63', '2014-07-15 10:00:00', 1.46, 12.00, 45, 155, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(71, 192, 'APC-64', '2014-07-15 10:00:00', 1.22, 12.00, 42, 167, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(72, 107, 'APC-65', '2014-07-16 10:00:00', 1.66, 12.00, 36, 164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(73, 249, 'APC-66', '2014-07-16 10:00:00', 5.09, 12.00, 38, 195, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(74, 153, 'APC-67', '2014-07-16 10:00:00', 1.24, 12.00, 25, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(75, 90, 'APC-68', '2014-07-17 10:00:00', 6.59, 12.00, 32, 167, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(76, 90, 'APC-69', '2014-07-17 10:00:00', 0.62, 12.00, 25, 164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'MN', NULL, NULL),
+(77, 221, 'APC-70', '2014-07-17 10:00:00', 3.67, 12.00, 32, 167, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(78, 209, 'APC-71', '2014-07-21 10:00:00', 4.00, 12.00, 32, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(79, 295, 'APC-72', '2014-07-21 10:00:00', 3.59, 12.00, 23, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(80, 36, 'APC-73', '2014-07-21 10:00:00', 2.95, 12.00, 18, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(81, 36, 'APC-74', '2014-07-21 10:00:00', 2.95, 12.00, 43, 163, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(82, 139, 'APC-75', '2014-07-21 10:00:00', 5.13, 12.00, 32, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(83, 171, 'APC-76', '2014-07-22 10:00:00', 2.22, 12.00, 24, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(84, 255, 'APC-77', '2014-07-23 10:00:00', 2.09, 12.00, 29, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(85, 222, 'APC-78', '2014-07-23 10:00:00', 1.68, 12.00, 27, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(86, 9, 'APC-79', '2014-07-23 10:00:00', 4.20, 12.00, 32, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(87, 201, 'APC-80', '2014-07-24 10:00:00', 1.05, 12.00, 14, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(88, 108, 'APC-81', '2014-07-24 10:00:00', 4.96, 12.00, 35, 164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(89, 146, 'APC-82', '2014-07-24 10:00:00', 1.53, 12.00, 21, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(90, 230, 'APC-83', '2014-07-24 10:00:00', 2.33, 12.00, 24, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(91, 15, 'APC-84', '2014-07-24 10:00:00', 3.83, 12.00, 39, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(92, 71, 'APC85', '2014-07-25 10:00:00', 2.21, 12.00, 26, 172, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(93, 87, 'APC86', '2014-07-28 10:00:00', 9.38, 12.00, 27, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(94, 87, 'APC87', '2014-07-28 20:00:00', 3.45, 12.00, 22, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(95, 3, 'APC88', '2014-07-28 10:00:00', 3.89, 12.00, 24, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(96, 15, 'APC89', '2014-07-29 10:00:00', 1.15, 12.00, 38, 162, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(97, 45, 'APC90', '2014-07-29 10:00:00', 1.52, 12.00, 17, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(98, 143, 'APC91', '2014-07-29 10:00:00', 7.45, 12.00, 21, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(99, 243, 'APC92', '2014-07-30 10:00:00', 1.32, 12.00, 20, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(100, 74, 'APC93', '2014-07-30 10:00:00', 2.81, 12.00, 20, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(101, 174, 'APC94', '2014-07-31 10:00:00', 2.65, 12.00, 22, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(102, 41, 'APC95', '2014-07-31 10:00:00', 1.90, 12.00, 21, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(103, 259, 'APC96', '2014-07-31 10:00:00', 1.73, 12.00, 29, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(104, 256, 'APC97', '2014-07-31 10:00:00', 2.82, 12.00, 19, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(105, 105, 'APC98', '2014-08-01 10:00:00', 7.66, 12.00, 28, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(106, 105, 'APC99', '2014-08-01 10:00:00', 1.00, 12.00, 27, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(107, 7, 'APC100', '2014-08-01 10:00:00', 1.27, 12.00, 27, 164, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(108, 292, 'APC-101', '2014-08-01 10:00:00', 4.70, 12.00, 19, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(109, 291, 'APC102', '2014-08-01 10:00:00', 16.70, 12.00, 22, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(110, 288, 'APC103', '2014-08-01 10:00:00', 5.00, 12.00, 27, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(111, 287, 'APC104', '2014-08-01 10:00:00', 10.78, 12.00, 17, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(112, 251, 'APC-105', '2014-08-04 10:00:00', 1.22, 12.00, 22, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(113, 107, 'APC106', '2014-08-04 10:00:00', 0.94, 12.00, 26, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(114, 293, 'APC107', '2014-08-04 10:00:00', 3.85, 12.00, 20, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', NULL, NULL),
+(115, 214, 'APC108', '2014-08-04 10:00:00', 13.41, 12.00, 25, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(116, 295, 'APC109', '2014-08-04 10:00:00', 2.47, 12.00, 21, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(117, 301, 'APC110', '2014-08-04 10:00:00', 1.42, 12.00, 20, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(118, 239, 'APC111', '2014-08-04 10:00:00', 1.35, 12.00, 27, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(119, 242, 'APC112', '2014-08-04 10:00:00', 0.73, 12.00, 28, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(120, 250, 'APC113', '2014-08-04 10:00:00', 13.80, 12.00, 26, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(121, 215, 'APC114', '2014-08-04 10:00:00', 1.00, 12.00, 25, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', NULL, NULL),
+(122, 237, 'APC115', '2014-08-04 10:00:00', 0.50, 12.00, 17, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', NULL, NULL),
+(123, 296, 'APC116', '2014-08-05 10:00:00', 5.19, 12.00, 30, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(124, 292, 'APC117', '2014-08-05 10:00:00', 0.59, 12.00, 63, 156, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(125, 296, 'APC118', '2014-08-05 10:00:00', 4.74, 12.00, 29, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(126, 138, 'APC119', '2014-08-05 10:00:00', 1.46, 12.00, 17, 186, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(127, 155, 'APC120', '2014-08-05 10:00:00', 1.86, 12.00, 24, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(128, 299, 'APC121', '2014-08-06 10:00:00', 3.33, 12.00, 34, 168, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(129, 32, 'APC122', '2014-08-06 10:00:00', 2.67, 12.00, 20, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(130, 93, 'APC123', '2014-08-06 10:00:00', 3.13, 12.00, 11, 190, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(131, 1, 'APC124', '2014-08-06 10:00:00', 2.42, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(132, 300, 'APC125', '2014-08-06 10:00:00', 4.67, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(133, 140, 'APC126', '2014-08-07 10:00:00', 5.59, 12.00, 17, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(134, 122, 'APC127', '2014-08-07 10:00:00', 1.50, 12.00, 20, 181, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(135, 118, 'APC128', '2014-08-07 10:00:00', 0.80, 12.00, 16, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(136, 118, 'APC129', '2014-08-07 10:00:00', 0.74, 12.00, 21, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(137, 257, 'APC130', '2014-08-07 10:00:00', 12.46, 12.00, 29, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(138, 129, 'APC131', '2014-08-07 10:00:00', 1.44, 12.00, 16, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(139, 190, 'APC132', '2014-08-07 10:00:00', 0.78, 12.00, 26, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(140, 201, 'APC133', '2014-08-07 10:00:00', 0.38, 12.00, 23, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(141, 206, 'APC134', '2014-08-07 10:00:00', 0.48, 12.00, 13, 185, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(142, 36, 'APC135', '2014-08-07 10:00:00', 0.41, 12.00, 9, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(143, 36, 'APC136', '2014-08-07 10:00:00', 3.73, 12.00, 29, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(144, 43, 'APC137', '2014-08-08 10:00:00', 2.09, 12.00, 23, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'B', NULL, NULL),
+(145, 149, 'APC138', '2014-08-08 10:00:00', 2.75, 12.00, 22, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(146, 61, 'APC139', '2014-08-08 10:00:00', 4.54, 12.00, 23, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(147, 221, 'APC140', '2014-08-08 10:00:00', 2.62, 12.00, 27, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(148, 16, 'APC141', '2014-08-08 10:00:00', 1.35, 12.00, 16, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(149, 7, 'APC142', '2014-08-08 10:00:00', 4.12, 12.00, 25, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(150, 253, 'APC143', '2014-08-08 10:00:00', 2.28, 12.00, 23, 175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(151, 214, 'APC144', '2014-08-08 10:00:00', 1.67, 12.00, 18, 183, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(152, 221, 'APC145', '2014-08-08 10:00:00', 1.90, 12.00, 30, 171, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(153, 298, 'APC146', '2014-08-11 10:00:00', 5.49, 12.00, 29, 174, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(154, 298, 'APC147', '2014-08-11 10:00:00', 0.62, 12.00, 21, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(155, 294, 'APC-148', '2014-08-11 10:00:00', 10.38, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(156, 213, 'APC-149', '2014-08-11 10:00:00', 6.04, 12.00, 30, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(157, 163, 'APC-150', '2014-08-11 10:00:00', 4.14, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(158, 63, 'APC-151', '2014-08-11 10:00:00', 2.83, 12.00, 23, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(159, 222, 'APC-152', '2014-08-11 10:00:00', 1.23, 12.00, 26, 170, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(160, 272, 'APC-153', '2014-08-12 10:00:00', 3.78, 12.00, 25, 176, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(161, 196, 'APC-154', '2014-08-12 10:00:00', 2.16, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(162, 51, 'APC-155', '2014-08-12 10:00:00', 5.62, 12.00, 24, 178, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(163, 122, 'APC-156', '2014-08-12 10:00:00', 1.22, 12.00, 13, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(164, 19, 'APC-157', '2014-08-12 10:00:00', 2.61, 12.00, 21, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(165, 9, 'APC-158', '2014-08-12 10:00:00', 5.43, 12.00, 26, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(166, 60, 'APC-159', '2014-08-13 10:00:00', 3.87, 12.00, 33, 169, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(167, 153, 'APC-160', '2014-08-13 10:00:00', 2.06, 12.00, 14, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(168, 61, 'APC-161', '2014-08-14 10:00:00', 2.50, 12.00, 18, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(169, 290, 'APC-162', '2014-08-14 10:00:00', 1.57, 12.00, 10, 191, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(170, 50, 'APC-163', '2014-08-18 10:00:00', 7.12, 12.00, 12, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL),
+(171, 297, 'APC-164', '2014-08-18 10:00:00', 2.22, 12.00, 23, 179, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'A', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3326,7 +3623,7 @@ INSERT INTO `lotes` (`id`, `id_socio`, `codigo_lote`, `fecha`, `peso`, `humedad`
 --
 
 CREATE TABLE IF NOT EXISTS `niveles` (
-  `id_niveles` int(11) NOT NULL,
+`id_niveles` int(11) NOT NULL,
   `nivel` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
@@ -3348,7 +3645,7 @@ INSERT INTO `niveles` (`id_niveles`, `nivel`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `pagos` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `lote` int(11) NOT NULL,
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `exportable` float(10,2) NOT NULL,
@@ -3358,7 +3655,7 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   `cliente` float(10,2) NOT NULL,
   `microlote` float(10,2) NOT NULL,
   `tazadorada` float(10,2) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `pagos`
@@ -3368,9 +3665,9 @@ INSERT INTO `pagos` (`id`, `lote`, `fecha`, `exportable`, `descarte`, `fuera`, `
 (1, 93, '2014-09-18 21:38:38', 800.00, 70.00, 0.00, 0.00, 0.00, 0.00, 0.00),
 (2, 37, '2014-09-23 02:41:21', 0.00, 0.00, 100.00, 0.00, 0.00, 0.00, 0.00),
 (3, 36, '2014-09-25 14:53:29', 1499.00, 190.00, 0.00, 0.00, 45.00, 250.00, 300.00),
-(4, 170, '2015-07-10 05:00:00', 0.00, 0.00, 50.00, 0.00, 60.00, 70.00, 80.00),
 (5, 171, '2015-07-10 05:00:00', 0.00, 0.00, 10.00, 0.00, 20.00, 30.00, 40.00),
-(6, 168, '2015-07-10 05:00:00', 0.00, 0.00, 15.00, 0.00, 22.00, 23.00, 24.00);
+(6, 168, '2015-07-10 05:00:00', 0.00, 0.00, 15.00, 0.00, 22.00, 23.00, 24.00),
+(7, 4, '2015-07-12 05:00:00', 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -3379,7 +3676,7 @@ INSERT INTO `pagos` (`id`, `lote`, `fecha`, `exportable`, `descarte`, `fuera`, `
 --
 
 CREATE TABLE IF NOT EXISTS `parcelas` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_socio` int(11) NOT NULL,
   `coorX` int(11) NOT NULL,
   `coorY` int(11) NOT NULL,
@@ -3389,14 +3686,14 @@ CREATE TABLE IF NOT EXISTS `parcelas` (
   `MOfamiliar` int(11) NOT NULL,
   `Miembros_familia` int(11) NOT NULL,
   `riego` text COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=298 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=303 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `parcelas`
 --
 
 INSERT INTO `parcelas` (`id`, `id_socio`, `coorX`, `coorY`, `alti`, `sup_total`, `MOcontratada`, `MOfamiliar`, `Miembros_familia`, `riego`) VALUES
-(1, 58, 9482926, 707211, 1178, 2.00, 200, 3, 3, 'Goteo'),
+(1, 58, 9482926, 707211, 1178, 3.00, 200, 4, 3, 'Goteo'),
 (2, 2, 0, 0, 0, 7.00, 60, 2, 2, ''),
 (3, 3, 9482298, 707191, 1160, 10.00, 20, 4, 6, ''),
 (4, 4, 948559, 705609, 1403, 30.00, 60, 2, 5, ''),
@@ -3498,7 +3795,7 @@ INSERT INTO `parcelas` (`id`, `id_socio`, `coorX`, `coorY`, `alti`, `sup_total`,
 --
 
 CREATE TABLE IF NOT EXISTS `persona` (
-  `id_persona` int(11) NOT NULL,
+`id_persona` int(11) NOT NULL,
   `nombres` text,
   `apellidos` text,
   `cedula` bigint(20) DEFAULT NULL,
@@ -3509,7 +3806,7 @@ CREATE TABLE IF NOT EXISTS `persona` (
   `foto` text,
   `genero` char(1) DEFAULT NULL,
   `id_canton` int(10) DEFAULT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=313 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=314 DEFAULT CHARSET=utf8;
 
 --
 -- Volcado de datos para la tabla `persona`
@@ -3583,7 +3880,7 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 (66, ' Segundo Ramon', 'Salinas Castillo', 1900159144, 0, '1962-10-17', '', '', '', '', 1),
 (67, ' Josefino De Jesus', 'Suarez Bravo', 1103208110, 0, '0000-00-00', '', '', '', '', 1),
 (68, ' Gaona Castillo', 'Vilma Francisca', 1105101149, 0, '1991-07-24', '', '', '', '', 1),
-(69, ' Indalecio', 'Abad Abad', 1104518863, 0, '1981-01-29', '', '', '', 'm', NULL),
+(69, 'Indalecio', 'Abad Abad', 1104518863, 0, '1981-01-29', '', '', '', 'M', 16),
 (70, ' Segundo Aurelio', 'Calva Abad', 1900255355, 0, '1963-11-16', '', '', '', '', 1),
 (71, ' Jose Marcial', 'Abad Pintado', 1900324615, 0, '1973-04-15', '', '', '', '', 1),
 (72, ' Simon Bolivar', 'Gaona Calva', 1103147862, 0, '1971-10-08', '', '', '', '', 1),
@@ -3821,7 +4118,8 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 (304, 'Jose', 'Cueva', NULL, 0, NULL, NULL, NULL, NULL, NULL, 1),
 (310, 'Nuevo', 'Nuevo', 123123, 0, '0000-00-00', 'art_s@hotmail.es', '', NULL, 'm', 5),
 (311, 'Alex', 'Plascencia', 1104635501, 0, '1995-01-12', 'art_s@hotmail.es', 'DIRECCION', NULL, 'm', NULL),
-(312, 'Alex', 'Plascencia', 1104635501, 0, '1995-01-12', 'art_s@hotmail.es', 'DIRECCION', NULL, 'm', NULL);
+(312, 'Alex', 'Plascencia', 1104635501, 0, '1995-01-12', 'art_s@hotmail.es', 'DIRECCION', NULL, 'm', NULL),
+(313, 'Alex', 'Plascencia', 11123213, 19238123, '2015-01-12', '', '', '', '1', 16);
 
 -- --------------------------------------------------------
 
@@ -3830,7 +4128,7 @@ INSERT INTO `persona` (`id_persona`, `nombres`, `apellidos`, `cedula`, `celular`
 --
 
 CREATE TABLE IF NOT EXISTS `provincia` (
-  `id_provincia` int(11) NOT NULL,
+`id_provincia` int(11) NOT NULL,
   `provincia` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
@@ -3871,7 +4169,7 @@ INSERT INTO `provincia` (`id_provincia`, `provincia`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `socios` (
-  `id_socio` int(11) NOT NULL,
+`id_socio` int(11) NOT NULL,
   `id_grupo` int(11) DEFAULT NULL,
   `id_persona` int(11) DEFAULT NULL,
   `codigo` text COLLATE latin1_spanish_ci NOT NULL
@@ -3949,7 +4247,7 @@ INSERT INTO `socios` (`id_socio`, `id_grupo`, `id_persona`, `codigo`) VALUES
 (65, 5, 66, 'CU15'),
 (66, 5, 67, 'CU17'),
 (67, 5, 68, 'CU19'),
-(68, 2, 69, 'AG74'),
+(68, 2, 69, 'AG81'),
 (69, 5, 70, 'CU21'),
 (70, 5, 71, 'CU22'),
 (71, 5, 72, 'CU23'),
@@ -4194,7 +4492,7 @@ INSERT INTO `socios` (`id_socio`, `id_grupo`, `id_persona`, `codigo`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `subparcelas` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `id_parcela` int(11) NOT NULL,
   `superficie` float(10,2) NOT NULL,
   `variedad` text COLLATE latin1_spanish_ci NOT NULL,
@@ -4209,14 +4507,14 @@ CREATE TABLE IF NOT EXISTS `subparcelas` (
   `ojo_pollo` text COLLATE latin1_spanish_ci NOT NULL,
   `mes_inicio_cosecha` text COLLATE latin1_spanish_ci NOT NULL,
   `duracion_cosecha` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=302 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=305 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `subparcelas`
 --
 
 INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `variedad2`, `siembra`, `densidad`, `marco`, `hierbas`, `sombreado`, `roya`, `broca`, `ojo_pollo`, `mes_inicio_cosecha`, `duracion_cosecha`) VALUES
-(1, 1, 2.00, 'catimoro', 'catucaï¿½', 2005, 0, 'Regular', 'Limpio', 'Poco', '0', '25', '0', '', 0),
+(1, 1, 2.00, 'catimoro', 'catucaÃ­', 2005, 0, 'Regular', 'Limpio', 'Poco', '25', '25', '0', 'Febrero', 0),
 (2, 2, 4.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (3, 3, 1.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (4, 4, 3.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
@@ -4284,7 +4582,7 @@ INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `varied
 (66, 66, 1.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (67, 67, 1.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (68, 68, 4.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
-(69, 69, 2.00, '', '', 2008, 0, '', '', '', '', '', '', '', 0),
+(69, 69, 2.00, 'catucaÃ­', 'catucaÃ­', 2008, 0, 'Regular', 'Limpio', 'Poco', '25', '0', '0', '', 0),
 (70, 70, 1.00, '', '', 2011, 0, '', '', '', '', '', '', '', 0),
 (71, 71, 2.00, '', '', 2003, 0, '', '', '', '', '', '', '', 0),
 (72, 72, 3.00, '', '', 2005, 0, '', '', '', '', '', '', '', 0),
@@ -4310,7 +4608,7 @@ INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `varied
 (92, 92, 4.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (296, 296, 1.00, '', '', 1900, 0, '', '', '', '', '', '', '', 0),
 (297, 297, 6.00, '', '', 2009, 0, '', '', '', '', '', '', '', 0),
-(301, 1, 20.00, 'catucaï¿½', 'catucaï¿½', 0, 20, 'Medio', 'Medio', 'Medio', '50', '50', '50', 'Enero', 3);
+(304, 1, 20.00, 'catucaÃ­', 'catucaÃ­', 2000, 20, 'Regular', 'Limpio', 'Poco', '25', '50', '50', 'Enero', 2);
 
 -- --------------------------------------------------------
 
@@ -4319,13 +4617,13 @@ INSERT INTO `subparcelas` (`id`, `id_parcela`, `superficie`, `variedad`, `varied
 --
 
 CREATE TABLE IF NOT EXISTS `usuarios` (
-  `id` int(11) NOT NULL,
+`id` int(11) NOT NULL,
   `user` text COLLATE latin1_spanish_ci NOT NULL,
   `pass` text COLLATE latin1_spanish_ci NOT NULL,
   `id_nivel` int(11) NOT NULL,
   `id_persona` int(11) DEFAULT NULL,
   `estado` varchar(2) COLLATE latin1_spanish_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
@@ -4336,7 +4634,8 @@ INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`, `estado`
 (2, 'prueba', '123', 3, 310, 'A'),
 (5, 'Jafv', '123', 1, NULL, 'A'),
 (6, 'Javier', '12345', 3, NULL, 'A'),
-(7, 'Nuevo2', '123', 2, NULL, 'B');
+(7, 'Nuevo2', '123', 2, NULL, 'B'),
+(8, 'alex2', '1234', 2, NULL, 'B');
 
 --
 -- Índices para tablas volcadas
@@ -4346,168 +4645,145 @@ INSERT INTO `usuarios` (`id`, `user`, `pass`, `id_nivel`, `id_persona`, `estado`
 -- Indices de la tabla `acciones`
 --
 ALTER TABLE `acciones`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `altas`
 --
 ALTER TABLE `altas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_alta_SOCIO_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_alta_SOCIO_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `analisis`
 --
 ALTER TABLE `analisis`
-  ADD PRIMARY KEY (`id_analisis`),
-  ADD KEY `fk_subparcela_analisis_idx` (`id_subparcela`);
+ ADD PRIMARY KEY (`id_analisis`), ADD KEY `fk_subparcela_analisis_idx` (`id_subparcela`);
 
 --
 -- Indices de la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `FK_SUBPARCELA_ASOCIACION_idx` (`subparcela_id`);
+ ADD PRIMARY KEY (`id`), ADD KEY `FK_SUBPARCELA_ASOCIACION_idx` (`subparcela_id`);
 
 --
 -- Indices de la tabla `canton`
 --
 ALTER TABLE `canton`
-  ADD PRIMARY KEY (`id_canton`),
-  ADD KEY `FK_provincia_idx` (`id_provincia`);
+ ADD PRIMARY KEY (`id_canton`), ADD KEY `FK_provincia_idx` (`id_provincia`);
 
 --
 -- Indices de la tabla `catas`
 --
 ALTER TABLE `catas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk:CATA_LOTE_idx` (`lote`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk:CATA_LOTE_idx` (`lote`);
 
 --
 -- Indices de la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_:SOCIO_CERTIFICACION_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_:SOCIO_CERTIFICACION_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `comentario`
 --
 ALTER TABLE `comentario`
-  ADD PRIMARY KEY (`id_COMENTARIO`),
-  ADD KEY `FK_Comentario_cuenta_idx` (`id_usuario`),
-  ADD KEY `FK_Foto_COmentario_idx` (`Id_foto`);
+ ADD PRIMARY KEY (`id_COMENTARIO`), ADD KEY `FK_Comentario_cuenta_idx` (`id_usuario`), ADD KEY `FK_Foto_COmentario_idx` (`Id_foto`);
 
 --
 -- Indices de la tabla `configuracion`
 --
 ALTER TABLE `configuracion`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`);
+ ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`);
 
 --
 -- Indices de la tabla `despachos`
 --
 ALTER TABLE `despachos`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_despacho_lote_idx` (`lote`),
-  ADD KEY `FK_DESPACHO_ENVIO_idx` (`envio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_despacho_lote_idx` (`lote`), ADD KEY `FK_DESPACHO_ENVIO_idx` (`envio`);
 
 --
 -- Indices de la tabla `envios`
 --
 ALTER TABLE `envios`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk:_Estimacion_socio_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk:_Estimacion_socio_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `fotos`
 --
 ALTER TABLE `fotos`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `grupos`
 --
 ALTER TABLE `grupos`
-  ADD PRIMARY KEY (`id`);
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `historial`
 --
 ALTER TABLE `historial`
-  ADD PRIMARY KEY (`id_historial`);
+ ADD PRIMARY KEY (`id_historial`);
 
 --
 -- Indices de la tabla `lotes`
 --
 ALTER TABLE `lotes`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id` (`id`),
-  ADD KEY `FK_SOCIO_LOTE_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `id` (`id`), ADD KEY `FK_SOCIO_LOTE_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `niveles`
 --
 ALTER TABLE `niveles`
-  ADD PRIMARY KEY (`id_niveles`);
+ ADD PRIMARY KEY (`id_niveles`);
 
 --
 -- Indices de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `FK_PAGO_LOTE_idx` (`lote`);
+ ADD PRIMARY KEY (`id`), ADD KEY `FK_PAGO_LOTE_idx` (`lote`);
 
 --
 -- Indices de la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `FK_PARCELA_SOCIO_idx` (`id_socio`);
+ ADD PRIMARY KEY (`id`), ADD KEY `FK_PARCELA_SOCIO_idx` (`id_socio`);
 
 --
 -- Indices de la tabla `persona`
 --
 ALTER TABLE `persona`
-  ADD PRIMARY KEY (`id_persona`),
-  ADD KEY `FK_id_provincia_idx` (`id_canton`);
+ ADD PRIMARY KEY (`id_persona`), ADD KEY `FK_id_provincia_idx` (`id_canton`);
 
 --
 -- Indices de la tabla `provincia`
 --
 ALTER TABLE `provincia`
-  ADD PRIMARY KEY (`id_provincia`);
+ ADD PRIMARY KEY (`id_provincia`);
 
 --
 -- Indices de la tabla `socios`
 --
 ALTER TABLE `socios`
-  ADD PRIMARY KEY (`id_socio`),
-  ADD KEY `id_socio` (`id_socio`),
-  ADD KEY `FK_SOCIO_GRUPO_idx` (`id_grupo`),
-  ADD KEY `FK_PERSONA_SOCIO_idx` (`id_persona`);
+ ADD PRIMARY KEY (`id_socio`), ADD KEY `id_socio` (`id_socio`), ADD KEY `FK_SOCIO_GRUPO_idx` (`id_grupo`), ADD KEY `FK_PERSONA_SOCIO_idx` (`id_persona`);
 
 --
 -- Indices de la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_subparcela_parcela_idx` (`id_parcela`);
+ ADD PRIMARY KEY (`id`), ADD KEY `fk_subparcela_parcela_idx` (`id_parcela`);
 
 --
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `USUARIOS_PERSONA` (`id_persona`),
-  ADD KEY `FK_USUARIO_NIVEL_idx` (`id_nivel`);
+ ADD PRIMARY KEY (`id`), ADD KEY `USUARIOS_PERSONA` (`id_persona`), ADD KEY `FK_USUARIO_NIVEL_idx` (`id_nivel`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -4517,122 +4793,122 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `acciones`
 --
 ALTER TABLE `acciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=712;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=712;
 --
 -- AUTO_INCREMENT de la tabla `altas`
 --
 ALTER TABLE `altas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=52;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=52;
 --
 -- AUTO_INCREMENT de la tabla `analisis`
 --
 ALTER TABLE `analisis`
-  MODIFY `id_analisis` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id_analisis` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `asociaciones`
 --
 ALTER TABLE `asociaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=732;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=756;
 --
 -- AUTO_INCREMENT de la tabla `canton`
 --
 ALTER TABLE `canton`
-  MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=222;
+MODIFY `id_canton` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=222;
 --
 -- AUTO_INCREMENT de la tabla `catas`
 --
 ALTER TABLE `catas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=146;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=149;
 --
 -- AUTO_INCREMENT de la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=341;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=356;
 --
 -- AUTO_INCREMENT de la tabla `comentario`
 --
 ALTER TABLE `comentario`
-  MODIFY `id_COMENTARIO` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id_COMENTARIO` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `configuracion`
 --
 ALTER TABLE `configuracion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `despachos`
 --
 ALTER TABLE `despachos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `envios`
 --
 ALTER TABLE `envios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=35;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=35;
 --
 -- AUTO_INCREMENT de la tabla `fotos`
 --
 ALTER TABLE `fotos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `grupos`
 --
 ALTER TABLE `grupos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
 --
 -- AUTO_INCREMENT de la tabla `historial`
 --
 ALTER TABLE `historial`
-  MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;
+MODIFY `id_historial` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=142;
 --
 -- AUTO_INCREMENT de la tabla `lotes`
 --
 ALTER TABLE `lotes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=172;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=185;
 --
 -- AUTO_INCREMENT de la tabla `niveles`
 --
 ALTER TABLE `niveles`
-  MODIFY `id_niveles` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+MODIFY `id_niveles` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT de la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=298;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=303;
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=313;
+MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=314;
 --
 -- AUTO_INCREMENT de la tabla `provincia`
 --
 ALTER TABLE `provincia`
-  MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=25;
+MODIFY `id_provincia` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT de la tabla `socios`
 --
 ALTER TABLE `socios`
-  MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=307;
+MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=307;
 --
 -- AUTO_INCREMENT de la tabla `subparcelas`
 --
 ALTER TABLE `subparcelas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=302;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=305;
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
 --
 -- Restricciones para tablas volcadas
 --
@@ -4641,101 +4917,89 @@ ALTER TABLE `usuarios`
 -- Filtros para la tabla `altas`
 --
 ALTER TABLE `altas`
-  ADD CONSTRAINT `fk_alta_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_alta_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `analisis`
 --
 ALTER TABLE `analisis`
-  ADD CONSTRAINT `fk_subparcela_analisis` FOREIGN KEY (`id_subparcela`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Filtros para la tabla `asociaciones`
---
-ALTER TABLE `asociaciones`
-  ADD CONSTRAINT `FK_SUBPARCELA_ASOCIACION` FOREIGN KEY (`subparcela_id`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_subparcela_analisis` FOREIGN KEY (`id_subparcela`) REFERENCES `subparcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `canton`
 --
 ALTER TABLE `canton`
-  ADD CONSTRAINT `fk_provin` FOREIGN KEY (`id_provincia`) REFERENCES `provincia` (`id_provincia`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_provin` FOREIGN KEY (`id_provincia`) REFERENCES `provincia` (`id_provincia`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `catas`
 --
 ALTER TABLE `catas`
-  ADD CONSTRAINT `fk_CATA_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_CATA_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `certificacion`
 --
 ALTER TABLE `certificacion`
-  ADD CONSTRAINT `fk_SOCIO_CERTIFICACION` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_SOCIO_CERTIFICACION` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `comentario`
 --
 ALTER TABLE `comentario`
-  ADD CONSTRAINT `FK_Comentario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `FK_Foto_COmentario` FOREIGN KEY (`Id_foto`) REFERENCES `fotos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_Comentario_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `FK_Foto_COmentario` FOREIGN KEY (`Id_foto`) REFERENCES `fotos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `despachos`
 --
 ALTER TABLE `despachos`
-  ADD CONSTRAINT `FK_DESPACHO_ENVIO` FOREIGN KEY (`envio`) REFERENCES `envios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_despacho_lote` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_DESPACHO_ENVIO` FOREIGN KEY (`envio`) REFERENCES `envios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `fk_despacho_lote` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `estimacion`
 --
 ALTER TABLE `estimacion`
-  ADD CONSTRAINT `fk_Estimacion_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_Estimacion_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `lotes`
 --
 ALTER TABLE `lotes`
-  ADD CONSTRAINT `FK_SOCIO_LOTE` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_SOCIO_LOTE` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  ADD CONSTRAINT `FK_PAGO_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_PAGO_LOTE` FOREIGN KEY (`lote`) REFERENCES `lotes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `parcelas`
 --
 ALTER TABLE `parcelas`
-  ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_PARCELA_SOCIO` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `persona`
 --
 ALTER TABLE `persona`
-  ADD CONSTRAINT `fk_canton` FOREIGN KEY (`id_canton`) REFERENCES `canton` (`id_canton`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `fk_canton` FOREIGN KEY (`id_canton`) REFERENCES `canton` (`id_canton`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `socios`
 --
 ALTER TABLE `socios`
-  ADD CONSTRAINT `FK_PERSONA_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `FK_SOCIO_GRUPO` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
---
--- Filtros para la tabla `subparcelas`
---
-ALTER TABLE `subparcelas`
-  ADD CONSTRAINT `fk_subparcela_parcela` FOREIGN KEY (`id_parcela`) REFERENCES `parcelas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_PERSONA_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `FK_SOCIO_GRUPO` FOREIGN KEY (`id_grupo`) REFERENCES `grupos` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Filtros para la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD CONSTRAINT `FK_USUARIO_NIVEL` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `FK_USUARIO_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `FK_USUARIO_NIVEL` FOREIGN KEY (`id_nivel`) REFERENCES `niveles` (`id_niveles`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `FK_USUARIO_SOCIO` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id_persona`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

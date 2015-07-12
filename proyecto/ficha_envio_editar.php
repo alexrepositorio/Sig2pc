@@ -14,7 +14,7 @@
 		echo "<form name=form action=".$_SERVER['PHP_SELF']."?envio=".$_GET["envio"]." method='post'>";
 		echo "<table class=tablas>";
 		echo "<tr><th><h4></th><td><input type='hidden' name=envio value='".$_GET["envio"]."'></td></tr>";
-		echo "<tr><th><h4>Fecha</th><td><input type='text' name=fecha value='".$envio["fecha"]."'></td></tr>";
+		echo "<tr><th><h4>Fecha</th><td><input type='date' name=fecha value='".$envio["fecha"]."'></td></tr>";
 		echo "<tr><th><h4>Destino</th><td><input type='text' name=destino value='".$envio["destino"]."'></td></tr>";
 		echo "<tr><th><h4>Chófer</th><td><input type='text' name=chofer value='".$envio["chofer"]."'></td></tr>";
 		echo "<tr><th><h4>Responsable</th><td><input type='text' name=responsable value='".$envio["responsable"]."'></td></tr>";

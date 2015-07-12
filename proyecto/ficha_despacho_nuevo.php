@@ -1,6 +1,5 @@
 <?php
 include ("cabecera.php");
-include ("despachos_funciones.php");
 include ("envios_funciones.php");
 if(isset ($_POST["lote"])){
 	

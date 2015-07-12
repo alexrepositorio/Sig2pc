@@ -1,7 +1,6 @@
 <?php
 include ("cabecera.php");
-include ("lote_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("certificaciones_funciones.php");
 include ("configuracion_funciones.php");
 
@@ -35,25 +34,26 @@ if(isset ($_GET["guarda"]))
 		$_POST["contaminado"]=0;
 	}
 
-	$id_lote_socio = $_POST["id_socio"];
-	$codigo_lote = $_POST["codigo_lote"];
-	$fecha_lote = $$_POST["fecha"];
-	$peso_lote = $_POST["peso"];
-	$humedad_lote = $_POST["humedad"];
-	$rto_descarte_lote = $_POST["rto_descarte"];
-	$rto_exportable_lote = $_POST["rto_exportable"];
-	$defecto_negro_lote = $POST["defecto_negro"];
-	$defecto_vinagre_lote = $POST["defecto_vinagre"];
-	$defecto_decolorado_lote = $POST["defecto_decolorado"];
-	$defecto_mordido_lote = $POST["defecto_mordido"];
-	$defecto_brocado_lote = $POST["defecto_brocado"];
-	$reposo_lote = $POST["reposo"];
-	$moho_lote = $_POST["moho"];
-	$fermento_lote = $POST["fermento"];
-	$contaminado_lote = $POST["contaminado"];
-	$calidad_lote = $POST["calidad"];
-	$id_lote = $_GET["guarda"];
-	lotes_actualizar($id_lote,$id_lote_socio, $codigo_lote, $fecha_lote,
+		$id_lote_socio = $_POST["id_socio"];
+		$codigo_lote = $_POST["codigo_lote"];
+		$fecha_lote = $_POST["fecha"];
+		$peso_lote = $_POST["peso"];
+		$humedad_lote = $_POST["humedad"];
+		$rto_descarte_lote = $_POST["rto_descarte"];
+		$rto_exportable_lote = $_POST["rto_exportable"];
+		$defecto_negro_lote = $_POST["defecto_negro"];
+		$defecto_vinagre_lote = $_POST["defecto_vinagre"];
+		$defecto_decolorado_lote = $_POST["defecto_decolorado"];
+		$defecto_mordido_lote = $_POST["defecto_mordido"];
+		$defecto_brocado_lote = $_POST["defecto_brocado"];
+		$reposo_lote = $_POST["reposo"];
+		$moho_lote = $_POST["moho"];
+		$fermento_lote = $_POST["fermento"];
+		$contaminado_lote = $_POST["contaminado"];
+		$calidad_lote = $_POST["calidad"];
+		$id_lote = $_GET["guarda"];
+
+	lote_actualizar($id_lote,$id_lote_socio, $codigo_lote, $fecha_lote,
 		$peso_lote, $humedad_lote, $rto_descarte_lote, $rto_exportable_lote,
 		$defecto_negro_lote, $defecto_vinagre_lote, $defecto_decolorado_lote, 
 		$defecto_mordido_lote, $defecto_brocado_lote, $reposo_lote, $moho_lote,
@@ -113,24 +113,24 @@ if(isset ($_GET["guarda"]))
 		$socio_codigo=$rowsocio["codigo"];
 		if ($rowsocio["codigo"]==$lote["id_socio"]){
 			$sel="selected";}else{$sel="";}
-		echo "<option $sel value='".$rowsocio["id_socio"]."'>$socio_codigo-$socio_n</option>";
+		echo "<option $sel value='".$rowsocio["id"]."'>$socio_codigo-$socio_n</option>";
 	}
 	echo "</select><br>";
-	echo "<tr><th align=right><h4>Fecha</th><td><input type='text' name=fecha value='".$lote["fecha"]."'></td></tr>";
+	echo "<tr><th align=right><h4>Fecha</th><td><input type='date' name=fecha value='".$lote["fecha"]."'></td></tr>";
 	echo "<tr><th align=right><h4>Código LOTE</th><td><input size=15 type='text' name=codigo_lote value='".$lote["codigo_lote"]."'></td></tr>";
-	echo "<tr><th align=right><h4>Peso</th><td><input size=5 type='text' name=peso value='".$lote["peso"]."'> qq</td></tr>";
-	echo "<tr><th align=right><h4>Humedad</th><td><input size=2 type='text' name=humedad value='".$lote["humedad"]."'> %</td></tr>";
-	echo "<tr><th align=right><h4>Descarte</th><td><input size=2 type='text' name=rto_descarte value='".$lote["rto_descarte"]."'> gr trillados sobre la muestra de ".configuracion_cons('parametro','gr_muestra')[0]["valor"]."gr</td></tr>";
-	echo "<tr><th align=right><h4>Exportable</th><td><input size=2 type='text' name=rto_exportable value='".$lote["rto_exportable"]."'> gr trillados sobre la muestra de ".configuracion_cons('parametro','gr_muestra')[0]["valor"]."gr</td></tr>";
+	echo "<tr><th align=right><h4>Peso</th><td><input size=5 type='number' step=0.01 min=0 name=peso value='".$lote["peso"]."'> qq</td></tr>";
+	echo "<tr><th align=right><h4>Humedad</th><td><input size=2 type='number' step=0.01 min=0 name=humedad value='".$lote["humedad"]."'> %</td></tr>";
+	echo "<tr><th align=right><h4>Descarte</th><td><input size=2 type='number' name=rto_descarte value='".$lote["rto_descarte"]."'> gr trillados sobre la muestra de ".configuracion_cons('parametro','gr_muestra')[0]["valor"]."gr</td></tr>";
+	echo "<tr><th align=right><h4>Exportable</th><td><input size=2 type='number' name=rto_exportable value='".$lote["rto_exportable"]."'> gr trillados sobre la muestra de ".configuracion_cons('parametro','gr_muestra')[0]["valor"]."gr</td></tr>";
 	echo "</table>&nbsp&nbsp";
 
 	echo "<table class=tablas>";
 	echo "<tr><th align=center><h3>Defectos</th><th align=center>granos</th></tr>";
-	echo "<tr><th align=right><h4>Negro o parcial</th><td><input size=2 type='text' name=defecto_negro value='".$lote["defecto_negro"]."'></td></tr>";
-	echo "<tr><th align=right><h4>Vinagre o parcial</th><td><input size=2 type='text' name=defecto_vinagre value='".$lote["defecto_vinagre"]."'></td></tr>";
-	echo "<tr><th align=right><h4>Decolorados</th><td><input size=2 type='text' name=defecto_decolorado value='".$lote["defecto_decolorado"]."'></td></tr>";
-	echo "<tr><th align=right><h4>Mordidos y cortados</th><td><input size=2 type='text' name=defecto_mordido value='".$lote["defecto_mordido"]."'></td></tr>";
-	echo "<tr><th align=right><h4>Brocados</th><td><input size=2 type='text' name=defecto_brocado value='".$lote["defecto_brocado"]."'></td></tr>";
+	echo "<tr><th align=right><h4>Negro o parcial</th><td><input size=2 type='number' name=defecto_negro value='".$lote["defecto_negro"]."'></td></tr>";
+	echo "<tr><th align=right><h4>Vinagre o parcial</th><td><input size=2 type='number' name=defecto_vinagre value='".$lote["defecto_vinagre"]."'></td></tr>";
+	echo "<tr><th align=right><h4>Decolorados</th><td><input size=2 type='number' name=defecto_decolorado value='".$lote["defecto_decolorado"]."'></td></tr>";
+	echo "<tr><th align=right><h4>Mordidos y cortados</th><td><input size=2 type='number' name=defecto_mordido value='".$lote["defecto_mordido"]."'></td></tr>";
+	echo "<tr><th align=right><h4>Brocados</th><td><input size=2 type='number' name=defecto_brocado value='".$lote["defecto_brocado"]."'></td></tr>";
 	echo "</table>&nbsp&nbsp";
 
 	echo "<table class=tablas>";

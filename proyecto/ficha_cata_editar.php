@@ -65,7 +65,9 @@ if(isset($_GET["lote_guardar"])){
 	echo "<div align=center><h1>GUARDANDO, ESPERA...
 	<meta http-equiv='Refresh' content='2;url=ficha_cata.php?lote=".$_GET["lote_guardar"]."'></font></h1></div>";	
 }else{
-	echo "<div align=center><h1>EDICION DE LA CATA DEL LOTE ".$_GET["lote"]."</h1><br>";
+	$lote=LotesConsultarCriterio('id',$_GET["lote"]);
+	$lote=$lote[0];
+	echo "<div align=center><h1>EDICION DE LA CATA DEL LOTE ".$lote["codigo_lote"]."</h1><br>";
 	echo "<h3><font color=red>Puntuación actual: ".$cata["puntuacion"]. "pts.</font></h3><br>";
 	echo "<form name=form action=".$_SERVER['PHP_SELF']."?lote=".$_GET["lote"]."&lote_guardar=".$_GET["lote"]." method='post'>";
 	echo "<table class=tablas>";

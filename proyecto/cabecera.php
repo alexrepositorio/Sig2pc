@@ -55,20 +55,20 @@ function imprimir(id)
 include("titulo.html");
 include ("uno.php");
 include ("historial_funciones.php");
-
 session_start();
-
 if (empty($_SESSION)) {
    header ('Location: login.php');
     exit (0); 
 }
-
-echo "Bienvenido ".$_SESSION["user"];
-
 echo " <form name=form action=".$_SERVER['PHP_SELF']." method='post'>
-<input type='submit' class='button' name='logout' value='logout' onclick='logout()'/>";
+<div align=left><h4><font size=2>¡Bienvenido ". $_SESSION['user']."! </font><font size=1>(".nivel($_SESSION['acceso']).")</font>
+<button type='submit' name='logout' value='salir'>
+  <img src=images/exit.png width=15>
+</button>";
 if (isset($_POST['logout'])) {
    logout();
 }
 echo "</form>";
+echo"</div><hr>";
+include ("menu.php");
 ?>

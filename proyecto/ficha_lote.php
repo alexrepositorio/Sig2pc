@@ -1,9 +1,7 @@
 <?php
 include ("cabecera.php");
-include ("lote_funciones.php");
 include ("configuracion_funciones.php");
-include ("despachos_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("certificaciones_funciones.php");
 include ("estimaciones_funciones.php");
 include ("altas_funciones.php");
@@ -20,7 +18,7 @@ $descarte_qq=($lote["peso"]*(1-($trillado)/100))*$descarte_prc/100;
 $exportable_qq=($lote["peso"]*(1-($trillado)/100))*$exportable_prc/100;
 $trillado_qq=$lote["peso"]*(($trillado)/100);
 
-$r_p=LotesConsultarpagos($_GET["lote"]);
+$r_p=pagos_consultar_criterio('lote',$_GET["lote"]);
 if (!is_array($r_p)) {
 	$estados["pago"]="<h6><font color=red>PENDIENTE DE PAGO</font></h6>";
 	$movimientos[]="PENDIENTE DE PAGO";
@@ -79,10 +77,10 @@ if (is_array($resultado_lotes)) {
 echo "<div id=imprimir>";
 echo "<div align=center><h1>Ficha del lote</h1><br><h2>".$socio["apellidos"].", ".$socio["nombres"]."<br>
 					".$socio["codigo"]."-".$socio["poblacion"]."</h2><br>
-					<h3>Estatus Certificación ".$estatus[$estatus_actual]["year"].": $estatus_t (".$estatus[$estatus_actual]["estatus"].")<br><br>";
+					<h3>Estatus Certificación ".$estatus_actual["year"].": $estatus_t (".$estatus_actual["estatus"].")<br><br>";
 echo "
 <table class=tablas><tr>
-<td><h4>Estimacion ".$estimado[$estimado_actual]["year"]."</td><td><h4>".$estimado[$estimado_actual]["estimados"]."qq</h4><br><h6>(max $estimado_actual_max qq)</td></tr>
+<td><h4>Estimacion ".$estimado_actual["year"]."</td><td><h4>".$estimado_actual["estimados"]."qq</h4><br><h6>(max $estimado_actual_max qq)</td></tr>
 <tr><td><h4>Entregados hasta ahora</td><td><h4>".$peso_entregado."qq ($cuenta_lotes lotes)</td></tr>
 <tr><th><h4>Restante</th><th><h4>$peso_restante qq</th>
 </tr></table><br><br>";

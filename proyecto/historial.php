@@ -6,15 +6,22 @@
 	$_POST["busca"]="";
 	$criterio="";
 	$encontrados="";
-	$resultado=historial_cons('','');
+	$resultado=historial_cons('','','');
 	}else{
 		if(isset($_GET["socio"])){
 			$_POST["busca"]=$_GET["socio"];
 		}
 		if (isset($_POST["busca"])) {
-			$resultado=historial_cons($_GET["criterio"],$_POST["busca"]);
-			$encontrados="ENCONTRADAS";
-			$_texto=$_POST["busca"];
+			if (isset($_POST["busca2"])) {
+				$resultado=historial_cons($_GET["criterio"],$_POST["busca"],$_POST["busca2"]);
+				$encontrados="ENCONTRADAS";
+				$_texto= "Desde: ".$_POST["busca"]."  Hasta:".$_POST["busca2"]."";
+			}else{
+				$resultado=historial_cons($_GET["criterio"],$_POST["busca"],'');
+				$encontrados="ENCONTRADAS";
+				$_texto=$_POST["busca"];
+			}
+			
 		}
 
 	$criterio="<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> es <i>''$_texto''</i></h4>";}
@@ -30,7 +37,16 @@
 
 	echo "<div align=center><h1>Historial de acciones</h1><br><br>";
 	echo "<table width=700px border=0 cellpadding=0 cellspacing=0><tr>";
-	
+	echo "<td align=center><h4>Fecha<br>
+	<form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
+	echo "
+		<label for='desde'>Desde:</label>
+		<input type='date' name='busca' id='desde' >
+		<label for='hasta'>Hasta:</label>
+		<input type='date' name='busca2' id='hasta'>
+	";
+	echo "<input type='submit' value='filtrar'>";
+	echo "</form></td>";
 	echo "<td align=center><h4>Usuario<br><form name=form1 action=".$_SERVER['PHP_SELF']."?criterio=usuario method='post'>";
 	echo "<select name=busca>";
 	$r_socio=consultarCriterio('');
@@ -41,23 +57,13 @@
 	echo "<input type='submit' value='buscar'>";
 	echo "</form></td>";
 
-	echo "<td align=center><h4>Fecha<br><form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
-	echo "<select name=busca>";
-	$r_fec=consultarCriterio('fecha');
-	foreach ($r_fec as $rowfec) {
-		$fecha=$rowfec["fecha"];echo "<option value='$fecha'>$fecha</option>";
-	}
-	echo "</select><br>";
-	echo "<input type='submit' value='filtrar'>";
-	echo "</form></td>";
-
 	echo "</tr></table>";
 	echo "<br><br><div align=center>$criterio<br>";
 	echo "<br><br><div align=center>TOTAL $encontrados ($cuenta)<br>";
 	
-	echo "<table class=tablas width=60%>";
-	
-		echo "<tr><th>";
+	echo "<table id='table_id' style='width: 80%' class='tablas' posicion>";
+	echo "<thead>";
+	echo "<th>";
 		echo "<h4>Fecha</h4>";
 		echo "</th>
 		<th>";
@@ -74,8 +80,10 @@
 		echo "</th>";
 		echo "<th>";
 		echo "<h4>Maquina</h4>";
-		echo "</th>
-		</tr>";
+		echo "</th>";
+	echo "</thead>";
+	echo "<tbody>";
+		
 	if(isset($acciones))
 	{
 		foreach ($acciones as $accion)

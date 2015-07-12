@@ -1,7 +1,7 @@
 <?php
 function insertaraltas($socio,$fecha,$estado){
     require("conect.php");
-    $SQL="call sp_alta_ins('".$socio."','".$estado."','".$fecha."');";
+    $SQL="call sp_alta_ins('".$socio."','".ucfirst($estado)."','".$fecha."');";
 	mysqli_query($link,$SQL)or die(mysqli_error($link)); 
 	global $operaciones_constantes,$tabla_constantes;
 	guarda_historia($_SESSION["user"], $operaciones_constantes["I"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["altas"], gethostname());	

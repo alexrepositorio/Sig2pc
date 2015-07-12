@@ -1,30 +1,29 @@
 <?php
 include ("cabecera.php");
-include ("lote_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("configuracion_funciones.php");
 
-if(isset($_POST["peso"])){
+if(isset($_POST["socio"])){
 
-if(isset($_POST["reposo"])){
-
-	$_POST["reposo"]=1;
-}else{$_POST["reposo"]=0;
-}
-if(isset($_POST["moho"])){
-	$_POST["moho"]=1;
-}else{
-		$_POST["moho"]=0;}
-if(isset($_POST["fermento"])){
-	$_POST["fermento"]=1;
-}else{
-		$_POST["fermento"]=0;
+	if(isset($_POST["reposo"])){
+		$_POST["reposo"]=1;
+	}else{$_POST["reposo"]=0;
 	}
-if(isset($_POST["contaminado"])){
-	$_POST["contaminado"]=1;
-}else{$_POST["contaminado"]=0;
-}
-lote_insertar($_POST["id_socio"],$_POST["codigo_lote"],$_POST["fecha"],$_POST["peso"],$_POST["humedad"],$_POST["rto_descarte"],$_POST["rto_exportable"],
+	if(isset($_POST["moho"])){
+		$_POST["moho"]=1;
+	}else{
+			$_POST["moho"]=0;}
+	if(isset($_POST["fermento"])){
+		$_POST["fermento"]=1;
+	}else{
+			$_POST["fermento"]=0;
+		}
+	if(isset($_POST["contaminado"])){
+		$_POST["contaminado"]=1;
+	}else{$_POST["contaminado"]=0;
+	}
+echo $_POST["socio"];
+lote_insertar($_POST["socio"],$_POST["codigo_lote"],$_POST["fecha"],$_POST["peso"],$_POST["humedad"],$_POST["rto_descarte"],$_POST["rto_exportable"],
 	$_POST["defecto_negro"],$_POST["defecto_vinagre"],$_POST["defecto_decolorado"],$_POST["defecto_mordido"],$_POST["defecto_brocado"],
 	$_POST["reposo"],$_POST["moho"],$_POST["fermento"],$_POST["contaminado"],$_POST["calidad"]);
 				
@@ -47,20 +46,20 @@ echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 echo "<table class=tablas>";
 echo "<tr><th align=center colspan=2><h3>Datos del lote</th></tr>";
 
-echo "<tr><th align=right><h4>Socio</th><td><select name=id_socio>";
+echo "<tr><th align=right><h4>Socio</th><td><select name=socio>";
 $lista=consultarCriterio('','');
 foreach ($lista as $elemento) {
-	echo "<option value=".$elemento["id_socio"].">".$elemento["apellidos"]." ".$elemento["nombres"]."</option>";
+	echo "<option value='".$elemento["id"]."'>".$elemento["apellidos"]." ".$elemento["nombres"]."</option>";
 }
 echo "</select><br>";
 //echo "<tr><th align=right><h4></th><td><input type='hidden' name=id_socio value='".$_GET["socio"]."'></td></tr>";
 echo "<tr><th align=right><h4></th><td><input type='hidden' name=fecha value='".date("Y-m-d H:i:s",time())."'></td></tr>";
 echo "<tr><th align=right><h4>Código LOTE</th><td><input size=15 type='text' name=codigo_lote value='".lote_codigo()."'></td></tr>";
-echo "<tr><th align=right><h4>Peso entrada</th><td><input size=5 type='text' name=peso> qq pergamino</td></tr>";
-echo "<tr><th align=right><h4>Humedad</th><td><input size=2 type='text' name=humedad> %</td></tr>";
+echo "<tr><th align=right><h4>Peso entrada</th><td><input size=5 type='number' step=0.01 min=0  name=peso> qq pergamino</td></tr>";
+echo "<tr><th align=right><h4>Humedad</th><td><input size=2 type='number' step=0.01 min=0  name=humedad> %</td></tr>";
 //echo "<tr><th align=right><h4>Rendimiento Pilado</th><td><input size=2 type='text' name=rto_pilado> %</td></tr>";
-echo "<tr><th align=right><h4>Exportable</th><td><input size=2 type='text' name=rto_exportable> gr trillados sobre la muestra de ".('gr_muestra')."gr</td></tr>";
-echo "<tr><th align=right><h4>Descarte</th><td><input size=2 type='text' name=rto_descarte> gr trillados sobre la muestra de ".configuracion_cons('parametro','gr_muestra')[0]["valor"]."gr</td></tr>";
+echo "<tr><th align=right><h4>Exportable</th><td><input size=2 type='number' name=rto_exportable> gr trillados sobre la muestra de ".('gr_muestra')."gr</td></tr>";
+echo "<tr><th align=right><h4>Descarte</th><td><input size=2 type='number' name=rto_descarte> gr trillados sobre la muestra de ".configuracion_cons('parametro','gr_muestra')[0]["valor"]."gr</td></tr>";
 echo "</table>&nbsp&nbsp";
 
 echo "<table class=tablas>";

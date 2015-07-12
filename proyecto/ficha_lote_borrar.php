@@ -1,7 +1,6 @@
 <?php
 include ("cabecera.php");
-include ("lote_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 
 if(isset ($_GET["lote"]) AND isset($_GET["borra"]))
 {
@@ -10,7 +9,7 @@ if(isset ($_GET["lote"]) AND isset($_GET["borra"]))
 	<meta http-equiv='Refresh' content='2;url=lotes.php?criterio=socio&socio=".$_GET["socio"]."'></font></h1></div>";
 }else{
 	$lote=LotesConsultarCriterio('id',$_GET["lote"]);
-	$lote[0];
+	$lote=$lote[0];
 	$socio=consultarCriterio('id',$lote["id_socio"]);
 	$socio=$socio[0];
 	echo "<div align=center><h1>Borrar el lote</h1><br><h2>".$socio["nombres"]."  ".$socio["apellidos"]."<br>".$lote["fecha"]."<br>".$lote["peso"]."kg </h2><br><br>";

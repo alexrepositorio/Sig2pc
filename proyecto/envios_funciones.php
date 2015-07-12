@@ -153,5 +153,12 @@
 			}
 			return array ($media_humedades,$media_puntuaciones);
 		}
+	function enviosConsultarfecha($valor1,$valor2){
+		require ("conect.php");
+		$SQL="call SP_envios_con_fecha('fecha','".$valor1."','".$valor2."')";
+		$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
+		require("config_disconnect.php"); 
+		return (transformar_a_lista($resultado));
+	}
 		
 ?>

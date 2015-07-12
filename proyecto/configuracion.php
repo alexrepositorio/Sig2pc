@@ -1,7 +1,7 @@
 
 <?php
 include ("cabecera.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("configuracion_funciones.php");
 
 $resultado=configuracion_cons('','');

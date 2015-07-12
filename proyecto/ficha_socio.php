@@ -1,19 +1,20 @@
 <?php
 include ("cabecera.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("certificaciones_funciones.php");
-include ("lote_funciones.php");
 include ("parcelas_funciones.php");
 include ("altas_funciones.php");
 include ("estimaciones_funciones.php");
 include ("configuracion_funciones.php");
+
 $socio = consultarCriterio('id',$_GET["user"]);
 $socio=$socio[0];
-$estatus=certificacion('socio',$_GET["user"]);
+$estatus=certificacion('actual',$_GET["user"]);
+$estatus=$estatus[0];
 if (is_array($estatus)) {
 	$enlace_estatus="<a href=historial_certificacion.php?socio=".$_GET["user"]."><h3>Ver historial Certificacion</h3></a>";}
 else{
-	$enlace_estatus="<a href=ficha_socio_certificar.php?socio=".$_GET["user"]."><h3>Añadir Certificacion</h3>/a>";
+	$enlace_estatus="<a href=ficha_socio_certificar.php?socio=".$_GET["user"]."><h3>Añadir Certificacion</h3></a>";
 }
 $estimado=estimacion('',$socio["id_socio"]);
 if (is_array($estimado)) {
@@ -21,7 +22,8 @@ if (is_array($estimado)) {
 }else{
 	$enlace_estimado="<a href=historial_estimacion_nuevo.php?socio=".$_GET["user"]."><h3>Añadir Estimacion</h3></a>";
 }
-$altas=altas_consultar('socio',$socio["id_socio"]);
+$altas=altas_consultar('actual',$socio["id_socio"]);
+$altas=$altas[0];
 if (is_array($altas)) {
 	$enlace_altas="<a href=historial_altas.php?socio=".$_GET["user"]."><h3>Ver historial Altas</h3></a>";
 }else{
@@ -38,6 +40,7 @@ if (is_array($resultado_lotes)) {
 	$peso_entregado=array_sum($pesos_del_socio);
 	$estimado_actual_max=$estimado_actual["estimados"]*(1+(configuracion_cons('parametro','margen_contrato')[0]["valor"]/100));
 	$cuenta_lotes_t="(<font color=red><b>$cuenta_lotes</b></font>)";
+	$peso_restante=$estimado_actual_max-$peso_entregado;
 }else{
 		$peso_entregado=0;
 		$estimado_actual_max="";
@@ -71,16 +74,35 @@ echo "<tr><th><h4>Cantón</th><td><h4>".$socio["canton"]."</td></tr>";
 echo "<tr><th><h4>Provincia</th><td><h4>".$socio["provincia"]."</td></tr>";
 echo "<tr><th><h4>Género</th><td><h4>".$socio["genero"]."</td></tr>";
 echo "</table>";
-
 echo "<br><br>";
 
 echo "<div align=center>
 <table class=tablas><tr>";
 echo "<tr>";
-echo "<td>".$enlace_estatus."</td>";
-echo "<td>".$enlace_altas."</td>";
-echo "<td>".$enlace_estimado."</td>";
+echo "<td>".$enlace_estatus."";
+if (is_array($estatus)) {
+	echo "<table><tr><th><h4>Estatus actual<br>".$estatus["estatus"]." 
+		<th><img title='socio CON certificación orgánica' src=images/organico.png width=25></th>;
+				</tr></table>";
+};
+echo" </td>";
+echo "<td>".$enlace_altas."";
+if (is_array($altas)) {
+	echo "<table><tr><th><h4>Estado actual<br>".$altas["estado"]." </th>
+			<th><h4>Desde<br>".$altas["fecha"]." </th>				
+			</tr></table>";
+};
+echo" </td>";
+echo "<td>".$enlace_estimado."";
+if (is_array($estimado_actual)) {
+	echo "<table><tr><th><h4>Estimado<br>".$estimado_actual["estimados"]."qq<br><h6> (max $estimado_actual_max qq)</h4></th>
+						   <th><h4>Entregado<br>$peso_entregado qq</h4></th>
+						   <th><h4>Restante<br>$peso_restante qq</h4></th>
+				</tr></table>";
+};
+echo" </td>";
 echo "</tr>";
+
 
 if(in_array($_SESSION['acceso'],$permisos_administrativos))
 	{echo "<td><a href=ficha_socio_editar.php?user=".$_GET["user"]."><h3>EDITAR</h3></a></td>";

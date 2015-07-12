@@ -2,7 +2,7 @@
 include ("cabecera.php");
 include ("parcelas_funciones.php");
 include ("asociaciones_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("configuracion_funciones.php");
 
 
@@ -15,6 +15,7 @@ if(isset($_GET["borrar_asoc"])){
 	asociaciones_borrar($_GET["borrar_asoc"]);
 }
 if(isset ($_POST["update"])){
+	echo $_POST["id_socio"];
 	parcela_editar($_POST["sup_total"],$_POST["coorX"],$_POST["coorY"],$_POST["alti"],$_POST["id_socio"],$_POST["MOcontratada"]
 	,$_POST["MOfamiliar"],$_POST["Miembros_familia"],$_POST["riego"],$_POST["update"]);	
 	echo "<div align=center><h1>ACTUALIZANDO, ESPERA...
@@ -41,11 +42,13 @@ else{
 			}else{
 				$mark="";$lotess="";
 			}
-			if($rowsocio["codigo"]==$datos["id_socio"]){
-				$sel="selected";}else{$sel="";
+			if($rowsocio["id_socio"]==$datos["id_socio"]){
+				$sel="selected";
+			}else{
+				$sel="";
 			}
 			$socio_n=$rowsocio["codigo"]."-".$rowsocio["apellidos"].", ".$rowsocio["nombres"]." $lotess";
-			echo "<option $sel $mark value='".$rowsocio["codigo"]."'>$socio_n</option>";
+			echo "<option $sel $mark value='".$rowsocio["id_socio"]."'>$socio_n</option>";
 		}
 		echo "</select><br>";
 		echo "<input type='hidden' name='update' value=".$_GET["parcela"].">";
@@ -68,7 +71,7 @@ else{
 	echo "<input type='submit' value='Guardar'>";
 	echo "</form></div>";
 	//*****************************ASOCIACIONES*********************************************
-	$resultado_asoc=asociaciones_consultar($_GET["parcela"]);
+	$resultado_asoc=asociaciones_consultar("parcela",$_GET["parcela"]);
 	foreach ($resultado_asoc as $asoc) {
 		$asociaciones[]=$asoc;
 		$asoc_cultivos[]=$asoc["concepto"];

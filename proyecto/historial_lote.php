@@ -1,10 +1,8 @@
 <?php
 include ("cabecera.php");
-include ("lote_funciones.php");
 include ("configuracion_funciones.php");
 include ("catas_funciones.php");
-include ("despachos_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("certificaciones_funciones.php");
 include ("altas_funciones.php");
 include ("estimaciones_funciones.php");

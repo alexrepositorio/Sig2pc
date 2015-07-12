@@ -14,10 +14,7 @@ return valor;
 </script>
 <?php
 include ("cabecera.php");
-$defectos=array('d_fermento','d_metalico','d_quimico','d_vinagre','d_stinker',
-				'd_fenol','d_reposo','d_moho','d_terroso','d_extrano','d_sucio',
-				'd_astringente','dl_cereal','dl_fermento','dl_reposo','dl_moho',
-				'dl_astringencia');
+include ("catas_funciones.php");
 
 if(isset($_POST["catador"])){
 
@@ -32,61 +29,15 @@ $puntuacion= $_POST["fragancia"]+
 			 $_POST["taza_limpia"]+
 			 $_POST["dulzor"]-
 			 $_POST["d_general"];
-
-
-
-
-$SQL_edit="INSERT INTO catas VALUES ('',
-				'".$_GET["lote"]."',
-				'".$_POST["fecha"]."',
-				'".$_POST["catador"]."',
-				'".$_POST["tostado"]."',
-				'".$_POST["fragancia"]."',
-				'".implode(",",$_POST["tipo_aroma1"])."',
-				'".$_POST["nota_aroma"]."',
-				'".$_POST["sabor"]."',
-				'".implode(",",$_POST["tipo_sabor"])."',
-				'".$_POST["nota_sabor"]."',
-				'".$_POST["sabor_residual"]."',
-				'".implode(",",$_POST["tipo_sabor_residual"])."',
-				'".$_POST["nota_sabor_residual"]."',
-				'".$_POST["acidez"]."',
-				'".$_POST["cuerpo"]."',
-				'".$_POST["uniformidad"]."',
-				'".$_POST["balance"]."',
-				'".$_POST["puntaje_catador"]."',
-				'".$_POST["taza_limpia"]."',
-				'".$_POST["dulzor"]."',
-				'".$_POST["nota_catacion"]."',
-				'".$puntuacion."',
-				'".$_POST["d_fermento"]."',
-				'".$_POST["d_metalico"]."',				
-				'".$_POST["d_quimico"]."',
-				'".$_POST["d_vinagre"]."',				
-				'".$_POST["d_stinker"]."',
-				'".$_POST["d_fenol"]."',				
-				'".$_POST["d_reposo"]."',
-				'".$_POST["d_moho"]."',				
-				'".$_POST["d_terroso"]."',
-				'".$_POST["d_extrano"]."',				
-				'".$_POST["d_sucio"]."',
-				'".$_POST["d_astringente"]."',				
-				'".$_POST["d_quaquers"]."',				
-				'".$_POST["dl_cereal"]."',
-				'".$_POST["dl_fermento"]."',				
-				'".$_POST["dl_reposo"]."',
-				'".$_POST["dl_moho"]."',				
-				'".$_POST["dl_astringencia"]."',
-				'".$_POST["d_general"]."'				
-				)";
-
-$resultado=mysqli_query($link, $SQL_edit);
-
-//echo "$SQL_edit";
-//para el historial
-$cadena=str_replace("'", "", $SQL_edit);
-guarda_historial($cadena);
-
+catas_insertar($_GET["lote"],$_POST["fecha"],$_POST["catador"],$_POST["tostado"],$_POST["fragancia"],
+	implode(",",$_POST["tipo_aroma1"]),$_POST["nota_aroma"],$_POST["sabor"],implode(",",$_POST["tipo_sabor"]),
+	$_POST["nota_sabor"],$_POST["sabor_residual"],implode(",",$_POST["tipo_sabor_residual"]),
+	$_POST["nota_sabor_residual"],$_POST["acidez"],$_POST["cuerpo"],$_POST["uniformidad"],$_POST["balance"],
+	$_POST["puntaje_catador"],$_POST["taza_limpia"],$_POST["nota_catacion"],$_POST["dulzor"],
+	$puntuacion,$_POST["d_fermento"],$_POST["d_metalico"],$_POST["d_quimico"],$_POST["d_vinagre"],
+	$_POST["d_stinker"],$_POST["d_fenol"],$_POST["d_reposo"],$_POST["d_moho"],$_POST["d_terroso"],
+	$_POST["d_extrano"],$_POST["d_sucio"],$_POST["d_astringente"],$_POST["d_quaquers"],$_POST["dl_cereal"],
+	$_POST["dl_fermento"],$_POST["dl_reposo"],$_POST["dl_moho"],$_POST["dl_astringencia"],$_POST["d_general"]);
 
 echo "<div align=center><h1>GUARDANDO, ESPERA...
 <meta http-equiv='Refresh' content='2;url=catas.php'></font></h1></div>";

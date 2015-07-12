@@ -1,14 +1,27 @@
 <?php
 include ("cabecera.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("estimaciones_funciones.php");
-include ("lote_funciones.php");
+
 
 
 if (isset ($_GET["borrar"])) {
-	estimacion_eliminar($_GET["borrar"]);
+
+	if (isset($_GET["opcion"])) {
+		estimacion_eliminar($_GET["borrar"]);
 	echo "<div align=center><h1>BORRANDO, ESPERA...
 	<meta http-equiv='Refresh' content='2;url=historial_estimacion.php?socio=".$_GET["socio"]."'></font></h1></div>";
+	}else{
+		echo "<div align=center>";
+		echo "<notif>¿ESTA SEGURO?</notif><br><br>";
+		echo "<table class=tablas><tr>";
+		echo "<td width=50%>
+		<a href='historial_estimacion.php?borrar=".$_GET["borrar"]."&opcion=1&socio=".$_GET["socio"]."'>
+		<notifsi>SI</notifsi>
+		</a></td>";
+		echo "<td width=50%><a href='historial_estimacion.php?socio=".$_GET["socio"]."'<notifno>NO</notifno></a></td>";
+		echo "</tr></table></div>";
+	}	
 }
 
 if(isset($_GET["actualiza"]) && isset($_GET["entregados"])){

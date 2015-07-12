@@ -1,12 +1,10 @@
 <?php
 include ("cabecera.php");
-include ("lote_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("grupos_funciones.php");
 include ("configuracion_funciones.php");
 include ("certificaciones_funciones.php");
 include ("catas_funciones.php");
-include ("despachos_funciones.php");
 
 if(!isset($_GET["criterio"]))
 {
@@ -20,10 +18,14 @@ if(!isset($_GET["criterio"]))
 		$resultado=LotesConsultarCriterio($_GET["criterio"],"");
 	}
 	else{	
-		$resultado=LotesConsultarCriterio($_GET["criterio"],$_POST["busca"]);
+		if (isset($_POST["busca2"])) {
+			$resultado=LotesConsultarfecha($_POST["busca"],$_POST["busca2"]);
+		}else{
+			$resultado=LotesConsultarCriterio($_GET["criterio"],$_POST["busca"]);
 
+		}
 	}
-	$criterio="<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b></h4>";
+	$criterio="<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> </h4>";
 }
 if (is_array($resultado)) {
 	$cuenta=count($resultado);
@@ -65,21 +67,22 @@ echo "<td align=center><h4>Grupo<br><form name=form2 action=".$_SERVER['PHP_SELF
 echo "<select name=busca>";
 $r_loc=consultarGrupo('','');
 foreach ($r_loc as $rowloc) {
-		echo "<option value='".$rowloc["id"]."'>(".$rowloc["codigo_grupo"].")  ".$rowloc["grupo"]."</option>";
+		echo "<option value='".$rowloc["grupo"]."'>(".$rowloc["codigo_grupo"].")  ".$rowloc["grupo"]."</option>";
 }
 echo "</select><br>";
 echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
 
-echo "<td align=center><h4>Fecha<br><form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
-echo "<select name=busca>";
-$fechas=LotesConsultarCriterio("fechas","");
-foreach ($fechas as $rowfec) {
-	echo "<option value='".$rowfec["fecha"]."'>".$rowfec["fecha"]."</option>";
-}
-echo "</select><br>";
-echo "<input type='submit' value='filtrar'>";
-echo "</form></td>";
+echo "<td align=center><h4>Fecha<br>
+	<form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
+	echo "
+		<label for='desde'>Desde:</label>
+		<input type='date' name='busca' id='desde' >
+		<label for='hasta'>Hasta:</label>
+		<input type='date' name='busca2' id='hasta'>
+	";
+	echo "<input type='submit' value='filtrar'>";
+	echo "</form></td>";
 echo "</tr></table>";
 
 //*****************************************************************************************************
@@ -88,7 +91,8 @@ echo "</tr></table>";
 $sumatotal=array_sum($pesos);
 echo "<div align=center>$criterio<br>";
 echo "<table id='table_id' style='width: 80%' class='tablas' posicion>";
-	echo "<tr><th>";
+echo "<thead>";
+	echo "<th>";
 	echo "<h4>LOTES $encontrados</h4><br>$sumatotal qq pergamino en $cuenta lotes";
 	echo "</th>";
 	echo "<th width=10px><h6>rend.</h6></th>";
@@ -97,7 +101,10 @@ echo "<table id='table_id' style='width: 80%' class='tablas' posicion>";
 	echo "<th width=10px><h6>lote (pergamino)</h6></th>";
 	echo "<th width=10px><h6>despachado</h6></th>";
 	echo "<th width=10px><h6>restante</h6></th>";
-	echo "<th width=10px><h6>despachar</h6></th></tr>";
+	echo "<th width=10px><h6>despachar</h6></th>";
+echo "</thead>";
+echo "<tbody>";
+	
 
 if(isset($lotes)){
 	foreach ($lotes as $lote)
@@ -105,12 +112,11 @@ if(isset($lotes)){
 		$datos_socio=consultarCriterio("id",$lote["id_socio"]);
 		$estatus=certificacion('actual',$lote["id_socio"]);
 		if (isset($estatus)) {
-			if ($estatus[0]["estatus"]=='O') {
+			if (strpos($estatus[0]["estatus"], 'O')) {
 				$estatus_t="<img title='socio CON certificación orgánica' src=images/organico.png width=25>";
 			}else{
 				$estatus_t="<img title='socio SIN certificación orgánica' src=images/noorganico.png width=25>";
 			}
-			
 		}
 		$trillado_gr=configuracion_cons('parametro','gr_muestra')[0]["valor"]-($lote["rto_exportable"]+$lote["rto_descarte"]);
 		$trillado=100-($lote["rto_exportable"]+$lote["rto_descarte"])/configuracion_cons('parametro','gr_muestra')[0]["valor"]*100;
@@ -181,7 +187,7 @@ if(isset($lotes)){
 		echo "<td align=center><h4>".round($restante,2)." qq</td>";
 		echo "<td align=center>";
 		if($restante>0){
-			echo "<a href=ficha_despacho_nuevo.php?lote=".$lote["codigo_lote"]."&restante=$restante><img title='añadir despacho al lote' src=images/add.png width=25></a>";
+			echo "<a href=ficha_despacho_nuevo.php?lote=".$lote["id"]."&restante=$restante><img title='añadir despacho al lote' src=images/add.png width=25></a>";
 		}
 			echo "	  </td></tr>";	
 	}

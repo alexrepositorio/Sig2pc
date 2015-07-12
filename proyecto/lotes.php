@@ -1,7 +1,6 @@
 <?php
 include ("cabecera.php");
-include ("lote_funciones.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("grupos_funciones.php");
 include ("certificaciones_funciones.php");
 include ("configuracion_funciones.php");
@@ -16,10 +15,14 @@ if(!isset($_GET["criterio"]))
 	if(isset($_GET["socio"])){
 		$_POST["busca"]=$_GET["socio"];
 	}
-	if (isset($_POST["busca"])) {
-		$resultado=LotesConsultarCriterio($_GET["criterio"],$_POST["busca"]);
-	}else{
+	if (!isset($_POST["busca"])) {
 		$resultado=LotesConsultarCriterio($_GET["criterio"],'');
+	}else{
+		if (isset($_POST["busca2"])) {
+			$resultado=LotesConsultarfecha($_POST["busca"],$_POST["busca2"]);
+		}else{
+			$resultado=LotesConsultarCriterio($_GET["criterio"],$_POST["busca"]);
+		}
 	}
 	$encontrados="ENCONTRADOS";
 	$envio_val = $_GET["criterio"];
@@ -71,7 +74,7 @@ echo "</select><br>";
 echo "<input type='submit' value='buscar'>";
 echo "</form></td>";
 echo "<td align=center><h4>Grupo<br><form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-echo "<input list='grupos' name='busca'>";	
+echo "<input list='grupos' name='busca' value='Seleccione...'>";	
 	echo "<datalist  id='grupos'>";	
 	//echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
 	$grupos=consultarGrupo('','');
@@ -82,18 +85,16 @@ echo "<input list='grupos' name='busca'>";
 	echo "</datalist></br>";
 	echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
-echo "<td align=center><h4>Fecha<br><form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
-echo "<select name=busca>";
-
-
-$fechas=LotesConsultarCriterio('fechas','');
- 	foreach ($fechas as $fecha)
-	{
-		echo "<option>".$fecha["fecha"]."</option>";
-	}
-echo "</select><br>";
-echo "<input type='submit' value='filtrar'>";
-echo "</form></td>";
+echo "<td align=center><h4>Fecha<br>
+	<form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=fecha method='post'>";
+	echo "
+		<label for='desde'>Desde:</label>
+		<input type='date' name='busca' id='desde' >
+		<label for='hasta'>Hasta:</label>
+		<input type='date' name='busca2' id='hasta'>
+	";
+	echo "<input type='submit' value='filtrar'>";
+	echo "</form></td>";
 echo "<td align=center><a href=ficha_lote_nuevo.php>";
 echo "<img src=images/add.png width=50><br><h4>nuevo</a>";
 echo "</td>";
@@ -102,11 +103,13 @@ $sumatotal=array_sum($pesos);
 echo "</tr></table>";
 echo "<div align=center>$criterio<br>";
 echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
-echo "<tr><th width=500px>";
-echo "<h4>LOTES $encontrados</h4> ($cuenta) total:$sumatotal qq pergamino";
-echo "</th>";
-echo "<th width=20px><h6>opciones</h6></th></tr>";
-
+echo "<thead>";
+		echo "<th width=500px>";
+		echo "<h4>LOTES $encontrados</h4> ($cuenta) total:$sumatotal qq pergamino";
+		echo "</th>";
+		echo "<th width=15%><h6>opciones</h6></th>";
+		echo "</thead>";
+		echo "<tbody>";
 if(isset($lotes))
 {
 	foreach ($lotes as $lote)
@@ -115,7 +118,7 @@ if(isset($lotes))
 		$datos_socio=$datos_socio[0];
 		$estatus=certificacion('actual',$datos_socio["id_socio"]);
 		$estatus_actual=$estatus[0];
-		if($estatus_actual["estatus"]=="O")
+		if(strpos($estatus_actual["estatus"], "O"))
 			{
 				$estatus_t="<img title='socio CON certificación orgánica' src=images/organico.png width=25>";
 			}else{
@@ -139,6 +142,7 @@ if(isset($lotes))
 				  </td></tr>";
 	}
 }
+echo "<tbody>";
 echo "</table></div>";
 include("pie.php");
 ?>

@@ -2,7 +2,6 @@
 include ("cabecera.php");
 include ("conect.php");
 include ("configuracion_funciones.php");
-include ("pagos_funciones.php");
 include ("certificaciones_funciones.php");
 include ("estimaciones_funciones.php");
 
@@ -19,13 +18,13 @@ include ("estimaciones_funciones.php");
 			$total = $pago[0]["exportable"]+$pago[0]["descarte"]+$pago[0]["calidad"];
 		}
 
-		$lote = busqueda_lotes("lote", $_GET["lote"]);
-
-		$pilado = round((($lote[0]["peso"]*(1-($lote[0]["humedad"])/100))/0.88)*($lote[0]["rto_pilado"])/100,2);
-		$exportable = round($pilado*($lote[0]["rto_exportable"]/100),2);
+		$lote = LotesConsultarCriterio("id", $_GET["lote"]);
+		$lote=$lote[0];
+		$pilado = round((($lote["peso"]*(1-($lote["humedad"])/100))/0.88)*($lote["rto_pilado"])/100,2);
+		$exportable = round($pilado*($lote["rto_exportable"]/100),2);
 		$descarte = round($pilado-$exportable,2);
 
-		if($lote[0]["apto_cata"]==0){
+		if($lote["apto_cata"]==0){
 			$cata["puntuacion"]="NO APTO";
 			$input_q="NO APTO<input type='hidden' name=calidad value='0'>";}
 		else{
@@ -70,7 +69,7 @@ echo "<div align=center><h1>AÑADIR PAGO POR CALIDAD</h1><br>";
 
 echo "<form name=form action=".$_SERVER['PHP_SELF']."?lote=".$_GET["lote"]." method='post'>";
 echo "<table class=tablas>";
-echo "<tr><th><h4>Lote</th><td colspan=2><h4>".$lote[0]["codigo_lote"]."</td></tr>";
+echo "<tr><th><h4>Lote</th><td colspan=2><h4>".$lote["codigo_lote"]."</td></tr>";
 echo "<tr><th><h4>Fecha</th><td colspan=2>".$pago[0]["fecha"]."</td></tr>";
 echo "<tr><th><h4>Exportable</th><td>$exportable qq</td><td>$".$pago[0]["exportable"]."</td></tr>";
 echo "<tr><th><h4>Descarte</th><td>$descarte qq</td><td>$".$pago[0]["descarte"]."</td></tr>";

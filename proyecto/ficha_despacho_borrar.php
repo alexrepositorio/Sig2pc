@@ -1,6 +1,5 @@
 <?php
 include ("cabecera.php");
-include ("despachos_funciones.php");
 
 if(isset ($_GET["despacho"]) AND isset($_GET["borra"])){	
 	eliminar_despacho($_GET["borra"]);

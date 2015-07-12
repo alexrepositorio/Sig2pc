@@ -18,6 +18,7 @@ function insertar_Usuarios($user,$pass,$nivel,$persona){
 	require ("conect.php");
 	$SQL="call SP_usuarios_ins('".$user."','".$pass."','".$nivel."','".$persona."')";
 	mysqli_query($link,$SQL) or die(mysqli_error($link));
+    echo $SQL;
      global $operaciones_constantes,$tabla_constantes;
 	guarda_historia($_SESSION["user"], $operaciones_constantes["I"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["usuarios"], gethostname());	
 	require("config_disconnect.php");
@@ -27,7 +28,7 @@ function comprobar_mail($mail){
     require ("conect.php");
     $SQL="call SP_personas_cons('','".$mail."')";
     $resultado=mysqli_query($link, $SQL)or die(mysqli_error($link));
-    if(mysqli_num_rows($result)==0 or $mail==''){
+    if(mysqli_num_rows($resultado)==0 or $mail==''){
         return false;
     }else
         return true;
@@ -35,10 +36,10 @@ function comprobar_mail($mail){
 
 function insertar_persona($nombre,$apellido,$cedula,$celular,$f_nac,$mail,$direccion,$foto,$genero,$canton){
     require ("conect.php");
-    $SQL="call SP_persona _ins('".$nombre."','".$apellido."','".$cedula."','".$celular."','".$f_nac."','".$mail."','".$direccion."','".$foto."','".$genero."','".$canton."')";
+    $SQL="call SP_persona_ins('".$nombre."','".$apellido."','".$cedula."','".$celular."','".$f_nac."','".$mail."','".$direccion."','".$foto."','".$genero."','".$canton."')";
     mysqli_query($link,$SQL) or die(mysqli_error($link));
      global $operaciones_constantes,$tabla_constantes;
-    guarda_historia($_SESSION["user"], $operaciones_constantes["I"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL_edit) ,$tabla_constantes["personas"], gethostname()); 
+    guarda_historia($_SESSION["user"], $operaciones_constantes["I"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["personas"], gethostname()); 
     require("config_disconnect.php");
 }
 
