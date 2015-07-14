@@ -54,23 +54,40 @@ echo "</form></td>";
 echo "<td align=center><h4>Socio<br><form name=form1 action=".$_SERVER['PHP_SELF']."?criterio=socio method='post'>";
 echo "<select name=busca>";
 $r_socio=consultarCriterio('','');
-foreach ($r_socio as $rowsocio) {
-	$socio_n=$rowsocio["codigo"]."-".$rowsocio["apellidos"].", ".$rowsocio["nombres"];
-	echo "<option value='".$rowsocio["id"]."'>$socio_n</option>";
+$lista=consultarCriterio('lotes','');
+foreach ($lista as $rowsocio) {
+	if($rowsocio["lotes"]>0)
+	{
+		if($rowsocio["lotes"]>1)
+		{
+			$lotes_t="lotes";
+		}else{
+				$lotes_t="lote";
+		}
+		$lotess="(".$rowsocio["lotes"]." $lotes_t)";
+		$mark="style='background-color:skyblue; color:blue;'";
+	}else{
+		$mark="";
+		$lotess="";
+	}
+	$socio_n=$rowsocio["codigo"]."-".$rowsocio["apellidos"].", ".$rowsocio["nombres"]." $lotess";
+	echo "<option $mark value='".$rowsocio["id_socio"]."'>$socio_n</option>";
 }
 echo "</select><br>";
 echo "<input type='submit' value='buscar'>";
 echo "</form></td>";
 
-
 echo "<td align=center><h4>Grupo<br><form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-echo "<select name=busca>";
-$r_loc=consultarGrupo('','');
-foreach ($r_loc as $rowloc) {
-		echo "<option value='".$rowloc["grupo"]."'>(".$rowloc["codigo_grupo"].")  ".$rowloc["grupo"]."</option>";
-}
-echo "</select><br>";
-echo "<input type='submit' value='filtrar'>";
+echo "<input list='grupos' name='busca' placeholder='Seleccione...'>";	
+	echo "<datalist  id='grupos'>";	
+	//echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
+	$grupos=consultarGrupo('','');
+ 	foreach ($grupos as $grupo)
+	{
+		echo "<option>".$grupo["grupo"]."</option>";
+	}
+	echo "</datalist></br>";
+	echo "<input type='submit' value='filtrar'>";
 echo "</form></td>";
 
 echo "<td align=center><h4>Fecha<br>
@@ -90,10 +107,11 @@ echo "</tr></table>";
 //*****************************************************************************************************
 $sumatotal=array_sum($pesos);
 echo "<div align=center>$criterio<br>";
+	echo "<h4>Total de lotes: $cuenta Total pergamino: $sumatotal qq </h4><br>";
 echo "<table id='table_id' style='width: 80%' class='tablas' posicion>";
 echo "<thead>";
 	echo "<th>";
-	echo "<h4>LOTES $encontrados</h4><br>$sumatotal qq pergamino en $cuenta lotes";
+	echo "<h4>LOTES</h4>";
 	echo "</th>";
 	echo "<th width=10px><h6>rend.</h6></th>";
 	echo "<th width=10px><h6>org.</h6></th>";

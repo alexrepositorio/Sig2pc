@@ -11,7 +11,7 @@
 
 		echo "<form name=form action=".$_SERVER['PHP_SELF']." method='post'>";
 		echo "<table class=tablas>";
-			echo "<tr><th><h4>Fecha</th><td><input type='date' name=fecha value='".date("Y-m-d H:i:s",time())."'  ></td></tr>";
+			echo "<tr><th><h4>Fecha</th><td><input type='date' name=fecha value='".date('Y-m-d', time())."'  ></td></tr>";
 			echo "<tr><th><h4>Destino</th><td><input type='text' name=destino></td></tr>";
 			echo "<tr><th><h4>Chófer</th><td><input type='text' name=chofer></td></tr>";
 			echo "<tr><th><h4>Responsable</th><td><input type='text' name=responsable></td></tr>";

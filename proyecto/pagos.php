@@ -91,7 +91,7 @@
 
 	//Combobox Grupo
 	echo "<td align=center><h4>Grupo<br><form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-	echo "<input list='grupos' name='busca' value='Seleccione...' required>";	
+	echo "<input list='grupos' name='busca' placeholder='Seleccione...' required>";	
 	echo "<datalist  id='grupos'>";	
 	$grupos=consultarGrupo('lista','');
  	foreach ($grupos as $grupo)
@@ -189,11 +189,11 @@
 		</tr></table><br><br>";
 	}
 	//************************fin información del socio elegido
-
+	echo "<h4>Total de lotes: $cuenta Total Pergamino:$sumatotal qq  </h4> ";
 	echo "<table id='table_id' style='width: 90%' class='tablas' posicion>";
 	echo "<thead>";
 	echo "<th width=500px>";
-	echo "<h4>LOTES $encontrados</h4> ($cuenta) total:$sumatotal qq pergamino";
+	echo "<h4>LOTES </h4>";
 	echo "</th>";
 	echo "<th width=20px><h6>Exportable</h6></th>";
 	echo "<th width=20px><h6>Descarte</h6></th>";

@@ -15,7 +15,6 @@ if(isset($_GET["borrar_asoc"])){
 	asociaciones_borrar($_GET["borrar_asoc"]);
 }
 if(isset ($_POST["update"])){
-	echo $_POST["id_socio"];
 	parcela_editar($_POST["sup_total"],$_POST["coorX"],$_POST["coorY"],$_POST["alti"],$_POST["id_socio"],$_POST["MOcontratada"]
 	,$_POST["MOfamiliar"],$_POST["Miembros_familia"],$_POST["riego"],$_POST["update"]);	
 	echo "<div align=center><h1>ACTUALIZANDO, ESPERA...

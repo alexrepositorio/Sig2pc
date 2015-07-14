@@ -12,9 +12,14 @@
 	function resultado_sentencias($SQL){	
 		require("conect.php");   	
 		$cuenta=mysqli_num_rows($SQL);
-		while ($row = mysqli_fetch_array($SQL,MYSQLI_ASSOC)){
+		if ($cuenta>0) {
+			while ($row = mysqli_fetch_array($SQL,MYSQLI_ASSOC)){
 			$envios[]=$row;	
+			}
+		}else{
+			$envios=0;
 		}
+		
 		require("config_disconnect.php");
 		return array($SQL,$cuenta,$envios);
 	}
@@ -155,10 +160,11 @@
 		}
 	function enviosConsultarfecha($valor1,$valor2){
 		require ("conect.php");
-		$SQL="call SP_envios_con_fecha('fecha','".$valor1."','".$valor2."')";
+		$SQL="call SP_envios_con_fecha('".$valor1."','".$valor2."')";
 		$resultado=mysqli_query($link,$SQL) or die(mysqli_error($link));
-		require("config_disconnect.php"); 
-		return (transformar_a_lista($resultado));
+		$_texto="desde: $valor1 hasta: $valor2";	
+		require("config_disconnect.php");		
+		return array($resultado,$_texto);   
 	}
 		
 ?>

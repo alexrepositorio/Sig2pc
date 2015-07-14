@@ -43,9 +43,9 @@ function comprobar_mail($mail){
 	}
 	return ($estado);
 }
-function insertar_socio($nombre,$apellido,$codigo,$cedula,$celular,$f_nac,$direccion,$poblacion,$canton,$provincia,$genero,$mail){
+function insertar_socio($nombre,$apellido,$codigo,$cedula,$celular,$f_nac,$direccion,$poblacion,$canton,$genero,$mail){
 	require ("conect.php");
-	$SQL="call SP_socio_ins('".$nombre."','".$apellido."','".$codigo."','".$cedula."','".$celular."','".$f_nac."','".$direccion."','".$poblacion."','".$canton."','".$provincia."','".$genero."','".$mail."')";
+	$SQL="call SP_socio_ins('".$nombre."','".$apellido."','".$codigo."','".$cedula."','".$celular."','".$f_nac."','".$direccion."','".$poblacion."','".$canton."','".$genero."','".$mail."')";
 	mysqli_query($link,$SQL) or die(mysqli_error($link));
 	global $operaciones_constantes,$tabla_constantes;
 	guarda_historia($_SESSION["user"], $operaciones_constantes["I"], date("Y-m-d H:i:s",time()), str_replace("'"," ",$SQL) ,$tabla_constantes["socios"], gethostname());	

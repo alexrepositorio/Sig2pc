@@ -31,14 +31,13 @@ $resultado=parcelas_consultarCriterio('id',$_GET["parcela"]);
 echo "<div id=imprimir>";
 echo "<div align=center><h2>Ficha de la Parcela</h2><br>";
 echo "<table class=tablas>";
-echo count($resultado);
 if (count($resultado)>0) {
 	foreach ($resultado as $datos) {
 	$datos_socio=consultarCriterio('id',$datos["id_socio"]);
 	$datos_socio=$datos_socio[0];
 	echo "<tr><th align=right><h4>Socio</th><td><h4>".$datos_socio["nombres"]." ".$datos_socio["apellidos"]." (".$datos["id_socio"].")</td></tr>";		
 	echo "<tr><th align=right><h4>Superficie Finca</th><td><h4>".$datos["sup_total"]."</h4>ha</td></tr>";	
-	echo "<tr><th align=right><h4>Superficie café</th><td><h4>".parcelas_consultarCriterio('sup_total','$_GET["parcela"]')[0]["sup_cafe"]."</h4>ha</td></tr>";	
+	echo "<tr><th align=right><h4>Superficie café</th><td><h4>".parcelas_consultarCriterio('sup_total',$_GET["parcela"])[0]["sup_cafe"]."</h4>ha</td></tr>";	
 	echo "<tr><th align=right><h4>Coordenada X</th><td><h4>".$datos["coorX"]."</h4></td></tr>";	
 	echo "<tr><th align=right><h4>Coordenada Y</th><td><h4>".$datos["coorY"]."</h4></td></tr>";	
 	echo "<tr><th align=right><h4>Altitud</th><td><h4>".$datos["alti"]."</h4>msnm</td></tr>";	

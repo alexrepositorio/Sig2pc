@@ -18,12 +18,12 @@ $exportable_qq=($lote["peso"]*(1-($trillado)/100))*$exportable_prc/100;
 $trillado_qq=$lote["peso"]*(($trillado)/100);
 
 
-$estados["entrada"] ="<h6>Registro el ".date("d-m-Y H:i:s",strtotime($lote["fecha"]))."
+$estados["entrada"] ="<h4>Registro el ".date("d-m-Y H:i:s",strtotime($lote["fecha"]))."
 <br>Cantidad:".$lote["peso"]." qq pergamino
 <br>Humedad:".$lote["humedad"]."%
 <br>Exportable:".round($exportable_prc,2)."% (".round($exportable_qq,2)." qq)
 <br>Descarte:".round($descarte_prc,2)."% (".round($descarte_qq,2)." qq)
-<br>Trillado:".$trillado."%</h6>";
+<br>Trillado:".$trillado."%</h4>";
 
 $r_c=catas_consultar('lote',$_GET["lote"]);
 if (is_array($r_c)) {
@@ -37,7 +37,7 @@ $r_p=LotesConsultarpagos($_GET["lote"]);
 if (is_array($r_p)) {
 	foreach ($r_p as $pago) {
 		$total=$pago["exportable"]+$pago["descarte"]+$pago["calidad"]+$pago["fuera"]+$pago["cliente"]+$pago["microlote"]+$pago["tazadorada"];	
-		$estados["pago"]= "<h6>Pagado el ".date("d-m-Y H:i:s",strtotime($pago["fecha"]))."<br>
+		$estados["pago"]= "<h4>Pagado el ".date("d-m-Y H:i:s",strtotime($pago["fecha"]))."<br>
 		exportable: $".$pago["exportable"]."<br>
 		descarte: $".$pago["descarte"]."<br>
 		fuera de contrato: $".$pago["fuera"]."<br>
@@ -45,7 +45,7 @@ if (is_array($r_p)) {
 		cliente: $".$pago["cliente"]."<br>
 		microlote: $".$pago["microlote"]."<br>
 		taza dorada: $".$pago["tazadorada"]."<hr>
-		<font color=blue>Total: $".$total."</h6>";
+		<font color=blue>Total: $".$total."</h4>";
 		$movimientos[]=$total;
 	}	
 }else{
@@ -55,9 +55,9 @@ $res_des=despachos_consultar_criterio('lote',$_GET["lote"]);
 if (is_array($res_des)) {
 	foreach ($res_des as $despacho) {
 		$despachados[]=$despacho["cantidad"];
-		$despachos[]="<h6>".$despacho["cantidad"]." qq el ".
+		$despachos[]="<h4>".$despacho["cantidad"]." qq el ".
 								date("d-m-Y",strtotime($despacho["fecha"])).
-								" a ". $despacho["destino"]."<br></h6>";
+								" a ". $despacho["destino"]."<br></h4>";
 	}
 }else{
 	$despachados[]=0;
@@ -66,7 +66,7 @@ if (is_array($res_des)) {
 
 $total_despacho=array_sum($despachados);	
 $restante=$lote["peso"]-$total_despacho;
-$despachos[]="<hr><h6><font color=blue>Total despachado:".$total_despacho." qq<br>Restante:".$restante."qq</font>";	
+$despachos[]="<hr><h4><font color=blue>Total despachado:".$total_despacho." qq<br>Restante:".$restante."qq</font>";	
 $estados["despachoS"]=implode("", $despachos);
 
 $socio=consultarCriterio("id",$lote["id_socio"]);
@@ -74,6 +74,7 @@ $socio=$socio[0];
 
 $estatus=certificacion('actual',$lote["id_socio"]);
 $estatus_actual=$estatus[0];
+
 $estimado=estimacion('actual',$lote["id_socio"]);
 $estimado_actual=$estimado[0];
 
@@ -85,7 +86,7 @@ if($ultimafecha==0)
 }else{
 	$ultimafecha=date("d-m-Y",strtotime($ultimafecha));
 }
-if($estatus_actual["estatus"]=="O")
+if(strpos($estatus_actual["estatus"], "O"))
 {
 	$estatus_t="ORGANICO";
 }else{
@@ -105,7 +106,6 @@ if (is_array($resultado_lotes)) {
 $peso_entregado=array_sum($pesos_del_socio);
 $estimado_actual_max=$estimado_actual["estimados"]*(1+(configuracion_cons('parametro','margen_contrato')[0]["valor"]/100));
 $peso_restante=$estimado_actual_max-$peso_entregado;
-
 echo "<div id=imprimir>";
 echo "<div align=center><h1>Ficha del lote ".$lote["codigo_lote"]."</h1><br><h2>".$socio["apellidos"].", ".$socio["nombres"]."<br>
 					".$socio["codigo"]."-".$socio["poblacion"]."</h2><br>

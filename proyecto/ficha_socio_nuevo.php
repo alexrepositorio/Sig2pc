@@ -1,6 +1,6 @@
 <?php
 include ("cabecera.php");
-include ("socio.php");
+include ("socio_funciones.php");
 include ("grupos_funciones.php");
 include ("canton_funciones.php");
 
@@ -15,7 +15,7 @@ if(isset ($_POST["nombres"])){
 		else{
 		
 		insertar_socio($_POST["nombres"],$_POST["apellidos"],calcular_codigo($_POST["poblacion"]),$_POST["cedula"],$_POST["celular"],$_POST["f_nacimiento"]
-			,$_POST["direccion"],$_POST["poblacion"],$_POST["canton"],$_POST["provincia"],$_POST["genero"],$_POST["email"]);
+			,$_POST["direccion"],$_POST["poblacion"],$_POST["canton"],$_POST["genero"],$_POST["email"]);
 		
 		//echo "$SQL_edit";
 		
@@ -63,7 +63,7 @@ echo "<datalist  id='cantones'>";
 		echo "<option>".$canton["canton"]."</option>";
 	}
 echo "</datalist></td></tr>";
-echo "<tr><th><h4>Provincia</th><td><input type='text' name=provincia></td></tr>";
+//echo "<tr><th><h4>Provincia</th><td><input type='text' name=provincia></td></tr>";
 echo "<tr><th><h4>Género</th><td><select name=genero required>
 		<option value=''>Elige género</option>
 		<option value='masculino'>M</option>

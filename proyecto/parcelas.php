@@ -111,14 +111,14 @@ if (is_array($parcelas)) {
 		}else{$mark="";$lotess="";
 	}
 		$socio_n=$elemento["codigo"]."-".$elemento["apellidos"].", ".$elemento["nombres"]." $lotess";
-		echo "<option value=".$elemento["id_socio"].">$socio_n</option>";
+		echo "<option $mark value=".$elemento["id_socio"].">$socio_n</option>";
 	}
 	echo "</select><br>";
 	echo "<input type='submit' value='buscar'>";
 	echo "</form></td>";
 	echo "<td align=center><h4>Grupo<br>
 	<form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-	echo "<input list='grupos' name='busca' value='Seleccione...' required>";	
+	echo "<input list='grupos' name='busca' placeholder='Seleccione...' required>";	
 	echo "<datalist  id='grupos'>";	
 	//echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
 	$grupos=consultarGrupo('lista','');
@@ -136,10 +136,11 @@ if (is_array($parcelas)) {
 	if(isset($superficie_cafe)){$total_cafe=array_sum($superficie_cafe);}else{$total_cafe="no se encuentran";}
 	echo "</tr></table>";
 	echo "<div align=center>$criterio<br>";
+	echo "<h4>PARCELAS $encontrados ($cuenta parcelas, $total_cafe ha de café) </h4> <br>";
 	echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
 	echo "<thead>";
 		echo "<th width=500px>";
-		echo "<h4>PARCELAS $encontrados</h4> ($cuenta parcelas, $total_cafe ha de café)";
+		echo "<h4>PARCELAS </h4>";
 		echo "</th>";
 		echo "<th width=13%><h6>opciones</h6></th>";
 		echo "</thead>";

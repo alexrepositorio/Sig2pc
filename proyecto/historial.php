@@ -59,7 +59,7 @@
 
 	echo "</tr></table>";
 	echo "<br><br><div align=center>$criterio<br>";
-	echo "<br><br><div align=center>TOTAL $encontrados ($cuenta)<br>";
+	echo "<br><br><div align=center><h4>TOTAL $encontrados ($cuenta)</h4><br>";
 	
 	echo "<table id='table_id' style='width: 80%' class='tablas' posicion>";
 	echo "<thead>";

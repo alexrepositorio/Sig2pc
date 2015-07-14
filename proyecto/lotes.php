@@ -74,7 +74,7 @@ echo "</select><br>";
 echo "<input type='submit' value='buscar'>";
 echo "</form></td>";
 echo "<td align=center><h4>Grupo<br><form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-echo "<input list='grupos' name='busca' value='Seleccione...'>";	
+echo "<input list='grupos' name='busca' placeholder='Seleccione...'>";	
 	echo "<datalist  id='grupos'>";	
 	//echo "<option value=".$socio["poblacion"].">".$socio["poblacion"]."</option>";
 	$grupos=consultarGrupo('','');
@@ -102,10 +102,11 @@ echo "</td>";
 $sumatotal=array_sum($pesos);
 echo "</tr></table>";
 echo "<div align=center>$criterio<br>";
+echo "<h4>Total de lotes: $cuenta pergamino total:$sumatotal qq  </h4> <br>";
 echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
 echo "<thead>";
 		echo "<th width=500px>";
-		echo "<h4>LOTES $encontrados</h4> ($cuenta) total:$sumatotal qq pergamino";
+		echo "<h4>LOTES </h4>";
 		echo "</th>";
 		echo "<th width=15%><h6>opciones</h6></th>";
 		echo "</thead>";
@@ -114,6 +115,7 @@ if(isset($lotes))
 {
 	foreach ($lotes as $lote)
 	{
+		
 		$datos_socio=consultarCriterio('id',$lote["id_socio"]);
 		$datos_socio=$datos_socio[0];
 		$estatus=certificacion('actual',$datos_socio["id_socio"]);

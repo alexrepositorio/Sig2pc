@@ -55,14 +55,14 @@ echo "</td>";
 
 echo "<td align=center>  <h4>Nombre y apellidos<br>
 <form name=form2 action=".$_SERVER['PHP_SELF']."?criterio=nombres method='post'>";
-echo "<input type='text' name=busca><br>";
+echo "<input type='text' name=busca ><br>";
 echo "<input type='submit' value='buscar'>";
 echo "</form></td>";
 
 
 echo "<td align=center> <h4>Localidad<br>
 <form name=form3 action=".$_SERVER['PHP_SELF']."?criterio=localidad method='post'>";
-echo "<input list='grupos' name='busca' value='Seleccione...' required>";	
+echo "<input list='grupos' name='busca' placeholder='Seleccione...' >";	
 echo "<datalist  id='grupos'>";	
 $grupos=consultarGrupo('lista','');
  foreach ($grupos as $grupo)
@@ -76,28 +76,28 @@ echo "</div>";
 
 echo "<div name='tabla' style='width:95%; height:48px; overflow:auto;''>";
 echo "</div>";
-echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
-echo "<H4>$texto</h4>";
+echo "<table id='table_id' style='width: 60%' class='tablas'>";
+echo "<H4>$texto</h4></br>";
 echo "<H4 > Total socios: (".count($socios).")</h4> </br>";
 echo "<thead>";
-		echo "<th  width=8%><h6>Codigo</h6></th>";
-		echo "<th  width=40%><h6>Socios</h6></th>";
-		echo "<th ><h6>Poblacion</h6></th>";
-		echo "<th width=13%><h6>Certificacion</h6></th>";
-		echo  "<th width=8%><h6>Opciones</h6></th>";
+		echo "<th  width=8%><h3>Codigo</h3></th>";
+		echo "<th  width=60%><h3>Socios</h3></th>";
+		echo "<th><h3>Poblacion</h3></th>";
+		echo "<th width=8%><h3>Certificacion</h3></th>";
+		echo  "<th width=8%><h3>Opciones</h3></th>";
 		echo "</thead>";
 		echo "<tbody>";
 if (is_array($socios)) {
 	foreach ($socios as $socio) {
 		echo "<tr>";
-		echo "<td>".$socio['codigo']."</td>";
-			echo "<td>".$socio['apellidos'].", ".$socio['nombres']." </td>";
-			echo "<td>".$socio['grupo']."</td>";
+		echo "<td><h4>".$socio['codigo']."</h4></td>";
+			echo "<td><h4>".$socio['apellidos'].", ".$socio['nombres']." </h4></td>";
+			echo "<td><h4>".$socio['grupo']."<h4></td>";
 			if (isset($socio['certificacion'])) {
 					echo "<td><img title='socio CON certificación orgánica' src=images/organico.png width=25></td>";
 				}
 				else{
-					echo "<td><img title='socio CON certificación orgánica' src=images/noorganico.png width=25><br>
+					echo "<td><img title='socio CON certificación orgánica' src=images/noorganico.png width=25>
 					<a href=ficha_socio_certificar.php?socio=".$socio['id']."><img src=images/add1.ico width=30></a>
 					</td>";
 				}	

@@ -4,13 +4,15 @@ include ("catas_funciones.php");
 echo "<div align=center><h1>Listado de lotes para Cata</h1><br><br>";
 if(!isset($_POST["busca"])){
 	$resultado=LotesConsultarCriterio('','');
+	$texto="";
 }else{
 	$resultado=LotesConsultarfecha($_POST["busca"],$_POST["busca2"]);
 	$_texto="Desde: ".$_POST["busca"]." Hasta:   ".$_POST['busca2']."";
-	echo "<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> $_texto</h4> </br>";
+	$texto= "<h4>Criterio de búsqueda: <b>".$_GET["criterio"]."</b> $_texto</h4> </br>";
 }
 
 if (is_array($resultado)) {
+	$cuenta=count($resultado);
 	foreach ($resultado as $row) {
 		$lotes[]=$row;
 		$pesos[]=$row["peso"];
@@ -25,6 +27,8 @@ if (is_array($resultado)) {
 			$puntuacion[$row["id"]]="<a href=ficha_cata_nuevo.php?lote=".$row["codigo_lote"]."><font color=blue><b>PENDIENTE</b></font></a>";
 		}
 	}		
+}else{
+	$cuenta=0;
 }
 
 	echo "<td align=center><h4>Fecha<br>
@@ -37,6 +41,8 @@ if (is_array($resultado)) {
 	";
 	echo "<input type='submit' value='filtrar'>";
 	echo "</form></td>";
+	echo "$texto<br>";
+	echo "<h4>Total de Lotes: $cuenta </h4><br> ";
 echo "<table id='table_id' style='width: 60%' class='tablas' posicion>";
 echo "<thead>";
 		echo "<th width=500px>";
