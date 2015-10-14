@@ -559,13 +559,13 @@ BEGIN
 	case criterio
 		when 'lista'
         then
-			SELECT DISTINCT(grupo)  FROM GRUPOS ORDER BY grupo ASC;
+			SELECT DISTINCT(grupo)  FROM grupos ORDER BY grupo ASC;
 		when 'id'
         then
-			SELECT * FROM GRUPOS WHERE id=in_id;
+			SELECT * FROM grupos WHERE id=in_id;
 		when ''
 		then
-			SELECT * FROM GRUPOS ORDER BY grupo ASC;
+			SELECT * FROM grupos ORDER BY grupo ASC;
 	end case;
         
 END$$
