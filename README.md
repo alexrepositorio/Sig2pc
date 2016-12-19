@@ -1,0 +1,2 @@
+# Sig2pc
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/774e4ad359394d42b6df241d8e03a74d)](https://www.codacy.com/app/javier_f-v/Sig2pc?utm_source=github.com&utm_medium=referral&utm_content=alexrepositorio/Sig2pc&utm_campaign=badger)
